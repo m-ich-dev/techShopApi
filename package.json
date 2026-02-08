@@ -34,6 +34,7 @@
     "@types/typescript": "^0.4.29",
     "eslint": "^9.39.2",
     "globals": "^17.3.0",
+    "jiti": "^2.6.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
