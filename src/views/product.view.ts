@@ -30,10 +30,11 @@ type TProduct = Omit<IRecordProduct, 'categoryId' | 'brandId'> & {
     prices: TProductPrice;
     attributes: TProductAttribute[];
 };
-
-type TProductConstructor = Omit<IRecordProduct, 'categoryId' | 'brandId'> & {
+export type TPivotProduct = Omit<IRecordProduct, 'categoryId' | 'brandId'> & {
     attributes: TProductAttribute[] | string;
 } & TProductCategory & TProductBrand & TProductPrice;
+
+type TProductConstructor = TPivotProduct
 
 export default class Product implements TProduct {
     id: number;
