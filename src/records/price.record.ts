@@ -1,3 +1,5 @@
+import { TInsert } from "../boot/database/record.types";
+
 export interface IRecordPrice {
     id: number;
     productId: number;
@@ -8,5 +10,5 @@ export interface IRecordPrice {
     updatedAt: Date;
 };
 
-export type TInsertPrice = Omit<IRecordPrice, 'id'>;
+export type TInsertPrice = TInsert<IRecordPrice>;
 export type TUpdatePrice = Partial<TInsertPrice>;

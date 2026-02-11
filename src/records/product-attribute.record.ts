@@ -1,3 +1,5 @@
+import { TInsert } from "../boot/database/record.types";
+
 export interface IRecordProductAttribute {
     id: number;
     productId: number;
@@ -5,5 +7,5 @@ export interface IRecordProductAttribute {
     value: string;
 };
 
-export type TInsertProductAttribute = Omit<IRecordProductAttribute, 'id'>;
+export type TInsertProductAttribute = TInsert<IRecordProductAttribute>;
 export type TUpdateProductAttribute = Partial<TInsertProductAttribute>;

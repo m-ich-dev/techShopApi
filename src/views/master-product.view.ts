@@ -1,0 +1,93 @@
+import { IRecordAttribute } from "../records/attribute.record";
+import { IRecordBrand } from "../records/brand.record";
+import { IRecordCategory } from "../records/category.record";
+import { IRecordPrice } from "../records/price.record";
+import { IRecordProductAttribute } from "../records/product-attribute.record";
+import { IRecordProductVariant } from "../records/product-variant.record";
+import { IRecordProduct } from "../records/product.record";
+
+type TProductAttribute = {
+    attributeId: IRecordAttribute['id'];
+    attributeTitle: IRecordAttribute['title'];
+    attributeValue: IRecordProductAttribute['value'];
+}
+type TProductPrice = {
+    priceId: IRecordPrice['id'];
+    price: IRecordPrice['price'];
+    oldPrice: IRecordPrice['oldPrice'];
+    discount: IRecordPrice['discount'];
+};
+type TProductCategory = {
+    categoryId: IRecordCategory['id'];
+    categoryTitle: IRecordCategory['title']
+}
+type TProductBrand = {
+    brandId: IRecordBrand['id'];
+    brandTitle: IRecordBrand['title'];
+}
+type TProductVariant = {
+    sku: IRecordProductVariant['sku'];
+    slug: IRecordProductVariant['slug'];
+    stock: IRecordProductVariant['stock']
+}
+type TProduct = Omit<IRecordProduct, 'categoryId' | 'brandId' | 'slug'> & TProductVariant & {
+    category: TProductCategory;
+    brand: TProductBrand;
+    prices: TProductPrice;
+    attributes: TProductAttribute[];
+};
+export type TPivotProduct = Omit<IRecordProduct, 'categoryId' | 'brandId'> &
+    TProductVariant & TProductCategory & TProductBrand & TProductPrice & {
+        attributes: TProductAttribute[] | string;
+    };
+
+type TProductConstructor = TPivotProduct
+
+export default class MasterProduct implements TProduct {
+    id: number;
+    category: TProductCategory;
+    brand: TProductBrand;
+    title: string;
+    sku: string;
+    stock: number;
+    slug: string;
+    prices: TProductPrice;
+    attributes: TProductAttribute[];
+
+    createdAt: Date;
+    updatedAt: Date;
+    deletedAt: Date | null;
+
+
+    constructor(data: TProductConstructor) {
+
+        if (typeof data.attributes === 'string') {
+            data.attributes = JSON.parse(data.attributes) as TProduct['attributes'] || [];
+        }
+
+        this.id = data.id;
+        this.category = {
+            categoryId: data.categoryId,
+            categoryTitle: data.categoryTitle
+        };
+        this.brand = {
+            brandId: data.brandId,
+            brandTitle: data.brandTitle
+        };
+        this.title = data.title;
+        this.sku = data.sku;
+        this.stock = data.stock;
+        this.slug = data.slug;
+        this.prices = {
+            priceId: data.priceId,
+            price: data.price,
+            oldPrice: data.oldPrice,
+            discount: data.discount
+        };
+        this.attributes = data.attributes;
+
+        this.createdAt = data.createdAt;
+        this.updatedAt = data.updatedAt;
+        this.deletedAt = data.deletedAt;
+    }
+}
