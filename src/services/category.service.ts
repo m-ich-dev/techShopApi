@@ -1,9 +1,9 @@
-import HTTPError from "../boot/http.error";
+import HTTPError from "../boot/http/http.error";
 import CategoryReadRepository from "../repositories/category/category.read.repository";
 import Category from "../views/category.view";
 
 
-export class CategoryService {
+export default class CategoryService {
     constructor(private readonly categoryReadRepository: CategoryReadRepository) { }
 
     public async all() {
@@ -16,5 +16,3 @@ export class CategoryService {
         return new Category(categoryRow);
     }
 }
-
-export default new CategoryService(new CategoryReadRepository());
