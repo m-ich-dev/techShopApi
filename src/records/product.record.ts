@@ -1,4 +1,4 @@
-import { TInsert } from "../boot/database/record.types";
+import { TInsertRecord } from "../boot/types/db.types";
 
 export interface IRecordProduct {
     id: number;
@@ -11,7 +11,7 @@ export interface IRecordProduct {
     deletedAt: Date | null
 };
 
-export type TInsertProduct = TInsert<IRecordProduct>;
+export type TInsertProduct = TInsertRecord<IRecordProduct>;
 export type TUpdateProduct = Partial<TInsertProduct>;
 
 export type TPivotRecordProduct = IRecordProduct & {

@@ -1,4 +1,5 @@
-import { TInsert } from "../boot/database/record.types";
+import { TInsertRecord } from "../boot/types/db.types";
+
 
 export interface IRecordBrand {
     id: number;
@@ -9,5 +10,5 @@ export interface IRecordBrand {
     deletedAt: Date | null;
 };
 
-export type TInsertBrand = TInsert<IRecordBrand>;
+export type TInsertBrand = TInsertRecord<IRecordBrand>;
 export type TUpdateBrand = Partial<TInsertBrand>;

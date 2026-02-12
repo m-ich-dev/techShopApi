@@ -1,4 +1,4 @@
-import { TInsert } from "../boot/database/record.types";
+import { TInsertRecord } from "../boot/types/db.types";
 
 export interface IRecordCategory {
     id: number;
@@ -9,5 +9,5 @@ export interface IRecordCategory {
     deletedAt: Date | null;
 };
 
-export type TInsertCategory = TInsert<IRecordCategory>;
+export type TInsertCategory = TInsertRecord<IRecordCategory>;
 export type TUpdateCategory = Partial<TInsertCategory>;

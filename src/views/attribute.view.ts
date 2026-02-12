@@ -4,7 +4,7 @@ import { IRecordAttribute } from "../records/attribute.record";
 type TAttribute = IRecordAttribute;
 type TAttributeConstructor = IRecordAttribute;
 
-export default class Brand implements TAttribute {
+export default class Attribute implements TAttribute {
     id: number;
     title: string;
     slug: string;
