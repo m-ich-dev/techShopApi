@@ -1,7 +1,8 @@
 import { db } from "../../boot/database/db.knex";
 import ReadRepositorty from "../../boot/repositories/read.repository";
 import { IRecordCategory } from "../../records/category.record";
-import { TPivotProduct } from "../../views/product.view";
+import { TPivotProduct } from "../../views/master-product.view";
+
 
 export default class ProductReadRepository extends ReadRepositorty<IRecordCategory> {
     protected readonly tableName: string = 'products';

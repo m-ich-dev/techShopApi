@@ -3,8 +3,9 @@ import type { Knex } from "knex";
 
 export async function up(knex: Knex): Promise<void> {
     return knex.schema.createTable('prices', function (table) {
+        table.collate('utf8mb4_unicode_ci');
+        
         table.increments('id');
-        table.integer('product_variant_id').unsigned().notNullable().references('id').inTable('product_variants').onDelete('CASCADE').onUpdate('CASCADE');
 
         table.decimal('price').unsigned().notNullable().defaultTo(0);
         table.decimal('old_price').unsigned().notNullable().defaultTo(0);
