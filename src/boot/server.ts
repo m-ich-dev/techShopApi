@@ -1,10 +1,14 @@
 import express from 'express';
 import 'dotenv/config';
+import router from '../routes/web';
+
+const PORT = process.env.APP_PORT ?? 3030;
 
 const app = express();
 app.use(express.json());
 
-const PORT = process.env.APP_PORT ?? 3030;
+app.use(router);
+
 
 export const serve = () => {
     const server = app.listen(PORT, () => {

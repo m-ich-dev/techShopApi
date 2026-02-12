@@ -1,4 +1,4 @@
-import { HTTP_CODES, THttpCode } from "./enums/http.enums";
+import { HTTP_CODES, THttpCode } from "../enums/http.enums";
 
 
 export default class HTTPError extends Error {
