@@ -1,22 +1,40 @@
-import { IRecordProduct } from "../records/product.record";
+import { IRecordBrand } from "../records/brand.record";
+import { IRecordCategory } from "../records/category.record";
+import { IRecordProduct, TPivotRecordProduct } from "../records/product.record";
 
-export type TProduct = IRecordProduct;
-export type TProductConstructor = TProduct
+type TProductCategory = {
+    id: IRecordCategory['id'];
+    title: IRecordCategory['title']
+}
+type TProductBrand = {
+    id: IRecordBrand['id'];
+    title: IRecordBrand['title'];
+}
+export type TProduct = Omit<IRecordProduct, 'categoryId' | 'brandId'> & {
+    category: TProductCategory;
+    brand: TProductBrand;
+};
 
 export default class Product implements TProduct {
     id: number;
-    categoryId: number;
-    brandId: number;
+    category: TProductCategory;
+    brand: TProductBrand;
     title: string;
     slug: string;
     createdAt: Date;
     updatedAt: Date;
     deletedAt: Date | null;
 
-    constructor(data: TProductConstructor) {
+    constructor(data: TPivotRecordProduct) {
         this.id = data.id;
-        this.categoryId = data.categoryId;
-        this.brandId = data.brandId;
+        this.category = {
+            id: data.categoryId,
+            title: data.categoryTitle
+        };
+        this.brand = {
+            id: data.brandId,
+            title: data.brandTitle
+        };
         this.title = data.title;
         this.slug = data.slug;
         this.createdAt = data.createdAt;

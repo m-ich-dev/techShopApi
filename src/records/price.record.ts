@@ -2,7 +2,7 @@ import { TInsert } from "../boot/database/record.types";
 
 export interface IRecordPrice {
     id: number;
-    productId: number;
+    productVariantId: number;
     price: number;
     oldPrice: number;
     discount: number;

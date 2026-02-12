@@ -13,3 +13,8 @@ export interface IRecordProduct {
 
 export type TInsertProduct = TInsert<IRecordProduct>;
 export type TUpdateProduct = Partial<TInsertProduct>;
+
+export type TPivotRecordProduct = IRecordProduct & {
+    categoryTitle: string;
+    brandTitle: string;
+}
