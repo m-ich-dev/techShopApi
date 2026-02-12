@@ -3,7 +3,7 @@ import { IRecordCategory } from "../records/category.record";
 type TCategory = IRecordCategory;
 type TCategoryConstructor = IRecordCategory;
 
-export default class Brand implements TCategory {
+export default class Category implements TCategory {
     id: number;
     title: string;
     slug: string;
