@@ -1,7 +1,4 @@
-import { IRecordCategory } from "../records/category.record";
-
-export type TCategory = IRecordCategory;
-type TCategoryConstructor = IRecordCategory;
+import { TCategory, TCategoryRow } from "./types/category.types";
 
 export default class Category implements TCategory {
     id: number;
@@ -11,7 +8,7 @@ export default class Category implements TCategory {
     updatedAt: Date;
     deletedAt: Date | null;
 
-    constructor(data: TCategoryConstructor) {
+    constructor(data: TCategoryRow) {
         this.id = data.id;
         this.title = data.title;
         this.slug = data.slug;

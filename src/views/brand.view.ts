@@ -1,7 +1,5 @@
-import { IRecordBrand } from "../records/brand.record";
+import { TBrand, TBrandRow } from "./types/brand.types";
 
-export type TBrand = IRecordBrand;
-type TBrandConstructor = IRecordBrand;
 
 export default class Brand implements TBrand {
     id: number;
@@ -11,7 +9,7 @@ export default class Brand implements TBrand {
     updatedAt: Date;
     deletedAt: Date | null;
 
-    constructor(data: TBrandConstructor) {
+    constructor(data: TBrandRow) {
         this.id = data.id;
         this.title = data.title;
         this.slug = data.slug;

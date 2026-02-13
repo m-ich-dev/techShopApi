@@ -1,8 +1,5 @@
-import { IRecordAttribute } from "../records/attribute.record";
+import { TAttribute, TAttributeRow } from "./types/attribute.types";
 
-
-type TAttribute = IRecordAttribute;
-type TAttributeConstructor = IRecordAttribute;
 
 export default class Attribute implements TAttribute {
     id: number;
@@ -13,7 +10,7 @@ export default class Attribute implements TAttribute {
     updatedAt: Date;
     deletedAt: Date | null;
 
-    constructor(data: TAttributeConstructor) {
+    constructor(data: TAttributeRow) {
         this.id = data.id;
         this.title = data.title;
         this.slug = data.slug;

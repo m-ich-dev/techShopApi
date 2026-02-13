@@ -1,5 +1,6 @@
 import ReadRepositorty from "../../boot/repositories/read.repository";
-import { IRecordProduct, TPivotRecordProduct } from "../../records/product.record";
+import { IRecordProduct } from "../../records/product.record";
+import { TProductRow } from "../../views/types/product.types";
 
 
 export default class ProductReadRepository extends ReadRepositorty<IRecordProduct> {
@@ -11,7 +12,7 @@ export default class ProductReadRepository extends ReadRepositorty<IRecordProduc
         return this.query() //products
             .join('categories', 'products.category_id', 'categories.id')
             .join('brands', 'products.brand_id', 'brands.id')
-            .select<TPivotRecordProduct[]>(
+            .select<TProductRow[]>(
                 'products.*',
                 'categories.title as categoryTitle',
                 'brands.title as brandTitle',

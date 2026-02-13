@@ -1,26 +1,5 @@
-import { IRecordAttribute } from "../records/attribute.record";
-import { IRecordPrice } from "../records/price.record";
-import { IRecordProductAttribute } from "../records/product-attribute.record";
-import { IRecordProductVariant, TPivotRecordProductVariant } from "../records/product-variant.record";
+import { TProductVariant, TProductVariantRow, TVariantAttribute, TVariantPrice } from "./types/product-variant.types";
 
-type TVariantAttribute = {
-    attributeId: IRecordAttribute['id'];
-    attributeTitle: IRecordAttribute['title'];
-    attributeValue: IRecordProductAttribute['value'];
-}
-type TVariantPrice = {
-    id: IRecordProductVariant['currentPriceId'];
-    price: IRecordPrice['price'];
-    oldPrice: IRecordPrice['oldPrice'];
-    discount: IRecordPrice['discount'];
-};
-type TProductVariant = Omit<IRecordProductVariant, 'currentPriceId'> & {
-    prices: TVariantPrice;
-    attributes: TVariantAttribute[]
-};
-export type TProductVariantRow = Omit<TPivotRecordProductVariant, 'attributes'> & {
-    attributes: TVariantAttribute[];
-};
 
 export default class ProductVariant implements TProductVariant {
     id: number;

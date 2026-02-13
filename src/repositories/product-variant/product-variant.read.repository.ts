@@ -1,7 +1,7 @@
 import { db } from "../../boot/database/db.knex";
 import ReadRepositorty from "../../boot/repositories/read.repository";
 import { IRecordProductVariant, TPivotRecordProductVariant } from "../../records/product-variant.record";
-import { TProductVariantRow } from "../../views/product-variant.view";
+import { TProductVariantRow } from "../../views/types/product-variant.types";
 
 
 export default class ProductVariantReadRepository extends ReadRepositorty<IRecordProductVariant> {
