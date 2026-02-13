@@ -17,5 +17,3 @@ export class BrandService {
         return new Brand(brandRow);
     }
 }
-
-export default new BrandService(new BrandReadRepository());
