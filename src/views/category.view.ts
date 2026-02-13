@@ -1,6 +1,6 @@
 import { IRecordCategory } from "../records/category.record";
 
-type TCategory = IRecordCategory;
+export type TCategory = IRecordCategory;
 type TCategoryConstructor = IRecordCategory;
 
 export default class Category implements TCategory {

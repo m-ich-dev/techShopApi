@@ -1,4 +1,4 @@
-import CategoryController from "../controllers/category.controller";
+import CategoryController from "../http/controllers/category.controller";
 import CategoryReadRepository from "../repositories/category/category.read.repository";
 import CategoryService from "../services/category.service";
 

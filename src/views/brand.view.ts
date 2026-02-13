@@ -1,6 +1,6 @@
 import { IRecordBrand } from "../records/brand.record";
 
-type TBrand = IRecordBrand;
+export type TBrand = IRecordBrand;
 type TBrandConstructor = IRecordBrand;
 
 export default class Brand implements TBrand {
