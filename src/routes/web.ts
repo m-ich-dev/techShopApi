@@ -11,7 +11,7 @@ router.get('/categories', categoryController.index);
 router.get('/categories/:slug', categoryController.show);
 
 router.get('/brands', brandController.index);
-router.get('/brand/:slug', brandController.show);
+router.get('/brands/:slug', brandController.show);
 
 router.get('/products', productController.index);
 router.get('/products/:slug', productController.show);
