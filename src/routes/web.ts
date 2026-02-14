@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { brandController, categoryController } from "../boot/container";
+import { brandController, categoryController, productController } from "../boot/container";
 import { resolveSlug } from "../midllewares/resolve-slug.midlleware";
 
 
@@ -12,6 +12,9 @@ router.get('/categories/:slug', categoryController.show);
 
 router.get('/brands', brandController.index);
 router.get('/brand/:slug', brandController.show);
+
+router.get('/products', productController.index);
+router.get('/products/:slug', productController.show);
 
 
 export default router;

@@ -37,5 +37,13 @@ export default class ProductVariantReadRepository extends ReadRepositorty<IRecor
             attributes: row.attributes ? JSON.parse(row.attributes) : []
         } : undefined;
     }
+    public async findBatchByParent(parentId: number): Promise<TProductVariantRow[]> {
+        const rows = await this.variantPivotQuery().where('parent_id', parentId).groupBy('product_variants.id');
+
+        return rows.map(row => ({
+            ...row,
+            attributes: row.attributes ? JSON.parse(row.attributes) : []
+        }));
+    }
 
 }
