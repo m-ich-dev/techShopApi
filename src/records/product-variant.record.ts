@@ -3,8 +3,8 @@ import { TInsertRecord } from "../boot/types/db.types";
 export interface IRecordProductVariant {
     id: number;
     parentId: number;
-    currentPriceId: number;
-    sku: string;
+    currentPriceId: number | null;
+    title: string
     stock: number;
     slug: string;
     createdAt: Date;

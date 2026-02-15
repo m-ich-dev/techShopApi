@@ -7,9 +7,9 @@ export async function up(knex: Knex): Promise<void> {
 
         table.increments('id');
         table.integer('parent_id').notNullable().unsigned().references('id').inTable('products').onUpdate('CASCADE').onDelete('CASCADE');
-        table.integer('current_price_id').notNullable().unsigned().references('id').inTable('prices').onUpdate('CASCADE').onDelete('RESTRICT');
+        table.integer('current_price_id').nullable().unsigned().references('id').inTable('prices').onUpdate('CASCADE').onDelete('RESTRICT');
 
-        table.string('sku').unique();
+        table.string('title').notNullable();
         table.integer('stock').defaultTo(0);
         table.string('slug').unique();
 
