@@ -4,10 +4,10 @@ import { TProductVariant, TProductVariantRow, TVariantAttribute, TVariantPrice }
 export default class ProductVariant implements TProductVariant {
     id: number;
     parentId: number;
-    sku: string;
+    title: string;
     stock: number;
     slug: string;
-    prices: TVariantPrice;
+    prices: TVariantPrice | null;
     attributes: TVariantAttribute[];
     createdAt: Date;
     updatedAt: Date;
@@ -16,15 +16,15 @@ export default class ProductVariant implements TProductVariant {
     constructor(data: TProductVariantRow) {
         this.id = data.id;
         this.parentId = data.parentId;
-        this.sku = data.sku;
+        this.title = data.title;
         this.stock = data.stock;
         this.slug = data.slug;
-        this.prices = {
+        this.prices = data.currentPriceId ? {
             id: data.currentPriceId,
             price: data.price,
             oldPrice: data.oldPrice,
             discount: data.discount
-        };
+        } : null;
         this.attributes = data.attributes;
 
         this.createdAt = data.createdAt;

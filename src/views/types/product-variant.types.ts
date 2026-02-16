@@ -5,18 +5,18 @@ import { IRecordProductVariant, TPivotRecordProductVariant } from "../../records
 
 
 export type TVariantAttribute = {
-    attributeId: IRecordAttribute['id'];
-    attributeTitle: IRecordAttribute['title'];
-    attributeValue: IRecordProductAttribute['value'];
+    id: IRecordAttribute['id'];
+    title: IRecordAttribute['title'];
+    value: IRecordProductAttribute['value'];
 }
 export type TVariantPrice = {
-    id: IRecordProductVariant['currentPriceId'];
+    id: IRecordPrice['id'];
     price: IRecordPrice['price'];
     oldPrice: IRecordPrice['oldPrice'];
     discount: IRecordPrice['discount'];
 };
 export type TProductVariant = Omit<IRecordProductVariant, 'currentPriceId'> & {
-    prices: TVariantPrice;
+    prices: TVariantPrice | null;
     attributes: TVariantAttribute[]
 };
 export type TProductVariantRow = Omit<TPivotRecordProductVariant, 'attributes'> & {

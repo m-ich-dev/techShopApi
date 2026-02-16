@@ -8,7 +8,7 @@ export default class ProductController extends Controller {
     constructor(private readonly productService: ProductService) { super(); }
 
     public index: THttp = async (req, res) => {
-        const products = this.productService.allMasterProducts();
+        const products = await this.productService.allMasterProducts();
         return res.status(HTTP_CODES.OK).json({ data: products });
     };
 
