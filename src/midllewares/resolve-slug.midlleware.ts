@@ -7,6 +7,6 @@ export const resolveSlug: TMWare = (req, res, next) => {
 
     if (Array.isArray(slug)) throw HTTPError.badRequest('Invalid slug');
 
-    res.locals.slug = slug;
+    res.locals.slug = String(slug);
     next();
 };

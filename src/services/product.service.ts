@@ -4,6 +4,7 @@ import ProductReadRepository from "../repositories/product/product.read.reposito
 import MasterProduct from "../views/master-product.view";
 import ProductVariant from "../views/product-variant.view";
 import Product from "../views/product.view";
+import { TProductVariantRow } from "../views/types/product-variant.types";
 
 
 
@@ -26,11 +27,21 @@ export default class ProductService {
         const productRows = await this.productReadRepository.allWithPivot();
         const variantRows = await this.productVariantReadRepository.allWithPivot();
 
-        const master = productRows.map(productRow => {
-            const productVariants = variantRows.filter(variantRow => variantRow.parentId === productRow.id);
-            return new MasterProduct({ product: productRow, variants: productVariants });
-        });
-        return master;
+        const variantsMap = new Map<number, TProductVariantRow[]>();
+
+        for (const variant of variantRows) {
+            if (!variantsMap.has(variant.parentId)) {
+                variantsMap.set(variant.parentId, []);
+            }
+            variantsMap.get(variant.parentId)!.push(variant);
+        }
+
+        return productRows.map(productRow =>
+            new MasterProduct({
+                product: productRow,
+                variants: variantsMap.get(productRow.id) ?? []
+            })
+        );
     }
 
     public async showMasterProduct(slug: string) {

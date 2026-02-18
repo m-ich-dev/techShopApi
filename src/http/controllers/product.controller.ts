@@ -14,7 +14,7 @@ export default class ProductController extends Controller {
 
     public show: THttpLocals<{ slug: string }> = async (req, res) => {
         const slug = res.locals.slug;
-        const product = this.productService.showMasterProduct(slug);
+        const product = await this.productService.showMasterProduct(slug);
         return res.status(HTTP_CODES.OK).json({ data: product });
     };
 }
