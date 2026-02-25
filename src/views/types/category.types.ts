@@ -1,5 +1,4 @@
-import { IRecordCategory } from "../../records/category.record";
+import { TRecordCategory } from "../../records/category.record";
 
-
-export type TCategory = IRecordCategory;
-export type TCategoryRow = IRecordCategory;
+export type TCategory = TRecordCategory;
+export type TCategoryRow = TCategory;

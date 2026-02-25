@@ -1,9 +1,10 @@
-import { HTTP_CODES } from "../../boot/enums/http.enums";
+import { HTTP_CODES } from "../../boot/enums/http.enum";
 import Controller from "../../boot/http/controller";
 import { THttp, THttpLocals } from "../../boot/types/http.types";
 
 import CategoryService from "../../services/category.service";
-import CategoryResource from "../resources/category.resource";
+import CategoryResource from "../resources/category/category.resource";
+
 
 
 export default class CategoryController extends Controller {

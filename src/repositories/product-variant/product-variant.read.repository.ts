@@ -1,65 +1,65 @@
-import { db } from "../../boot/database/db.knex";
 import ReadRepositorty from "../../boot/repositories/read.repository";
-import { IRecordProductVariant, TPivotRecordProductVariant } from "../../records/product-variant.record";
-import { TProductVariantRow, TVariantAttribute } from "../../views/types/product-variant.types";
+import { jsonArrayFrom } from "kysely/helpers/postgres";
+import HTTPError from "../../boot/http/http.error";
+import { IDatabase, TPrimaryKey } from "../../boot/database/schemas/index.schema";
+import { Selectable } from "kysely";
 
 
-export default class ProductVariantReadRepository extends ReadRepositorty<IRecordProductVariant> {
-    protected tableName: string = 'product_variants';
-    protected primaryKey: string = 'slug';
-    protected softDelete: boolean = true;
+export default class ProductVariantReadRepository extends ReadRepositorty<'productVariants'> {
+    public readonly tableName: "productVariants" = 'productVariants';
 
-    public variantPivotQuery() {
-        return this.query()//product_variants
-            .leftJoin('prices as current_prices', 'current_prices.id', 'product_variants.current_price_id')
-            .leftJoin('product_variant_attributes', 'product_variants.id', 'product_variant_attributes.product_variant_id')
-            .leftJoin('attributes', 'product_variant_attributes.attribute_id', 'attributes.id')
-            .select<TPivotRecordProductVariant[]>(
-                'product_variants.*',
-                'current_prices.price as price',
-                'current_prices.old_price as oldPrice',
-                'current_prices.discount as discount',
-                db.raw(`
-                JSON_ARRAYAGG(
-                    IF(
-                        attributes.id IS NULL,
-                        NULL,
-                        JSON_OBJECT(
-                            'id', attributes.id,
-                            'title', attributes.title,
-                            'value', product_variant_attributes.value
+    protected query() {
+        return this.db.selectFrom(this.tableName)
+            .where('deletedAt', 'is', null)
+            .selectAll();
+    }
+    private queryWithPivot() {
+        return this.db.selectFrom(this.tableName)
+            .where('deletedAt', 'is', null)
+            .leftJoin('prices as currentPrices', 'currentPrices.id', 'productVariants.currentPriceId')
+            .selectAll('productVariants')
+            .select((eb) => [
+                'currentPrices.price as price',
+                'currentPrices.oldPrice as oldPrice',
+                'currentPrices.discount as discount',
+                jsonArrayFrom(
+                    eb
+                        .selectFrom('productVariantAttributes')
+                        .innerJoin(
+                            'attributes',
+                            'attributes.id',
+                            'productVariantAttributes.attributeId'
                         )
-                    )
-                ) as attributes
-            `)
-            );
+                        .select([
+                            'attributes.id',
+                            'attributes.title',
+                            'productVariantAttributes.value'
+                        ])
+                        .whereRef(
+                            'productVariantAttributes.productVariantId',
+                            '=',
+                            'productVariants.id'
+                        )
+                ).as('attributes')
+
+            ]);
     }
 
-    public async allWithPivot(): Promise<TProductVariantRow[]> {
-        const rows = await this.variantPivotQuery().groupBy('product_variants.id');
-        return rows.map(row => ({
-            ...row,
-            attributes: row.attributes
-                ? (JSON.parse(row.attributes) as TVariantAttribute[])
-                    .filter(a => a !== null)
-                : []
-        }));
+
+    public async allPivot() {
+        return this.queryWithPivot().execute();
     }
 
-    public async findWithPivot(param: string | number): Promise<TProductVariantRow | undefined> {
-        const row = await this.variantPivotQuery().where(`${this.tableName}.${this.primaryKey}`, param).groupBy('product_variants.id').first();
-        return row ? {
-            ...row,
-            attributes: row.attributes ? JSON.parse(row.attributes) : []
-        } : undefined;
+    public async findPivot<K extends TPrimaryKey<'productVariants'>>(key: K, param: Selectable<IDatabase['productVariants']>[K]) {
+        return this.queryWithPivot()
+            .where(`productVariants.${key}`, '=', param as any)
+            .executeTakeFirstOrThrow(() => HTTPError.notFound(`Variant with ${key}: ${param} not found`));
     }
-    public async findBatchByParent(parentId: number): Promise<TProductVariantRow[]> {
-        const rows = await this.variantPivotQuery().where('parent_id', parentId).groupBy('product_variants.id');
 
-        return rows.map(row => ({
-            ...row,
-            attributes: row.attributes ? JSON.parse(row.attributes) : []
-        }));
+    public async findBatchByParent(parentId: number) {
+        return this.queryWithPivot()
+            .where('productVariants.parentId', '=', parentId)
+            .execute();
     }
 
 }

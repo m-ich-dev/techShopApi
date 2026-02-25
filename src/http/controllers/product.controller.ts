@@ -1,4 +1,4 @@
-import { HTTP_CODES } from "../../boot/enums/http.enums";
+import { HTTP_CODES } from "../../boot/enums/http.enum";
 import Controller from "../../boot/http/controller";
 import { THttp, THttpLocals } from "../../boot/types/http.types";
 import ProductService from "../../services/product.service";

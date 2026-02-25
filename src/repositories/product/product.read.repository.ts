@@ -1,29 +1,35 @@
+import { Selectable } from "kysely";
+import { IDatabase, TPrimaryKey } from "../../boot/database/schemas/index.schema";
+import HTTPError from "../../boot/http/http.error";
 import ReadRepositorty from "../../boot/repositories/read.repository";
-import { IRecordProduct } from "../../records/product.record";
-import { TProductRow } from "../../views/types/product.types";
 
 
-export default class ProductReadRepository extends ReadRepositorty<IRecordProduct> {
-    protected readonly tableName: string = 'products';
-    protected readonly primaryKey: string = 'slug';
-    protected readonly softDelete: boolean = true;
+export default class ProductReadRepository extends ReadRepositorty<'products'> {
+    public readonly tableName: "products" = 'products';
 
-    private productPivotQuery() {
-        return this.query() //products
-            .join('categories', 'products.category_id', 'categories.id')
-            .join('brands', 'products.brand_id', 'brands.id')
-            .select<TProductRow[]>(
-                'products.*',
+    protected query() {
+        return this.db.selectFrom(this.tableName)
+            .where('deletedAt', 'is', null)
+            .selectAll();
+    }
+
+    protected queryWithPivot() {
+        return this.db.selectFrom(this.tableName)
+            .where('deletedAt', 'is', null)
+            .innerJoin('categories', 'categories.id', 'products.categoryId')
+            .innerJoin('brands', 'brands.id', 'products.brandId')
+            .selectAll('products')
+            .select([
                 'categories.title as categoryTitle',
-                'brands.title as brandTitle',
-            );
+                'brands.title as brandTitle'
+            ]);
     }
-
-    public async allWithPivot() {
-        return await this.productPivotQuery().groupBy('products.id');
+    public allPivot() {
+        return this.queryWithPivot().execute();
     }
-
-    public async findWithPivot(param: string | number) {
-        return await this.productPivotQuery().where(`products.${this.primaryKey}`, param).groupBy('products.id').first();
+    public findPivot<K extends TPrimaryKey<'products'>>(key: K, param: Selectable<IDatabase['products']>[K]) {
+        return this.queryWithPivot()
+            .where(`products.${key}`, '=', param as any)
+            .executeTakeFirstOrThrow(() => HTTPError.notFound(`Product with ${key}: ${param} not found`));
     }
 }

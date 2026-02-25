@@ -1,19 +1,15 @@
-import HTTPError from "../boot/http/http.error";
 import BrandReadRepository from "../repositories/brand/brand.read.repository";
-import Brand from "../views/brand.view";
-
 
 
 export class BrandService {
     constructor(private readonly brandReadRepository: BrandReadRepository) { }
 
     public async all() {
-        const brandRows = await this.brandReadRepository.all();
-        return brandRows.map(row => new Brand(row));
+        const brands = await this.brandReadRepository.all();
+        return brands;
     }
-    public async show(param: string | number) {
-        const brandRow = await this.brandReadRepository.find(param);
-        if (!brandRow) throw HTTPError.notFound(`brand with param:${param} not found`);
-        return new Brand(brandRow);
+    public async showBySlug(param: string) {
+        const brand = await this.brandReadRepository.find('slug', param);
+        return brand;
     }
 }

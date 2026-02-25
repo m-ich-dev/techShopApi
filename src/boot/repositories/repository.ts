@@ -1,12 +1,13 @@
-import { db } from "../database/db.knex";
+import { SelectQueryBuilder } from "kysely";
+import db from "../database/db.kysely";
+import { IDatabase, TSelectable } from "../database/schemas/index.schema";
 
-export default abstract class Repository<TRecord extends object> {
-    protected readonly abstract tableName: string;
-    protected readonly abstract primaryKey: string;
-    protected readonly abstract softDelete: boolean;
+export default abstract class Repository<TTable extends keyof IDatabase> {
+  readonly abstract tableName: TTable;
+  protected readonly db = db;
 
-    public query() {
-        const qr = db<TRecord>(this.tableName);
-        return this.softDelete ? qr.whereNull(`${this.tableName}.deletedAt`) : qr;
-    }
+
+  protected abstract query(): SelectQueryBuilder<IDatabase, TTable, TSelectable[TTable]>;
+
 }
+
