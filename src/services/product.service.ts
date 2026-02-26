@@ -7,23 +7,21 @@ export default class ProductService {
     ) { }
 
     public async all() {
-        const products = await this.productReadRepository.all();
+        const products = await this.productReadRepository.all({});
         return products;
     }
     public async find(slug: string) {
-        const product = await this.productReadRepository.findPivot('slug', slug);
+        const product = await this.productReadRepository.first({ column: 'slug', value: slug });
         return product;
     }
 
     public async allPivot() {
-        const products = await this.productReadRepository.allPivot();
+        const products = await this.productReadRepository.allPivot({});
         return products;
     }
 
     public async findPivot(slug: string) {
-        const product = await this.productReadRepository.find('slug', slug);
+        const product = await this.productReadRepository.firstWithPivot({ column: 'slug', value: slug });
         return product;
     }
-
-
 }

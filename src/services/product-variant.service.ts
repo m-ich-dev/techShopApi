@@ -5,22 +5,22 @@ export default class ProductVariantService {
     constructor(private readonly variantReadRepository: ProductVariantReadRepository) { }
 
     public async all() {
-        const variants = await this.variantReadRepository.all();
+        const variants = await this.variantReadRepository.all({});
         return variants;
     }
 
     public async showBySlug(slug: string) {
-        const variant = await this.variantReadRepository.find('slug', slug);
+        const variant = await this.variantReadRepository.first({ column: 'slug', value: slug });
         return variant;
     }
 
     public async allPivot() {
-        const variants = await this.variantReadRepository.allPivot();
+        const variants = await this.variantReadRepository.allPivot({});
         return variants;
     }
 
     public async showPivotBySlug(slug: string) {
-        const variant = await this.variantReadRepository.find('slug', slug);
+        const variant = await this.variantReadRepository.firstWithPivot({ column: 'slug', value: slug });
         return variant;
     }
 }

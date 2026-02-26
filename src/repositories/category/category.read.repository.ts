@@ -1,12 +1,11 @@
+import { Kysely } from "kysely";
 import ReadRepositorty from "../../boot/repositories/read.repository";
+import { IDatabase } from "../../boot/database/schemas/index.schema";
 
 
 export default class CategoryReadRepository extends ReadRepositorty<'categories'> {
     public readonly tableName: "categories" = 'categories';
+    public readonly softDelete: boolean = true;
 
-    protected query() {
-        return this.db.selectFrom(this.tableName)
-            .where('deletedAt', 'is', null)
-            .selectAll();
-    }
+    constructor(protected readonly db: Kysely<IDatabase>) { super(); }
 }

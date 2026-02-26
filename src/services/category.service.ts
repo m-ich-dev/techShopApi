@@ -5,11 +5,11 @@ export default class CategoryService {
     constructor(private readonly categoryReadRepository: CategoryReadRepository) { }
 
     public async all() {
-        const category = await this.categoryReadRepository.all();
+        const category = await this.categoryReadRepository.all({});
         return category;
     }
     public async showBySlug(slug: string) {
-        const category = await this.categoryReadRepository.find('slug', slug);
+        const category = await this.categoryReadRepository.first({ column: 'slug', value: slug });
         return category;
     }
 }
