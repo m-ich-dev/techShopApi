@@ -1,23 +1,25 @@
-import type { Knex } from "knex";
+import { Kysely } from "kysely";
 
+const tableName = 'attribute_categories';
 
-export async function up(knex: Knex): Promise<void> {
-    return knex.schema.createTable('attribute_categories', function (table) {
-        table.collate('utf8mb4_unicode_ci');
+export async function up(db: Kysely<any>): Promise<void> {
+    await db.schema.createTable(tableName)
+        .addColumn('attribute_id', 'integer', (col) => col.notNull())
+        .addForeignKeyConstraint('attribute_id_foreign', ['attribute_id'], 'attributes', ['id'],
+            (col) => col.onDelete('cascade').onUpdate('cascade'))
 
-        table.integer('attribute_id').unsigned().notNullable()
-            .references('id').inTable('attributes').onDelete('CASCADE').onUpdate('CASCADE');
+        .addColumn('category_id', 'integer', (col) => col.notNull())
+        .addForeignKeyConstraint('category_id_foreign', ['category_id'], 'categories', ['id'],
+            (col) => col.onDelete('cascade').onUpdate('cascade'))
 
-        table.integer('category_id').unsigned().notNullable()
-            .references('id').inTable('categories').onDelete('CASCADE').onUpdate('CASCADE');
+        .addPrimaryKeyConstraint('primary_key', ['category_id', 'attribute_id'])
+        .execute();
 
-        table.primary(['attribute_id', 'category_id']);
-
-    });
 }
 
 
-export async function down(knex: Knex): Promise<void> {
-    return knex.schema.dropTableIfExists('attribute_categories');
+export async function down(db: Kysely<any>): Promise<void> {
+    await db.schema.dropTable(tableName).ifExists().execute();
+
 }
 

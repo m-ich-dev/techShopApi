@@ -1,25 +1,40 @@
-import type { Knex } from "knex";
+import { Kysely, sql } from "kysely";
+import { updatedAtTrigger } from "./triggers/updated-at.trigger";
 
+const tableName = 'attributes';
 
-export async function up(knex: Knex): Promise<void> {
-    return knex.schema.createTable('attributes', function (table) {
-        table.collate('utf8mb4_unicode_ci');
+export async function up(db: Kysely<any>): Promise<void> {
+    db.schema.createTable(tableName)
+        .addColumn('id', 'serial')
+        .addColumn('title', 'varchar', (col) => col.notNull())
+        .addColumn('slug', 'varchar', (col) => col.unique().notNull())
+        .addColumn('filter_type', 'varchar')
 
-        table.increments('id');
-        table.string('title');
-        table.string('slug').unique();
-        table.string('filter_type');
+        .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull())
+        .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull())
+        .addColumn('deleted_at', 'timestamptz')
+        .execute();
 
-        table.timestamp('created_at').defaultTo(knex.fn.now());
-        table.timestamp('updated_at').defaultTo(knex.raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
-        table.timestamp('deleted_at').nullable();
+    await db.schema
+        .createIndex(`idx_${tableName}_deleted_at`)
+        .on(tableName)
+        .column('deleted_at')
+        .execute();
 
-        table.index(['deleted_at']);
-    });
+    await db.schema
+        .createIndex(`idx_${tableName}_slug`)
+        .on(tableName)
+        .column('slug')
+        .execute();
+
+    await updatedAtTrigger.createTrigger(db, tableName);
 }
 
 
-export async function down(knex: Knex): Promise<void> {
-    return knex.schema.dropTableIfExists('attributes');
+export async function down(db: Kysely<any>): Promise<void> {
+    await updatedAtTrigger.dropTrigger(db, tableName);
+    await db.schema.dropIndex(`idx_${tableName}_deleted_at`).ifExists().execute();
+    await db.schema.dropIndex(`idx_${tableName}_slug`).ifExists().execute();
+    await db.schema.dropTable(tableName).ifExists().execute();
 }
 

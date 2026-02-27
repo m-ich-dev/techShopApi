@@ -1,29 +1,48 @@
-import type { Knex } from "knex";
+import { Kysely, sql } from "kysely";
+import { updatedAtTrigger } from "./triggers/updated-at.trigger";
 
+const tableName = 'products';
 
-export async function up(knex: Knex): Promise<void> {
-    return knex.schema.createTable('products', function (table) {
-        table.collate('utf8mb4_unicode_ci');
+export async function up(db: Kysely<any>): Promise<void> {
+    db.schema.createTable(tableName)
+        .addColumn('id', 'serial')
 
-        table.increments('id');
-        table.integer('category_id').unsigned().notNullable().references('id').inTable('categories').onDelete('RESTRICT').onUpdate('CASCADE');
-        table.integer('brand_id').unsigned().notNullable().references('id').inTable('brands').onDelete('RESTRICT').onUpdate('CASCADE');
+        .addColumn('category_id', 'integer', (col) => col.notNull())
+        .addForeignKeyConstraint('category_id_foreign', ['category_id'], 'categories', ['id'],
+            (col) => col.onDelete('restrict').onUpdate('cascade'))
 
-        table.string('title').notNullable();
-        table.string('slug').unique();
+        .addColumn('brand_id', 'integer', (col) => col.notNull())
+        .addForeignKeyConstraint('brand_id_foreign', ['brand_id'], 'brands', ['id'],
+            (col) => col.onDelete('restrict').onUpdate('cascade'))
 
-        table.timestamp('created_at').defaultTo(knex.fn.now());
-        table.timestamp('updated_at').defaultTo(knex.raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
-        table.timestamp('deleted_at').nullable();
+        .addColumn('title', 'varchar', (col) => col.notNull())
+        .addColumn('slug', 'varchar', (col) => col.unique().notNull())
 
-        table.index(['deleted_at']);
+        .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull())
+        .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull())
+        .addColumn('deleted_at', 'timestamptz')
+        .execute();
 
+    await db.schema
+        .createIndex(`idx_${tableName}_deleted_at`)
+        .on(tableName)
+        .column('deleted_at')
+        .execute();
 
-    });
+    await db.schema
+        .createIndex(`idx_${tableName}_slug`)
+        .on(tableName)
+        .column('slug')
+        .execute();
+
+    await updatedAtTrigger.createTrigger(db, tableName);
 }
 
 
-export async function down(knex: Knex): Promise<void> {
-    return knex.schema.dropTableIfExists('products');
+export async function down(db: Kysely<any>): Promise<void> {
+    await updatedAtTrigger.dropTrigger(db, tableName);
+    await db.schema.dropIndex(`idx_${tableName}_deleted_at`).ifExists().execute();
+    await db.schema.dropIndex(`idx_${tableName}_slug`).ifExists().execute();
+    await db.schema.dropTable(tableName).ifExists().execute();
 }
 
