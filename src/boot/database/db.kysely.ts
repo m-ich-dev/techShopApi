@@ -6,8 +6,8 @@ const PORT = Number(process.env.APP_DB_PORT) ?? 5432;
 const MIN = Number(process.env.APP_DB_MIN_CONS) ?? 2;
 const MAX = Number(process.env.APP_DB_MAX_CONS) ?? 10;
 
-const dialect = new PostgresDialect({
-    pool: async () => new Pool({
+export const dialect = new PostgresDialect({
+    pool: new Pool({
         database: process.env.APP_DB_NAME,
         host: process.env.APP_DB_HOST,
         user: process.env.APP_DB_USER,

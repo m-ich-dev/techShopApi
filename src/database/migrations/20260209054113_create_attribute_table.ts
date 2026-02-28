@@ -5,7 +5,7 @@ const tableName = 'attributes';
 
 export async function up(db: Kysely<any>): Promise<void> {
     db.schema.createTable(tableName)
-        .addColumn('id', 'serial')
+        .addColumn('id', 'serial', (col) => col.primaryKey())
         .addColumn('title', 'varchar', (col) => col.notNull())
         .addColumn('slug', 'varchar', (col) => col.unique().notNull())
         .addColumn('filter_type', 'varchar')
@@ -25,6 +25,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .createIndex(`idx_${tableName}_slug`)
         .on(tableName)
         .column('slug')
+        .unique()
         .execute();
 
     await updatedAtTrigger.createTrigger(db, tableName);

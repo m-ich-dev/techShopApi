@@ -5,7 +5,7 @@ const tableName = 'products';
 
 export async function up(db: Kysely<any>): Promise<void> {
     db.schema.createTable(tableName)
-        .addColumn('id', 'serial')
+        .addColumn('id', 'serial', (col) => col.primaryKey())
 
         .addColumn('category_id', 'integer', (col) => col.notNull())
         .addForeignKeyConstraint('category_id_foreign', ['category_id'], 'categories', ['id'],
@@ -33,6 +33,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .createIndex(`idx_${tableName}_slug`)
         .on(tableName)
         .column('slug')
+        .unique()
         .execute();
 
     await updatedAtTrigger.createTrigger(db, tableName);

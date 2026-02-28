@@ -5,7 +5,7 @@ const tableName = 'prices';
 
 export async function up(db: Kysely<any>): Promise<void> {
     db.schema.createTable(tableName)
-        .addColumn('id', 'serial')
+        .addColumn('id', 'serial', (col) => col.primaryKey())
 
         .addColumn('product_variant_id', 'integer', (col) => col.notNull())
         .addForeignKeyConstraint('product_variant_id_foreign', ['product_variant_id'], 'product_variants', ['id'])

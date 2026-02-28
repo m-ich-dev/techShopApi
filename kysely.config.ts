@@ -1,8 +1,17 @@
+import { PostgresDialect } from 'kysely';
 import { defineConfig } from 'kysely-ctl';
-import db from './src/boot/database/db.kysely';
+import { Pool } from 'pg';
 
 export default defineConfig({
-	db: db,
+	dialect: new PostgresDialect({
+		pool: new Pool({
+			database: process.env.APP_DB_NAME,
+			host: process.env.APP_DB_HOST,
+			user: process.env.APP_DB_USER,
+			password: process.env.APP_DB_PASSWORD,
+			port: Number(process.env.APP_DB_PORT) || 5432,
+		}),
+	}),
 	migrations: {
 		migrationFolder: "src/database/migrations",
 	},
