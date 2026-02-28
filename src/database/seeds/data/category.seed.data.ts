@@ -1,5 +1,5 @@
+import { TInsertCategory } from "../../../boot/database/schemas/category.schema";
 import slugify from "../../../boot/utils/slugify";
-import { TInsertCategory } from "../../../records/category.record";
 
 const categoryTitles = ['Смартфоны', 'Наушники', 'Планшеты', 'Часы'];
 

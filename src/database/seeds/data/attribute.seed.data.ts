@@ -1,5 +1,5 @@
+import { TInsertAttribute } from "../../../boot/database/schemas/attribute.schema.js";
 import slugify from "../../../boot/utils/slugify.js";
-import { TInsertAttribute } from "../../../records/attribute.record.js";
 
 const attrs = [
     // --- ОБЩИЕ АТРИБУТЫ ---

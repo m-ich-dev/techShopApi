@@ -1,5 +1,5 @@
+import { TInsertBrand } from "../../../boot/database/schemas/brand.schema";
 import slugify from "../../../boot/utils/slugify";
-import { TInsertBrand } from "../../../records/brand.record";
 
 export const brandTitles = [
     'Samsung', 'Apple', 'OnePlus', 'Google', 'Xiaomi',
