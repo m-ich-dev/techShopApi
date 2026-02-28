@@ -7,12 +7,13 @@ import ProductReadRepository from "../repositories/product/product.read.reposito
 import { BrandService } from "../services/brand.service";
 import CategoryService from "../services/category.service";
 import ProductService from "../services/product.service";
+import db from "./database/db.kysely";
 
 
 
-const categoryReadRepository = new CategoryReadRepository();
-const brandReadRepository = new BrandReadRepository();
-const productReadRepository = new ProductReadRepository();
+const categoryReadRepository = new CategoryReadRepository(db);
+const brandReadRepository = new BrandReadRepository(db);
+const productReadRepository = new ProductReadRepository(db);
 
 
 const categoryService = new CategoryService(categoryReadRepository);
