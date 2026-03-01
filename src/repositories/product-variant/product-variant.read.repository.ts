@@ -1,5 +1,5 @@
 import ReadRepositorty from "../../boot/repositories/read.repository";
-import { jsonArrayFrom } from "kysely/helpers/postgres";
+import { jsonArrayFrom, jsonObjectFrom } from "kysely/helpers/postgres";
 import HTTPError from "../../boot/http/http.error";
 import { IDatabase } from "../../boot/database/schemas/index.schema";
 import { Kysely, SelectType } from "kysely";
@@ -15,11 +15,12 @@ export default class ProductVariantReadRepository extends ReadRepositorty<'produ
 
     private queryWithPivot<T extends typeof this.tableName>(tableName: T, withTrash: boolean) {
         return this.qr(tableName, withTrash)
-            .leftJoin('prices as currentPrices', 'currentPrices.id', 't.currentPriceId')
             .select((eb) => [
-                'currentPrices.price as price',
-                'currentPrices.oldPrice as oldPrice',
-                'currentPrices.discount as discount',
+                jsonObjectFrom(
+                    eb.selectFrom('prices as cp')
+                        .select(['cp.id', 'cp.price', 'cp.oldPrice', 'cp.discount'])
+                        .whereRef('cp.id', '=', 't.currentPriceId')
+                ).as('price'),
                 jsonArrayFrom(
                     eb
                         .selectFrom('productVariantAttributes')

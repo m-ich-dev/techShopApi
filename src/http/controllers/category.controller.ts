@@ -18,7 +18,7 @@ export default class CategoryController extends Controller {
 
     public show: THttpLocals<{ slug: string }> = async (req, res) => {
         const slug = res.locals.slug;
-        const category = await this.categoryService.show(slug);
+        const category = await this.categoryService.showBySlug(slug);
 
         return res.status(HTTP_CODES.OK).json({ data: CategoryResource.transform(category) });
     };
