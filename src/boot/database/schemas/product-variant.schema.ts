@@ -1,4 +1,5 @@
 import { ColumnType, Generated, Insertable, Selectable, Updateable } from "kysely";
+import { Requestable } from "../../types/db.types";
 
 export interface IProductVariantTable {
     id: Generated<number>;
@@ -16,3 +17,4 @@ export interface IProductVariantTable {
 export type TRecordProductVariant = Selectable<IProductVariantTable>;
 export type TInsertProductVariant = Insertable<IProductVariantTable>;
 export type TUpdateProductVariant = Updateable<IProductVariantTable>;
+export type TRequestProductVariant = Requestable<TInsertProductVariant, 'slug'>;

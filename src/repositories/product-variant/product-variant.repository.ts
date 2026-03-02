@@ -3,8 +3,8 @@ import { jsonArrayFrom, jsonObjectFrom } from "kysely/helpers/postgres";
 import HTTPError from "../../boot/http/http.error";
 import { IDatabase } from "../../boot/database/schemas/index.schema";
 import { Kysely, SelectType } from "kysely";
-import { TWhereType } from "../../boot/types/db.types";
 import { ENTITY_BY_TABLE } from "../../boot/enums/entities.enum";
+import { TWhereParams } from "../../boot/types/repository.types";
 
 
 export default class ProductVariantRepository extends Repositorty<'productVariants'> {
@@ -55,7 +55,7 @@ export default class ProductVariantRepository extends Repositorty<'productVarian
         Value extends SelectType<IDatabase[T][Column]>,
     >(
         { tableName = this.tableName, column, value, withTrash = false }:
-            TWhereType<typeof this.tableName, Column, Value>
+            TWhereParams<typeof this.tableName, Column, Value>
     ) {
 
         const { ref } = this.db.dynamic;
@@ -74,7 +74,7 @@ export default class ProductVariantRepository extends Repositorty<'productVarian
         Value extends SelectType<IDatabase[T][Column]>,
     >(
         { tableName = this.tableName, column, value, withTrash = false }:
-            TWhereType<typeof this.tableName, Column, Value>
+            TWhereParams<typeof this.tableName, Column, Value>
     ) {
 
         const { ref } = this.db.dynamic;

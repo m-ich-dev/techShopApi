@@ -2,9 +2,8 @@ import { Kysely, SelectType } from "kysely";
 import { IDatabase } from "../../boot/database/schemas/index.schema";
 import HTTPError from "../../boot/http/http.error";
 import Repositorty from "../../boot/repositories/repository";
-import { TWhereType } from "../../boot/types/db.types";
 import { ENTITY_BY_TABLE } from "../../boot/enums/entities.enum";
-
+import { TWhereParams } from "../../boot/types/repository.types";
 
 
 export default class ProductRepository extends Repositorty<'products'> {
@@ -36,7 +35,7 @@ export default class ProductRepository extends Repositorty<'products'> {
         Value extends SelectType<IDatabase[T][Column]>,
     >(
         { tableName = this.tableName, column, value, withTrash = false }:
-            TWhereType<typeof this.tableName, Column, Value>
+            TWhereParams<typeof this.tableName, Column, Value>
     ) {
 
         const { ref } = this.db.dynamic;
@@ -55,7 +54,7 @@ export default class ProductRepository extends Repositorty<'products'> {
         Value extends SelectType<IDatabase[T][Column]>,
     >(
         { tableName = this.tableName, column, value, withTrash = false }:
-            TWhereType<typeof this.tableName, Column, Value>
+            TWhereParams<typeof this.tableName, Column, Value>
     ) {
 
         const { ref } = this.db.dynamic;

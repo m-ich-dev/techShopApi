@@ -2,7 +2,7 @@ import { Kysely, SelectType } from "kysely";
 import { IDatabase, TInsertable } from "../database/schemas/index.schema";
 import HTTPError from "../http/http.error";
 import { ENTITY_BY_TABLE } from "../enums/entities.enum";
-import { TSelectType, TWhereType } from "../types/db.types";
+import { TSelectParams, TWhereParams } from "../types/repository.types";
 
 
 export default abstract class Repository<TTable extends keyof IDatabase> {
@@ -30,7 +30,7 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     Value extends SelectType<IDatabase[TTable][Column]>,
   >(
     { tableName = this.tableName, column, value, withTrash = false }:
-      TWhereType<TTable, Column, Value>
+      TWhereParams<TTable, Column, Value>
   ) {
 
     const { ref } = this.db.dynamic;
@@ -50,7 +50,7 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     Value extends SelectType<IDatabase[TTable][Column]>,
   >(
     { tableName = this.tableName, column, value, withTrash = false }:
-      TWhereType<TTable, Column, Value>
+      TWhereParams<TTable, Column, Value>
   ) {
 
     const { ref } = this.db.dynamic;
@@ -64,12 +64,12 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
 
   public async all(
     { tableName = this.tableName, withTrash = false }:
-      TSelectType<TTable>
+      TSelectParams<TTable>
   ) {
     return await this.qr(tableName, withTrash).execute();
   }
 
-  public async insert<D extends TInsertable[TTable]>(data: D | D[]) {
+  public async insert<T extends TInsertable[TTable]>(data: T | T[]) {
     const qr = Array.isArray(data) ?
       this.db.insertInto(this.tableName).values(data).returningAll().execute() :
       this.db.insertInto(this.tableName).values(data).returningAll().executeTakeFirstOrThrow(

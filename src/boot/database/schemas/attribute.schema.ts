@@ -1,4 +1,5 @@
 import { ColumnType, Generated, Insertable, Selectable, Updateable } from "kysely";
+import { Requestable } from "../../types/db.types";
 
 export interface IAttributeTable {
     id: Generated<number>;
@@ -14,3 +15,4 @@ export interface IAttributeTable {
 export type TRecordAttribute = Selectable<IAttributeTable>;
 export type TInsertAttribute = Insertable<IAttributeTable>;
 export type TUpdateAttribute = Updateable<IAttributeTable>;
+export type TRequestAttribute = Requestable<TInsertAttribute, 'slug'>;

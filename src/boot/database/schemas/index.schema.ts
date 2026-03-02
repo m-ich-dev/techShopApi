@@ -18,10 +18,6 @@ export interface IDatabase {
     productVariantAttributes: productVariantAttributeSchema.IProductVariantAttributeTable;
 }
 
-export type PK = 'id' | 'slug';
-export type TPrimaryKey<T extends keyof IDatabase> =
-    Extract<keyof Selectable<IDatabase[T]>, PK>;
-
 export type TSelectable = {
     [K in keyof IDatabase]: Selectable<IDatabase[K]>
 };

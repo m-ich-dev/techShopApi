@@ -1,4 +1,6 @@
 import { ColumnType, Generated, Insertable, Selectable, Updateable } from "kysely";
+import { Requestable } from "../../types/db.types";
+
 
 export interface IBrandTable {
     id: Generated<number>;
@@ -13,3 +15,4 @@ export interface IBrandTable {
 export type TRecordBrand = Selectable<IBrandTable>;
 export type TInsertBrand = Insertable<IBrandTable>;
 export type TUpdateBrand = Updateable<IBrandTable>;
+export type TRequestBrand = Requestable<TInsertBrand, 'slug'>;
