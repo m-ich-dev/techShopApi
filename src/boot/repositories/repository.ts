@@ -1,11 +1,11 @@
 import { Kysely, SelectType } from "kysely";
-import { IDatabase } from "../database/schemas/index.schema";
+import { IDatabase, TInsertable } from "../database/schemas/index.schema";
 import HTTPError from "../http/http.error";
 import { ENTITY_BY_TABLE } from "../enums/entities.enum";
 import { TSelectType, TWhereType } from "../types/db.types";
 
 
-export default abstract class ReadRepository<TTable extends keyof IDatabase> {
+export default abstract class Repository<TTable extends keyof IDatabase> {
 
   readonly abstract tableName: TTable;
   readonly abstract softDelete: boolean;
@@ -40,7 +40,9 @@ export default abstract class ReadRepository<TTable extends keyof IDatabase> {
     return await qr
       .where(ref(`t${column}`), '=', value)
       .orderBy('t.id')
-      .executeTakeFirstOrThrow(() => HTTPError.notFound(`${ENTITY_BY_TABLE[this.tableName]} with ${column}: ${value} not found`));
+      .executeTakeFirstOrThrow(
+        () => HTTPError.notFound(`${ENTITY_BY_TABLE[this.tableName]} with ${column}: ${value} not found`)
+      );
   }
 
   public async get<
@@ -67,4 +69,12 @@ export default abstract class ReadRepository<TTable extends keyof IDatabase> {
     return await this.qr(tableName, withTrash).execute();
   }
 
+  public async insert<D extends TInsertable[TTable]>(data: D | D[]) {
+    const qr = Array.isArray(data) ?
+      this.db.insertInto(this.tableName).values(data).returningAll().execute() :
+      this.db.insertInto(this.tableName).values(data).returningAll().executeTakeFirstOrThrow(
+        () => HTTPError.notFound(`Not found insertable data in ${ENTITY_BY_TABLE[this.tableName]}`)
+      );
+    return await qr;
+  }
 }

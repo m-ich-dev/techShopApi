@@ -1,5 +1,5 @@
-import ProductVariantReadRepository from "../repositories/product-variant/product-variant.read.repository";
-import ProductReadRepository from "../repositories/product/product.read.repository";
+import ProductVariantReadRepository from "../repositories/product-variant/product-variant.repository";
+import ProductReadRepository from "../repositories/product/product.repository";
 import MasterProduct from "../views/master-product.view";
 
 

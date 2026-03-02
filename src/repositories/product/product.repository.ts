@@ -1,13 +1,13 @@
 import { Kysely, SelectType } from "kysely";
 import { IDatabase } from "../../boot/database/schemas/index.schema";
 import HTTPError from "../../boot/http/http.error";
-import ReadRepositorty from "../../boot/repositories/read.repository";
+import Repositorty from "../../boot/repositories/repository";
 import { TWhereType } from "../../boot/types/db.types";
 import { ENTITY_BY_TABLE } from "../../boot/enums/entities.enum";
 
 
 
-export default class ProductReadRepository extends ReadRepositorty<'products'> {
+export default class ProductRepository extends Repositorty<'products'> {
     public readonly tableName: "products" = 'products';
     public readonly softDelete: boolean = true;
 

@@ -1,9 +1,9 @@
 import { Kysely } from "kysely";
 import { IDatabase } from "../../boot/database/schemas/index.schema";
-import ReadRepositorty from "../../boot/repositories/read.repository";
+import Repositorty from "../../boot/repositories/repository";
 
 
-export default class AttributeReadRepository extends ReadRepositorty<'attributes'> {
+export default class AttributeRepository extends Repositorty<'attributes'> {
     public readonly tableName: "attributes" = 'attributes';
     public softDelete: boolean = true;
 

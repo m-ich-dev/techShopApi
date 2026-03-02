@@ -1,16 +1,20 @@
-import BrandReadRepository from "../repositories/brand/brand.read.repository";
+import { TInsertable } from "../boot/database/schemas/index.schema";
+import BrandRepository from "../repositories/brand/brand.repository";
 
 
-export class BrandService {
-    constructor(private readonly brandReadRepository: BrandReadRepository) { }
+export default class BrandService {
+    constructor(private readonly brandRepository: BrandRepository) { }
 
     public async all() {
-        const brands = await this.brandReadRepository.all({});
+        const brands = await this.brandRepository.all({});
         return brands;
     }
 
-    async showBySlug(slug: string) {
-        const brand = await this.brandReadRepository.first({ column: 'slug', value: slug });
+    public async showBySlug(slug: string) {
+        const brand = await this.brandRepository.first({ column: 'slug', value: slug });
         return brand;
+    }
+    public async store<D extends TInsertable['brands']>(data: D | D[]) {
+        return this.brandRepository.insert(data);
     }
 }

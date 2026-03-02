@@ -1,4 +1,4 @@
-import ReadRepositorty from "../../boot/repositories/read.repository";
+import Repositorty from "../../boot/repositories/repository";
 import { jsonArrayFrom, jsonObjectFrom } from "kysely/helpers/postgres";
 import HTTPError from "../../boot/http/http.error";
 import { IDatabase } from "../../boot/database/schemas/index.schema";
@@ -7,7 +7,7 @@ import { TWhereType } from "../../boot/types/db.types";
 import { ENTITY_BY_TABLE } from "../../boot/enums/entities.enum";
 
 
-export default class ProductVariantReadRepository extends ReadRepositorty<'productVariants'> {
+export default class ProductVariantRepository extends Repositorty<'productVariants'> {
     public readonly tableName: "productVariants" = 'productVariants';
     public readonly softDelete: boolean = true;
 

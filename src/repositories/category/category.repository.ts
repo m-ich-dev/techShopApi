@@ -1,11 +1,11 @@
 import { Kysely } from "kysely";
-import ReadRepositorty from "../../boot/repositories/read.repository";
+import Repositorty from "../../boot/repositories/repository";
 import { IDatabase } from "../../boot/database/schemas/index.schema";
 
-export default class BrandReadRepository extends ReadRepositorty<'brands'> {
-    public readonly tableName: "brands" = 'brands';
+
+export default class CategoryRepository extends Repositorty<'categories'> {
+    public readonly tableName: "categories" = 'categories';
     public readonly softDelete: boolean = true;
 
     constructor(protected readonly db: Kysely<IDatabase>) { super(); }
-
 }
