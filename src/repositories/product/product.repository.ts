@@ -43,7 +43,7 @@ export default class ProductRepository extends Repositorty<'products'> {
         const qr = this.queryWithPivot(tableName, withTrash);
 
         return await qr
-            .where(ref(`t${column}`), '=', value)
+            .where(ref(`t.${column}`), '=', value)
             .orderBy('t.id')
             .executeTakeFirstOrThrow(() => HTTPError.notFound(`${ENTITY_BY_TABLE[this.tableName]} with ${column}: ${value} not found`));
     }
@@ -62,7 +62,7 @@ export default class ProductRepository extends Repositorty<'products'> {
         const qr = this.queryWithPivot(tableName, withTrash);
 
         return await qr
-            .where(ref(`t${column}`), '=', value)
+            .where(ref(`t.${column}`), '=', value)
             .orderBy('t.id')
             .execute();
     }

@@ -38,7 +38,7 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     const qr = this.qr(tableName, withTrash);
 
     return await qr
-      .where(ref(`t${column}`), '=', value)
+      .where(ref(`t.${column}`), '=', value)
       .orderBy('t.id')
       .executeTakeFirstOrThrow(
         () => HTTPError.notFound(`${ENTITY_BY_TABLE[this.tableName]} with ${column}: ${value} not found`)
@@ -57,7 +57,7 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
 
     const qr = this.qr(tableName, withTrash);
     return await qr
-      .where(ref(`t${column}`), '=', value)
+      .where(ref(`t.${column}`), '=', value)
       .orderBy('t.id')
       .execute();
   }
