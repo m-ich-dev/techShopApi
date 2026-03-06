@@ -69,6 +69,8 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     return await this.qr(tableName, withTrash).execute();
   }
 
+  public async insert<T extends TInsertable[TTable]>(data: T[]): Promise<T[]>;
+  public async insert<T extends TInsertable[TTable]>(data: T): Promise<T>;
   public async insert<T extends TInsertable[TTable]>(data: T | T[]) {
     const qr = Array.isArray(data) ?
       this.db.insertInto(this.tableName).values(data).returningAll().execute() :
