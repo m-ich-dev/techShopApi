@@ -1,5 +1,5 @@
-import Resource from "../../../boot/http/resource";
-import { TRecordCategory } from "../../../boot/database/schemas/category.schema";
+import Resource from "../../../../boot/http/resource";
+import { TRecordCategory } from "../../../../boot/database/schemas/category.schema";
 import { TCategoryClientResource } from "./category.resource.types";
 
 

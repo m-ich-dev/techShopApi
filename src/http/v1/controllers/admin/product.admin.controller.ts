@@ -1,11 +1,11 @@
-import { HTTP_CODES } from "../../boot/enums/http.enum";
-import Controller from "../../boot/http/controller";
-import { THttp, THttpLocals } from "../../boot/types/http.types";
-import MasterProductService from "../../services/master-product.service";
-import ProductService from "../../services/product.service";
+import { HTTP_CODES } from "../../../../boot/enums/http.enum";
+import Controller from "../../../../boot/http/controller";
+import { THttp, THttpLocals } from "../../../../boot/types/http.types";
+import MasterProductService from "../../../../services/master-product.service";
+import ProductService from "../../../../services/product.service";
 
 
-export default class ProductController extends Controller {
+export default class ProductAdminController extends Controller {
     constructor(
         private readonly productService: ProductService,
         private readonly masterProductService: MasterProductService
