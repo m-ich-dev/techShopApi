@@ -1,26 +1,35 @@
-import { HTTP_CODES, THttpCode } from "../enums/http.enum";
+import { HTTP_CODES, HTTP_TITLES, THttpCode, THttpTitle } from "../enums/http.enum";
 
+type THTTPErrorBody = {
+    title?: THttpTitle;
+    message?: string;
+    detail?: string | string[] | object;
+}
 
 export default class HTTPError extends Error {
+    public readonly context: string = 'HTTP API ERROR';
+    public readonly title: THttpTitle | 'HTTP API ERROR';
+    public readonly detail?: string | string[] | object;
 
-    constructor(public status: THttpCode, message: string) {
-        super(message);
-        this.name = 'HTTP API error.';
+    constructor(public readonly status: THttpCode, body: THTTPErrorBody) {
+        super(body.message);
+        this.title = body.title ?? HTTP_TITLES[status] ?? 'HTTP API ERROR';
+        this.detail = body.detail;
+    };
+
+    static badRequest(body: THTTPErrorBody) {
+        return new HTTPError(HTTP_CODES.BAD_REQUEST, body);
     }
-
-    static badRequest(message: string = 'Bad Request.') {
-        return new HTTPError(HTTP_CODES.BAD_REQUEST, message);
+    static notFound(body: THTTPErrorBody) {
+        return new HTTPError(HTTP_CODES.NOT_FOUND, body);
     }
-
-    static notFound(message: string = 'Not Found.') {
-        return new HTTPError(HTTP_CODES.NOT_FOUND, message);
+    static unauthorized(body: THTTPErrorBody) {
+        return new HTTPError(HTTP_CODES.UNAUTHORIZED, body);
     }
-
-    static unauthorized(message: string = 'Unauthorized.') {
-        return new HTTPError(HTTP_CODES.UNAUTHORIZED, message);
+    static unprocessable(body: THTTPErrorBody) {
+        return new HTTPError(HTTP_CODES.UNPROCESSABLE_CONTENT, body);
     }
-
-    static unprocessable(message: string = 'Unprocessable Content.') {
-        return new HTTPError(HTTP_CODES.UNPROCESSABLE_CONTENT, message);
+    static internalServer(body: THTTPErrorBody) {
+        return new HTTPError(HTTP_CODES.INTERNAL_SERVER, body);
     }
 }

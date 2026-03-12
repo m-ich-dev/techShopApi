@@ -45,7 +45,9 @@ export default class ProductRepository extends Repositorty<'products'> {
         return await qr
             .where(ref(`t.${column}`), '=', value)
             .orderBy('t.id')
-            .executeTakeFirstOrThrow(() => HTTPError.notFound(`${ENTITY_BY_TABLE[this.tableName]} with ${column}: ${value} not found`));
+            .executeTakeFirstOrThrow(
+                () => HTTPError.notFound({ message: `${ENTITY_BY_TABLE[this.tableName]} not found`, detail: { path: column, value } })
+            );
     }
 
     public async getWithPivot<
