@@ -1,13 +1,9 @@
 import { Kysely } from "kysely";
-import { IDatabase } from "../database/schemas/index.schema";
+import { IDatabase } from "../../database/schemas/index.schema";
+import { AbstractConstructor, IMixinRepository } from "../../types/mixin.types";
 
-interface IRepository {
-  tableName: keyof IDatabase;
-}
 
-type AbstractConstructor<T = any> = abstract new (...args: any[]) => T;
-
-export function Sluggable<TBase extends AbstractConstructor<IRepository>>(Base: TBase) {
+export function Sluggable<TBase extends AbstractConstructor<IMixinRepository>>(Base: TBase) {
   abstract class SluggableRepository extends Base {
 
     protected abstract readonly db: Kysely<IDatabase>;

@@ -1,14 +1,13 @@
-import { Kysely, SelectType } from "kysely";
+import { Kysely, SelectType, sql, Updateable } from "kysely";
 import { IDatabase, TInsertable } from "../database/schemas/index.schema";
 import HTTPError from "../http/http.error";
 import { ENTITY_BY_TABLE } from "../enums/entities.enum";
-import { TSelectParams, TWhereParams } from "../types/repository.types";
-
+import { TDeleteParams, TSelectParams, TSoftDeleteParams, TUpdateParams, TWhereParams } from "../types/repository.types";
 
 export default abstract class Repository<TTable extends keyof IDatabase> {
 
   readonly abstract tableName: TTable;
-  readonly abstract softDelete: boolean;
+  readonly abstract softDeletable: boolean;
   protected readonly abstract db: Kysely<IDatabase>
 
   protected qr(tableName: TTable, withTrash: boolean) {
@@ -18,7 +17,7 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
       .selectFrom(table(tableName).as('t'))
       .selectAll();
 
-    if (this.softDelete && !withTrash) {
+    if (this.softDeletable && !withTrash) {
       query = query.where(ref('t.deletedAt'), 'is', null);
     }
 
@@ -78,5 +77,46 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
         () => HTTPError.internalServer({ message: `Failed to insert and retrieve data in ${ENTITY_BY_TABLE[this.tableName]}` })
       );
     return await qr;
+  }
+  public async update<
+    Column extends keyof IDatabase[TTable] & string,
+    Value extends SelectType<IDatabase[TTable][Column]>,
+  >(
+    data: Updateable<IDatabase[TTable]>,
+    { tableName = this.tableName, column, value }: TUpdateParams<TTable, Column, Value>
+  ) {
+    const { table, ref } = this.db.dynamic;
+    return await this.db.updateTable(table(tableName).as('t'))
+      .set(data as any).where(ref(`${column}`), '=', value)
+      .returningAll()
+      .executeTakeFirstOrThrow(
+        () => HTTPError.notFound({ message: `Record with ${column}=${value} not found in ${ENTITY_BY_TABLE[this.tableName]}` })
+      );
+  }
+  public async delete<
+    Column extends keyof IDatabase[TTable] & string,
+    Value extends SelectType<IDatabase[TTable][Column]>,
+  >({ tableName = this.tableName, column, value }: TDeleteParams<TTable, Column, Value>) {
+    const { table, ref } = this.db.dynamic;
+    await this.db.deleteFrom(table(tableName).as('t')).where(ref(`t.${column}`), '=', value).executeTakeFirstOrThrow(
+      () => HTTPError.notFound({ message: `Record with ${column}=${value} not found in ${ENTITY_BY_TABLE[this.tableName]}` })
+    );
+  }
+  public async softDelete<
+    Column extends keyof IDatabase[TTable] & string,
+    Value extends SelectType<IDatabase[TTable][Column]>,
+  >({ column, value }:
+    TSoftDeleteParams<Column, Value>) {
+    const { table, ref } = this.db.dynamic;
+    if (this.softDeletable) {
+      return await this.db.updateTable(table(this.tableName).as('t'))
+        .set({ deletedAt: sql`now()` } as any).where(ref('deletedAt'), 'is', null).where(ref(`${column}`), '=', value)
+        .returningAll()
+        .executeTakeFirstOrThrow(
+          () => HTTPError.notFound({ message: `Record with ${column}=${value} not found in ${ENTITY_BY_TABLE[this.tableName]}` })
+        );
+    } else {
+      throw HTTPError.badRequest({ message: `Soft delete not supported for ${ENTITY_BY_TABLE[this.tableName]}` });
+    }
   }
 }

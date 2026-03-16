@@ -1,10 +1,10 @@
+import { AbstractConstructor } from "../types/mixin.types";
 import slugify from "../utils/slugify";
-
-type AbstractConstructor<T = any> = abstract new (...args: any[]) => T;
 
 interface SlugRepository {
     lastSlugIndex(baseSlug: string): Promise<number | null>;
 }
+
 export function GenerateSlug<TBase extends AbstractConstructor>(Base: TBase) {
 
     abstract class SluggableService extends Base {
