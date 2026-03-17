@@ -1,9 +1,12 @@
-import { TInsertable } from "../boot/database/schemas/index.schema";
+import { GenerateSlug } from "../boot/mixins/sluggable-service.mixin";
+import Service from "../boot/service";
+import { TCategoryStoreRequest } from "../http/v1/requests/category/category.store.request";
+import { TCategoryUpdateRequest } from "../http/v1/requests/category/category.update.request";
 import CategoryRepository from "../repositories/category/category.repository";
 
 
-export default class CategoryService {
-    constructor(private readonly categoryRepository: CategoryRepository) { }
+export default class CategoryService extends GenerateSlug(Service) {
+    constructor(private readonly categoryRepository: CategoryRepository) { super(); }
 
     public async all() {
         const category = await this.categoryRepository.all({});
@@ -13,7 +16,22 @@ export default class CategoryService {
         const category = await this.categoryRepository.first({ column: 'slug', value: slug });
         return category;
     }
-    public async store<D extends TInsertable['categories']>(data: D | D[]) {
-        return this.categoryRepository.insert(data);
+    public async store(data: TCategoryStoreRequest) {
+        const slug = await this.generateSlug(this.categoryRepository, data.title);
+        const insertData = { ...data, slug };
+        const category = await this.categoryRepository.insert(insertData);
+        return category;
+    }
+    public async update(data: TCategoryUpdateRequest, slug: string) {
+        let updateData = data;
+        if (data.title) {
+            const updateSlug = await this.generateSlug(this.categoryRepository, data.title);
+            updateData = { ...data, slug: updateSlug };
+        }
+        const category = await this.categoryRepository.update(updateData, { column: 'slug', value: slug });
+        return category;
+    }
+    public async delete(slug: string) {
+        return await this.categoryRepository.delete({ column: 'slug', value: slug });
     }
 }

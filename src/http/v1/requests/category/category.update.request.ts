@@ -1,5 +1,7 @@
 import z from "zod";
-import { categoryStoreRequest } from "../category.request";
+import { categoryStoreRequest } from "./category.store.request";
+import { REQUEST_ERRORS } from "../../../../boot/enums/request-rules.enum";
 
-export const brandUpdateRequest = categoryStoreRequest.partial({ title: true });
-export type TBrandUpdateRequest = z.infer<typeof brandUpdateRequest>;
+
+export const categoryUpdateRequest = categoryStoreRequest.extend({ slug: z.string(REQUEST_ERRORS.invalidString) }).partial();
+export type TCategoryUpdateRequest = z.infer<typeof categoryUpdateRequest>;
