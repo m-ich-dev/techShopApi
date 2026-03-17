@@ -3,7 +3,6 @@ import brandRouter from './brand.routes';
 import categoryRouter from './category.routes';
 import productRouter from './product.routes';
 
-
 const router = Router();
 
 router.use('/brands', brandRouter);
