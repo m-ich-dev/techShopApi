@@ -11,6 +11,7 @@ const categoryAdminController = new CategoryAdminController(categoryService);
 const categoryStoreController = new CategoryStoreController(categoryService);
 
 export {
+    categoryRepository,
     categoryAdminController,
     categoryStoreController,
 };

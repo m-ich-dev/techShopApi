@@ -11,6 +11,7 @@ const brandAdminController = new BrandAdminController(brandService);
 const brandStoreController = new BrandStoreController(brandService);
 
 export {
+    brandRepository,
     brandAdminController,
     brandStoreController,
 };
