@@ -9,7 +9,7 @@ import { TWhereParams } from "../../boot/types/repository.types";
 
 export default class ProductVariantRepository extends Repositorty<'productVariants'> {
     public readonly tableName: "productVariants" = 'productVariants';
-    public readonly softDelete: boolean = true;
+    public readonly softDeletable: boolean = true;
 
     constructor(protected readonly db: Kysely<IDatabase>) { super(); }
 
