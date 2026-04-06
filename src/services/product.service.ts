@@ -1,11 +1,13 @@
-import { TInsertable } from "../boot/database/schemas/index.schema";
+import Service from "../boot/service";
 import ProductRepository from "../repositories/product/product.repository";
+import { GenerateSlug } from "../boot/mixins/sluggable-service.mixin";
+import { TProductStoreRequest } from "../http/v1/requests/product/product.store.request";
+import { TProductUpdateRequest } from "../http/v1/requests/product/product.update.request";
 
-
-export default class ProductService {
+export default class ProductService extends GenerateSlug(Service) {
     constructor(
         private readonly productRepository: ProductRepository,
-    ) { }
+    ) { super(); }
 
     public async all() {
         const products = await this.productRepository.all({});
@@ -25,7 +27,24 @@ export default class ProductService {
         const product = await this.productRepository.firstWithPivot({ column: 'slug', value: slug });
         return product;
     }
-    public async store<D extends TInsertable['products']>(data: D | D[]) {
-        return this.productRepository.insert(data);
+
+    public async store(data: TProductStoreRequest) {
+        const slug = await this.generateSlug(this.productRepository, data.title);
+        const insertData = { ...data, slug };
+        return this.productRepository.insert(insertData);
+    }
+
+    public async update(data: TProductUpdateRequest, slug: string) {
+        let updateData = data;
+        if (updateData.title) {
+            const updateSlug = await this.generateSlug(this.productRepository, updateData.title);
+            updateData = { ...data, slug: updateSlug };
+        }
+        const product = this.productRepository.update(updateData, { column: 'slug', value: slug });
+        return product;
+    }
+    public async delete(slug: string) {
+        const result = await this.productRepository.softDelete({ column: 'slug', value: slug });
+        return result;
     }
 }

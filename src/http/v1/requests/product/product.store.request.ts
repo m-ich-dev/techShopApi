@@ -1,5 +1,6 @@
 import z from "zod";
-import { REQUEST_ERRORS, REQUEST_RULES } from "../../../boot/enums/request-rules.enum";
+import { REQUEST_ERRORS, REQUEST_RULES } from "../../../../boot/enums/request-rules.enum";
+
 
 export const productStoreRequest = z.object({
     categoryId: z.coerce.number(REQUEST_ERRORS.invalidNumber),

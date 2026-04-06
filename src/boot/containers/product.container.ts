@@ -9,7 +9,7 @@ import { productVariantRepository } from "./product-variant.container";
 const productRepository = new ProductRepository(db);
 const productService = new ProductService(productRepository);
 const masterProductService = new MasterProductService(productRepository, productVariantRepository);
-const productAdminController = new ProductAdminController(productService, masterProductService);
+const productAdminController = new ProductAdminController(productService);
 
 export {
     productAdminController
