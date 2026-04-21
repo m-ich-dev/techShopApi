@@ -3,6 +3,7 @@ import { IDatabase, TInsertable } from "../database/schemas/index.schema";
 import HTTPError from "../http/http.error";
 import { ENTITY_BY_TABLE } from "../enums/entities.enum";
 import { TDeleteParams, TSelectParams, TSoftDeleteParams, TUpdateParams, TWhereParams } from "../types/repository.types";
+import { capitalize } from "../utils/capitalize";
 
 export default abstract class Repository<TTable extends keyof IDatabase> {
 
@@ -40,7 +41,10 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
       .where(ref(`t.${column}`), '=', value)
       .orderBy('t.id')
       .executeTakeFirstOrThrow(
-        () => HTTPError.notFound({ message: `${ENTITY_BY_TABLE[this.tableName]} not found`, detail: { path: column, value } })
+        () => HTTPError.notFound({
+          message: `${capitalize(ENTITY_BY_TABLE[this.tableName])} not found`,
+          detail: { path: column, message: `with value: ${value}` }
+        })
       );
   }
 
@@ -90,7 +94,10 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
       .set(data as any).where(ref(`${column}`), '=', value)
       .returningAll()
       .executeTakeFirstOrThrow(
-        () => HTTPError.notFound({ message: `Record with ${column}=${value} not found in ${ENTITY_BY_TABLE[this.tableName]}` })
+        () => HTTPError.notFound({
+          message: `Failed to update record. ${capitalize(ENTITY_BY_TABLE[this.tableName])} not found`,
+          detail: { path: column, message: `with value: ${value}` }
+        })
       );
   }
   public async delete<
@@ -99,7 +106,10 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
   >({ tableName = this.tableName, column, value }: TDeleteParams<TTable, Column, Value>) {
     const { table, ref } = this.db.dynamic;
     await this.db.deleteFrom(table(tableName).as('t')).where(ref(`t.${column}`), '=', value).executeTakeFirstOrThrow(
-      () => HTTPError.notFound({ message: `Record with ${column}=${value} not found in ${ENTITY_BY_TABLE[this.tableName]}` })
+      () => HTTPError.notFound({
+        message: `Failed to delete record. ${capitalize(ENTITY_BY_TABLE[this.tableName])} not found`,
+        detail: { path: column, message: `with value: ${value}` }
+      })
     );
   }
   public async softDelete<
@@ -113,7 +123,10 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
         .set({ deletedAt: sql`now()` } as any).where(ref('deletedAt'), 'is', null).where(ref(`${column}`), '=', value)
         .returningAll()
         .executeTakeFirstOrThrow(
-          () => HTTPError.notFound({ message: `Record with ${column}=${value} not found in ${ENTITY_BY_TABLE[this.tableName]}` })
+          () => HTTPError.notFound({
+            message: `Failed to soft delete record. ${capitalize(ENTITY_BY_TABLE[this.tableName])} not found`,
+            detail: { path: column, message: `with value: ${value}` }
+          })
         );
     } else {
       throw HTTPError.badRequest({ message: `Soft delete not supported for ${ENTITY_BY_TABLE[this.tableName]}` });
