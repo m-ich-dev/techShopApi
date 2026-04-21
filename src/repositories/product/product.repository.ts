@@ -5,6 +5,7 @@ import Repositorty from "../../boot/repositories/repository";
 import { Sluggable } from "../../boot/mixins/repository/sluggable-repository.mixin";
 import { ENTITY_BY_TABLE } from "../../boot/enums/entities.enum";
 import { TWhereParams } from "../../boot/types/repository.types";
+import { capitalize } from "../../boot/utils/capitalize";
 
 
 export default class ProductRepository extends Sluggable(Repositorty<'products'>) {
@@ -47,7 +48,10 @@ export default class ProductRepository extends Sluggable(Repositorty<'products'>
             .where(ref(`t.${column}`), '=', value)
             .orderBy('t.id')
             .executeTakeFirstOrThrow(
-                () => HTTPError.notFound({ message: `${ENTITY_BY_TABLE[this.tableName]} not found`, detail: { path: column, value } })
+                () => HTTPError.notFound({
+                    message: `${capitalize(ENTITY_BY_TABLE[this.tableName])} not found`,
+                    detail: { path: column, message: `with value: ${value}` }
+                })
             );
     }
 
