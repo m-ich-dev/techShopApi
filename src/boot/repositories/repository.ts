@@ -1,4 +1,4 @@
-import { Kysely, SelectType, sql, Updateable } from "kysely";
+import { Kysely, SelectType, sql, Transaction, Updateable } from "kysely";
 import { IDatabase, TInsertable } from "../database/schemas/index.schema";
 import HTTPError from "../http/http.error";
 import { ENTITY_BY_TABLE } from "../enums/entities.enum";
@@ -128,4 +128,9 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
       throw HTTPError.badRequest({ message: `Soft delete not supported for ${ENTITY_BY_TABLE[this.tableName]}` });
     }
   }
+
+  public async transaction(callback: (trx: Transaction<IDatabase>) => Promise<unknown>) {
+    return await this.db.transaction().execute(callback);
+  }
+
 }
