@@ -72,16 +72,12 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     return await this.qr(tableName, withTrash).execute();
   }
 
-  public async insert<T extends TInsertable[TTable]>(data: T[]): Promise<T[]>;
-  public async insert<T extends TInsertable[TTable]>(data: T): Promise<T>;
-  public async insert<T extends TInsertable[TTable]>(data: T | T[]) {
-    const qr = Array.isArray(data) ?
-      this.db.insertInto(this.tableName).values(data).returningAll().execute() :
-      this.db.insertInto(this.tableName).values(data).returningAll().executeTakeFirstOrThrow(
-        () => HTTPError.internalServer({ message: `Failed to insert and retrieve data in ${ENTITY_BY_TABLE[this.tableName]}` })
-      );
-    return await qr;
+  public async insert<T extends TInsertable[TTable]>(data: T) {
+    return await this.db.insertInto(this.tableName).values(data).returningAll().executeTakeFirstOrThrow(
+      () => HTTPError.internalServer({ message: `Failed to insert and retrieve data in ${ENTITY_BY_TABLE[this.tableName]}` })
+    );
   }
+
   public async update<
     Column extends keyof IDatabase[TTable] & string,
     Value extends SelectType<IDatabase[TTable][Column]>,
