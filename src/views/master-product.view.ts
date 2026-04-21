@@ -1,59 +1,19 @@
-import { ColumnType } from "kysely";
+import { TMasterProductView } from "../types/views/master-product.type";
+import { TVariantPivot, TVariantView } from "../types/views/product-variant.type";
+import { TProductPivot } from "../types/views/product.type";
 
-type TProductPivot = {
-    id: number;
-    title: string;
-    slug: string;
-    createdAt: ColumnType<Date, never, never>;
-    updatedAt: ColumnType<Date, never, never>
-    deletedAt: Date | null;
-    categoryId: number;
-    brandId: number;
-    categoryTitle: string;
-    brandTitle: string;
-};
 
-type TVariantPivot = {
-    currentPriceId: number | null;
-    id: number;
-    title: string;
-    slug: string;
-    createdAt: ColumnType<Date, never, never>
-    updatedAt: ColumnType<Date, never, never>
-    deletedAt: Date | null;
-    parentId: number;
-    stock: number;
-    price: {
-        id: number;
-        price: number;
-        oldPrice: number;
-        discount: number;
-    } | null;
-    attributes: {
-        id: number;
-        title: string;
-        value: string;
-    }[];
-}
-
-type TMasterProduct = Omit<TProductPivot, 'categoryId' | 'categoryTitle' | 'brandId' | 'brandTitle'> & {
-    category: { id: number; title: string };
-    brand: { id: number; title: string };
-    variants: Omit<TVariantPivot, 'currentPriceId'>[];
-};
-
-export default class MasterProduct implements TMasterProduct {
+export default class MasterProduct implements TMasterProductView {
     id: number;
     category: { id: number; title: string };
     brand: { id: number; title: string };
     title: string;
     slug: string;
-
-    createdAt: ColumnType<Date, never, never>;
-    updatedAt: ColumnType<Date, never, never>;
+    createdAt: Date;
+    updatedAt: Date;
     deletedAt: Date | null;
 
-    variants: TMasterProduct['variants'];
+    variants: TVariantView[];
 
     constructor(data: { product: TProductPivot, variants: TVariantPivot[] }) {
         this.id = data.product.id;
@@ -64,6 +24,32 @@ export default class MasterProduct implements TMasterProduct {
         this.createdAt = data.product.createdAt;
         this.updatedAt = data.product.updatedAt;
         this.deletedAt = data.product.deletedAt;
-        this.variants = data.variants;
+        this.variants = data.variants.map(v => {
+
+            const price = v.price
+                ? {
+                    id: v.price.id,
+                    current: v.price.current,
+                    old: v.price.old,
+                    discount: v.price.old
+                        ? Math.round((1 - v.price.current / v.price.old) * 100)
+                        : null
+                }
+                : null;
+
+            return {
+                id: v.id,
+                parentId: v.parentId,
+                title: v.title,
+                slug: v.slug,
+                stock: v.stock,
+                createdAt: v.createdAt,
+                updatedAt: v.updatedAt,
+                deletedAt: v.deletedAt,
+
+                price,
+                attributes: v.attributes
+            };
+        });
     }
 }
