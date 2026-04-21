@@ -1,10 +1,10 @@
 import z from "zod";
-import { REQUEST_ERRORS, REQUEST_RULES } from "../../../../boot/enums/request-rules.enum";
+import { REQUEST_RULES } from "../../../../boot/enums/request-rules.enum";
 
 
 export const productStoreRequest = z.object({
-    categoryId: z.coerce.number(REQUEST_ERRORS.invalidNumber),
-    brandId: z.coerce.number(REQUEST_ERRORS.invalidNumber),
+    categoryId: REQUEST_RULES.number(),
+    brandId: REQUEST_RULES.number(),
     title: REQUEST_RULES.title(),
     deletedAt: REQUEST_RULES.deletedAt()
 });
