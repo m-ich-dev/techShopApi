@@ -33,8 +33,6 @@ export default class ProductService extends GenerateSlug(Service) {
     }
 
     public async store(data: TProductStoreRequest) {
-        await this.categoryRepository.first({ column: 'id', value: data.categoryId });
-        await this.brandRepository.first({ column: 'id', value: data.brandId });
         const slug = await this.generateSlug(this.productRepository, data.title);
         const insertData = { ...data, slug };
         return this.productRepository.insert(insertData);
@@ -42,8 +40,6 @@ export default class ProductService extends GenerateSlug(Service) {
 
     public async update(data: TProductUpdateRequest, slug: string) {
         let updateData = data;
-        if (updateData.categoryId) await this.categoryRepository.first({ column: 'id', value: updateData.categoryId });
-        if (updateData.brandId) await this.brandRepository.first({ column: 'id', value: updateData.brandId });
         if (updateData.title) {
             const updateSlug = await this.generateSlug(this.productRepository, updateData.title);
             updateData = { ...data, slug: updateSlug };
