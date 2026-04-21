@@ -72,8 +72,9 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     return await this.qr(tableName, withTrash).execute();
   }
 
-  public async insert<T extends TInsertable[TTable]>(data: T) {
-    return await this.db.insertInto(this.tableName).values(data).returningAll().executeTakeFirstOrThrow(
+  public async insert<T extends TInsertable[TTable]>(data: T, trx: Transaction<IDatabase>) {
+    const executer = trx ?? this.db;
+    return await executer.insertInto(this.tableName).values(data).returningAll().executeTakeFirstOrThrow(
       () => HTTPError.internalServer({ message: `Failed to insert and retrieve data in ${ENTITY_BY_TABLE[this.tableName]}` })
     );
   }
@@ -83,10 +84,13 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     Value extends SelectType<IDatabase[TTable][Column]>,
   >(
     data: Updateable<IDatabase[TTable]>,
-    { tableName = this.tableName, column, value }: TUpdateParams<TTable, Column, Value>
+    { tableName = this.tableName, column, value }: TUpdateParams<TTable, Column, Value>,
+    trx: Transaction<IDatabase>
   ) {
     const { table, ref } = this.db.dynamic;
-    return await this.db.updateTable(table(tableName).as('t'))
+    const executer = trx ?? this.db;
+
+    return await executer.updateTable(table(tableName).as('t'))
       .set(data as any).where(ref(`${column}`), '=', value)
       .returningAll()
       .executeTakeFirstOrThrow(
@@ -99,9 +103,14 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
   public async delete<
     Column extends keyof IDatabase[TTable] & string,
     Value extends SelectType<IDatabase[TTable][Column]>,
-  >({ tableName = this.tableName, column, value }: TDeleteParams<TTable, Column, Value>) {
+  >(
+    { tableName = this.tableName, column, value }: TDeleteParams<TTable, Column, Value>,
+    trx: Transaction<IDatabase>
+  ) {
     const { table, ref } = this.db.dynamic;
-    await this.db.deleteFrom(table(tableName).as('t')).where(ref(`t.${column}`), '=', value).executeTakeFirstOrThrow(
+    const executer = trx ?? this.db;
+
+    await executer.deleteFrom(table(tableName).as('t')).where(ref(`t.${column}`), '=', value).executeTakeFirstOrThrow(
       () => HTTPError.notFound({
         message: `Failed to delete record. ${capitalize(ENTITY_BY_TABLE[this.tableName])} not found`,
         detail: { path: column, message: `with value: ${value}` }
@@ -111,11 +120,15 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
   public async softDelete<
     Column extends keyof IDatabase[TTable] & string,
     Value extends SelectType<IDatabase[TTable][Column]>,
-  >({ column, value }:
-    TSoftDeleteParams<Column, Value>) {
+  >(
+    { column, value }: TSoftDeleteParams<Column, Value>,
+    trx: Transaction<IDatabase>
+  ) {
     const { table, ref } = this.db.dynamic;
+    const executer = trx ?? this.db;
+
     if (this.softDeletable) {
-      return await this.db.updateTable(table(this.tableName).as('t'))
+      return await executer.updateTable(table(this.tableName).as('t'))
         .set({ deletedAt: sql`now()` } as any).where(ref('deletedAt'), 'is', null).where(ref(`${column}`), '=', value)
         .returningAll()
         .executeTakeFirstOrThrow(
