@@ -72,7 +72,7 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     return await this.qr(tableName, withTrash).execute();
   }
 
-  public async insert<T extends TInsertable[TTable]>(data: T, trx: Transaction<IDatabase>) {
+  public async insert<T extends TInsertable[TTable]>(data: T, trx?: Transaction<IDatabase>) {
     const executer = trx ?? this.db;
     return await executer.insertInto(this.tableName).values(data).returningAll().executeTakeFirstOrThrow(
       () => HTTPError.internalServer({ message: `Failed to insert and retrieve data in ${ENTITY_BY_TABLE[this.tableName]}` })
@@ -85,7 +85,7 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
   >(
     data: Updateable<IDatabase[TTable]>,
     { tableName = this.tableName, column, value }: TUpdateParams<TTable, Column, Value>,
-    trx: Transaction<IDatabase>
+    trx?: Transaction<IDatabase>
   ) {
     const { table, ref } = this.db.dynamic;
     const executer = trx ?? this.db;
@@ -105,7 +105,7 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     Value extends SelectType<IDatabase[TTable][Column]>,
   >(
     { tableName = this.tableName, column, value }: TDeleteParams<TTable, Column, Value>,
-    trx: Transaction<IDatabase>
+    trx?: Transaction<IDatabase>
   ) {
     const { table, ref } = this.db.dynamic;
     const executer = trx ?? this.db;
@@ -122,7 +122,7 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     Value extends SelectType<IDatabase[TTable][Column]>,
   >(
     { column, value }: TSoftDeleteParams<Column, Value>,
-    trx: Transaction<IDatabase>
+    trx?: Transaction<IDatabase>
   ) {
     const { table, ref } = this.db.dynamic;
     const executer = trx ?? this.db;
