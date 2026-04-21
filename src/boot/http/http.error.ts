@@ -1,18 +1,14 @@
 import { HTTP_CODES, HTTP_TITLES, THttpCode, THttpTitle } from "../enums/http.enum";
+import { IHTTPError, TErrorBodyDetail, THTTPErrorBody } from "../types/http-error.types";
 
-type THTTPErrorBody = {
-    title?: THttpTitle;
-    message?: string;
-    detail?: string | string[] | object;
-}
 
-export default class HTTPError extends Error {
-    public readonly context: string = 'HTTP API ERROR';
+export default class HTTPError extends Error implements IHTTPError {
     public readonly title: THttpTitle | 'HTTP API ERROR';
-    public readonly detail?: string | string[] | object;
+    public readonly detail?: TErrorBodyDetail;
 
     constructor(public readonly status: THttpCode, body: THTTPErrorBody) {
         super(body.message);
+        this.name = 'HTTP API ERROR';
         this.title = body.title ?? HTTP_TITLES[status] ?? 'HTTP API ERROR';
         this.detail = body.detail;
     };
