@@ -6,8 +6,8 @@ export interface IAttributeTable {
     title: string;
     slug: string;
     filterType: string | null;
-    createdAt: Generated<ColumnType<Date, never, never>>;
-    updatedAt: Generated<ColumnType<Date, never, never>>;
+    createdAt: ColumnType<Date, never, never>;
+    updatedAt: ColumnType<Date, never, never>;
 
     deletedAt: Date | null;
 }

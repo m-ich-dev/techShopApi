@@ -8,8 +8,8 @@ export interface IProductVariantTable {
     title: string;
     stock: number;
     slug: string;
-    createdAt: Generated<ColumnType<Date, never, never>>;
-    updatedAt: Generated<ColumnType<Date, never, never>>;
+    createdAt: ColumnType<Date, never, never>;
+    updatedAt: ColumnType<Date, never, never>;
 
     deletedAt: Date | null;
 }
