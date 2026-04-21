@@ -5,7 +5,7 @@ import HTTPError from "../boot/http/http.error";
 export function errorHandler(error: unknown, req: Request, res: Response, next: NextFunction) {
     if (error instanceof HTTPError) {
         return res.status(error.status).json({
-            context: error.context,
+            name: error.name,
             title: error.title,
             message: error.message,
             detail: error.detail
