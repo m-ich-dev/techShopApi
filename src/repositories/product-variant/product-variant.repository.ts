@@ -5,9 +5,11 @@ import { IDatabase } from "../../boot/database/schemas/index.schema";
 import { Kysely, SelectType } from "kysely";
 import { ENTITY_BY_TABLE } from "../../boot/enums/entities.enum";
 import { TWhereParams } from "../../boot/types/repository.types";
+import { Sluggable } from "../../boot/mixins/repository/sluggable-repository.mixin";
+import { capitalize } from "../../boot/utils/capitalize";
 
 
-export default class ProductVariantRepository extends Repositorty<'productVariants'> {
+export default class ProductVariantRepository extends Sluggable(Repositorty<'productVariants'>) {
     public readonly tableName: "productVariants" = 'productVariants';
     public readonly softDeletable: boolean = true;
 
@@ -17,9 +19,9 @@ export default class ProductVariantRepository extends Repositorty<'productVarian
         return this.qr(tableName, withTrash)
             .select((eb) => [
                 jsonObjectFrom(
-                    eb.selectFrom('prices as cp')
-                        .select(['cp.id', 'cp.price', 'cp.oldPrice', 'cp.discount'])
-                        .whereRef('cp.id', '=', 't.currentPriceId')
+                    eb.selectFrom('prices')
+                        .select(['prices.id', 'prices.price as current', 'prices.oldPrice as old'])
+                        .whereRef('prices.id', '=', 't.currentPriceId')
                 ).as('price'),
                 jsonArrayFrom(
                     eb
@@ -66,7 +68,10 @@ export default class ProductVariantRepository extends Repositorty<'productVarian
             .where(ref(`t.${column}`), '=', value)
             .orderBy('t.id')
             .executeTakeFirstOrThrow(
-                () => HTTPError.notFound({ message: `${ENTITY_BY_TABLE[this.tableName]} not found`, detail: { path: column, value } })
+                () => HTTPError.notFound({
+                    message: `${capitalize(ENTITY_BY_TABLE[this.tableName])} not found`,
+                    detail: { path: column, message: `with value: ${value}` }
+                })
             );
     }
 
