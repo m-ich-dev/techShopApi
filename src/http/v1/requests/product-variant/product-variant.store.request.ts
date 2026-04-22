@@ -1,8 +1,12 @@
 import z from "zod";
-import { variantAttributeRequest } from "../attribute/variant-attribute.request";
-import { REQUEST_ERRORS } from "../../../boot/enums/request-rules.enum";
+import { REQUEST_ERRORS, REQUEST_RULES } from "../../../../boot/enums/request-rules.enum";
 
-export const productVariantRequest = z.object({
-    stock: z.coerce.number(REQUEST_ERRORS.invalidNumber).nonnegative(REQUEST_ERRORS.negativeNotAllowed),
-    attributes: z.array(variantAttributeRequest).min(1, REQUEST_ERRORS.tooShort),
+export const variantStoreRequest = z.object({
+    parentId: REQUEST_RULES.number().nonnegative(REQUEST_ERRORS.negativeNotAllowed),
+    currentPriceId: REQUEST_RULES.number().nonnegative(REQUEST_ERRORS.negativeNotAllowed).nullish(),
+    title: REQUEST_RULES.title(),
+    stock: REQUEST_RULES.number().nonnegative(REQUEST_ERRORS.negativeNotAllowed).default(0),
+    deletedAt: REQUEST_RULES.deletedAt()
 });
+
+export type TVariantStoreRequest = z.infer<typeof variantStoreRequest>;
