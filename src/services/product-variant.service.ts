@@ -1,9 +1,12 @@
-import { TInsertable } from "../boot/database/schemas/index.schema";
+import { GenerateSlug } from "../boot/mixins/sluggable-service.mixin";
+import Service from "../boot/service";
+import { TVariantStoreRequest } from "../http/v1/requests/product-variant/product-variant.store.request";
+import { TVariantUpdateRequest } from "../http/v1/requests/product-variant/product-variant.update.request";
 import ProductVariantRepository from "../repositories/product-variant/product-variant.repository";
 
 
-export default class ProductVariantService {
-    constructor(private readonly variantRepository: ProductVariantRepository) { }
+export default class ProductVariantService extends GenerateSlug(Service) {
+    constructor(private readonly variantRepository: ProductVariantRepository) { super(); }
 
     public async all() {
         const variants = await this.variantRepository.all({});
@@ -25,7 +28,24 @@ export default class ProductVariantService {
         return variant;
     }
 
-    public async store<D extends TInsertable['productVariants']>(data: D | D[]) {
-        return this.variantRepository.insert(data);
+    public async store(data: TVariantStoreRequest) {
+        const slug = await this.generateSlug(this.variantRepository, data.title);
+        const variant = await this.variantRepository.insert({ ...data, slug });
+        return variant;
+    }
+
+    public async update(data: TVariantUpdateRequest, slug: string) {
+        let updateData = data;
+        if (updateData.title) {
+            const updateSlug = await this.generateSlug(this.variantRepository, updateData.title);
+            updateData = { ...data, slug: updateSlug };
+        }
+        const variant = this.variantRepository.update(updateData, { column: 'slug', value: slug });
+        return variant;
+    }
+
+    public async delete(slug: string) {
+        const result = await this.variantRepository.softDelete({ column: 'slug', value: slug });
+        return result;
     }
 }
