@@ -1,21 +1,21 @@
-import { Kysely, SelectType, sql, Transaction, Updateable } from "kysely";
+import { Kysely, SelectType, Transaction, Updateable } from "kysely";
 import { IDatabase, TInsertable } from "../database/schemas/index.schema";
 import HTTPError from "../http/http.error";
 import { ENTITY_BY_TABLE } from "../enums/entities.enum";
-import { TDeleteParams, TSelectParams, TSoftDeleteParams, TUpdateParams, TWhereParams } from "../types/repository.types";
+import { TDeleteParams, TSelectParams, TUpdateParams, TWhereParams } from "../types/repository.types";
 import { capitalize } from "../utils/capitalize";
 
 export default abstract class Repository<TTable extends keyof IDatabase> {
 
-  readonly abstract tableName: TTable;
-  readonly abstract softDeletable: boolean;
-  protected readonly abstract db: Kysely<IDatabase>
+  public readonly abstract tableName: TTable;
+  public readonly abstract softDeletable: boolean;
+  protected readonly abstract db: Kysely<IDatabase>;
 
-  protected qr(tableName: TTable, withTrash: boolean) {
+  protected qr(withTrash: boolean = false) {
     const { table, ref } = this.db.dynamic;
 
     let query = this.db
-      .selectFrom(table(tableName).as('t'))
+      .selectFrom(table(this.tableName).as('t'))
       .selectAll();
 
     if (this.softDeletable && !withTrash) {
@@ -29,13 +29,13 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     Column extends keyof IDatabase[TTable] & string,
     Value extends SelectType<IDatabase[TTable][Column]>,
   >(
-    { tableName = this.tableName, column, value, withTrash = false }:
-      TWhereParams<TTable, Column, Value>
+    { column, value, withTrash = false }:
+      TWhereParams<Column, Value>
   ) {
 
     const { ref } = this.db.dynamic;
 
-    const qr = this.qr(tableName, withTrash);
+    const qr = this.qr(withTrash);
 
     return await qr
       .where(ref(`t.${column}`), '=', value)
@@ -52,13 +52,13 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     Column extends keyof IDatabase[TTable] & string,
     Value extends SelectType<IDatabase[TTable][Column]>,
   >(
-    { tableName = this.tableName, column, value, withTrash = false }:
-      TWhereParams<TTable, Column, Value>
+    { column, value, withTrash = false }:
+      TWhereParams<Column, Value>
   ) {
 
     const { ref } = this.db.dynamic;
 
-    const qr = this.qr(tableName, withTrash);
+    const qr = this.qr(withTrash);
     return await qr
       .where(ref(`t.${column}`), '=', value)
       .orderBy('t.id')
@@ -66,10 +66,10 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
   }
 
   public async all(
-    { tableName = this.tableName, withTrash = false }:
-      TSelectParams<TTable>
+    { withTrash = false }:
+      TSelectParams
   ) {
-    return await this.qr(tableName, withTrash).execute();
+    return await this.qr(withTrash).execute();
   }
 
   public async insert<T extends TInsertable[TTable]>(data: T, trx?: Transaction<IDatabase>) {
@@ -84,13 +84,13 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     Value extends SelectType<IDatabase[TTable][Column]>,
   >(
     data: Updateable<IDatabase[TTable]>,
-    { tableName = this.tableName, column, value }: TUpdateParams<TTable, Column, Value>,
+    { column, value }: TUpdateParams<Column, Value>,
     trx?: Transaction<IDatabase>
   ) {
     const { table, ref } = this.db.dynamic;
     const executer = trx ?? this.db;
 
-    return await executer.updateTable(table(tableName).as('t'))
+    return await executer.updateTable(table(this.tableName).as('t'))
       .set(data as any).where(ref(`${column}`), '=', value)
       .returningAll()
       .executeTakeFirstOrThrow(
@@ -104,42 +104,18 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     Column extends keyof IDatabase[TTable] & string,
     Value extends SelectType<IDatabase[TTable][Column]>,
   >(
-    { tableName = this.tableName, column, value }: TDeleteParams<TTable, Column, Value>,
+    { column, value }: TDeleteParams<Column, Value>,
     trx?: Transaction<IDatabase>
   ) {
     const { table, ref } = this.db.dynamic;
     const executer = trx ?? this.db;
 
-    await executer.deleteFrom(table(tableName).as('t')).where(ref(`t.${column}`), '=', value).executeTakeFirstOrThrow(
+    await executer.deleteFrom(table(this.tableName).as('t')).where(ref(`t.${column}`), '=', value).executeTakeFirstOrThrow(
       () => HTTPError.notFound({
         message: `Failed to delete record. ${capitalize(ENTITY_BY_TABLE[this.tableName])} not found`,
         detail: { path: column, message: `with value: ${value}` }
       })
     );
-  }
-  public async softDelete<
-    Column extends keyof IDatabase[TTable] & string,
-    Value extends SelectType<IDatabase[TTable][Column]>,
-  >(
-    { column, value }: TSoftDeleteParams<Column, Value>,
-    trx?: Transaction<IDatabase>
-  ) {
-    const { table, ref } = this.db.dynamic;
-    const executer = trx ?? this.db;
-
-    if (this.softDeletable) {
-      return await executer.updateTable(table(this.tableName).as('t'))
-        .set({ deletedAt: sql`now()` } as any).where(ref('deletedAt'), 'is', null).where(ref(`${column}`), '=', value)
-        .returningAll()
-        .executeTakeFirstOrThrow(
-          () => HTTPError.notFound({
-            message: `Failed to soft delete record. ${capitalize(ENTITY_BY_TABLE[this.tableName])} not found`,
-            detail: { path: column, message: `with value: ${value}` }
-          })
-        );
-    } else {
-      throw HTTPError.badRequest({ message: `Soft delete not supported for ${ENTITY_BY_TABLE[this.tableName]}` });
-    }
   }
 
   public async transaction(callback: (trx: Transaction<IDatabase>) => Promise<unknown>) {
