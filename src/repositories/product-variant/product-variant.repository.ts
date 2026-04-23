@@ -5,11 +5,12 @@ import { IDatabase } from "../../boot/database/schemas/index.schema";
 import { Kysely, SelectType } from "kysely";
 import { ENTITY_BY_TABLE } from "../../boot/enums/entities.enum";
 import { TWhereParams } from "../../boot/types/repository.types";
-import { Sluggable } from "../../boot/mixins/repository/sluggable-repository.mixin";
+import { Sluggable } from "../../boot/mixins/repository/sluggable.repository.mixin";
 import { capitalize } from "../../boot/utils/capitalize";
+import { SoftDeletable } from "../../boot/mixins/repository/soft-deletable.repository.mixin";
 
 
-export default class ProductVariantRepository extends Sluggable(Repositorty<'productVariants'>) {
+export default class ProductVariantRepository extends SoftDeletable(Sluggable(Repositorty<'productVariants'>)) {
     public readonly tableName: "productVariants" = 'productVariants';
     public readonly softDeletable: boolean = true;
 

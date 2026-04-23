@@ -2,13 +2,14 @@ import { Kysely, SelectType } from "kysely";
 import { IDatabase } from "../../boot/database/schemas/index.schema";
 import HTTPError from "../../boot/http/http.error";
 import Repositorty from "../../boot/repositories/repository";
-import { Sluggable } from "../../boot/mixins/repository/sluggable-repository.mixin";
+import { Sluggable } from "../../boot/mixins/repository/sluggable.repository.mixin";
 import { ENTITY_BY_TABLE } from "../../boot/enums/entities.enum";
 import { TWhereParams } from "../../boot/types/repository.types";
 import { capitalize } from "../../boot/utils/capitalize";
+import { SoftDeletable } from "../../boot/mixins/repository/soft-deletable.repository.mixin";
 
 
-export default class ProductRepository extends Sluggable(Repositorty<'products'>) {
+export default class ProductRepository extends SoftDeletable(Sluggable(Repositorty<'products'>)) {
     public readonly tableName: "products" = 'products';
     public readonly softDeletable: boolean = true;
 
