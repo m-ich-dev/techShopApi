@@ -1,5 +1,5 @@
-import { AbstractConstructor } from "../types/mixin.types";
-import slugify from "../utils/slugify";
+import type { AbstractConstructor } from "@/boot/types/mixin.types.js";
+import slugify from "@/boot/utils/slugify.js";
 
 interface SlugRepository {
     lastSlugIndex(baseSlug: string): Promise<number | null>;

@@ -1,5 +1,6 @@
 import { Kysely } from "kysely";
 
+
 const tableName = 'product_variant_attributes';
 
 export async function up(db: Kysely<any>): Promise<void> {

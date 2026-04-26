@@ -1,7 +1,7 @@
 import { Kysely, sql } from "kysely";
 
 
-export const updatedAtTrigger = {
+const updatedAtTrigger = {
     func: (db: Kysely<any>) => {
         return sql`
         CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -24,3 +24,5 @@ export const updatedAtTrigger = {
     },
     dropTrigger: (db: Kysely<any>, tableName: string) => sql`DROP TRIGGER IF EXISTS ${sql.raw(tableName + '_updated_at')} ON ${sql.raw(tableName)}`.execute(db)
 };
+
+export default updatedAtTrigger;

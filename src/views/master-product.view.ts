@@ -1,6 +1,6 @@
-import { TMasterProductView } from "../types/views/master-product.type";
-import { TVariantPivot, TVariantView } from "../types/views/product-variant.type";
-import { TProductPivot } from "../types/views/product.type";
+import type { TMasterProductView } from "@/types/views/master-product.type.js";
+import type { TVariantPivot, TVariantView } from "@/types/views/product-variant.type.js";
+import type { TProductPivot } from "@/types/views/product.type.js";
 
 
 export default class MasterProduct implements TMasterProductView {

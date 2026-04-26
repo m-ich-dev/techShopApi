@@ -1,5 +1,6 @@
-import { TVariantView } from "./product-variant.type";
-import { TProductView } from "./product.type";
+import type { TVariantView } from "@/types/views/product-variant.type.js";
+import type { TProductView } from "@/types/views/product.type.js";
+
 
 export type TMasterProductView = TProductView & {
     variants: TVariantView[]

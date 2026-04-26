@@ -1,5 +1,6 @@
 import { Kysely } from "kysely";
 
+
 const tableName = 'attribute_categories';
 
 export async function up(db: Kysely<any>): Promise<void> {

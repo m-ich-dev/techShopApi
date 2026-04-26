@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { resolveSlug } from "../../../midllewares/resolve-slug.midlleware";
-import { productVariantAdminController } from "../../../boot/container";
-import { resolveFormRequest } from "../../../midllewares/resolve-request.midlleware";
-import { variantStoreRequest } from "../../../http/v1/requests/product-variant/product-variant.store.request";
-import { variantUpdateRequest } from "../../../http/v1/requests/product-variant/product-variant.update.request";
+import { resolveSlug } from "@/midllewares/resolve-slug.midlleware.js";
+import { productVariantAdminController } from "@/boot/container.js";
+import { resolveFormRequest } from "@/midllewares/resolve-request.midlleware.js";
+import { variantStoreRequest } from "@/http/v1/requests/product-variant/product-variant.store.request.js";
+import { variantUpdateRequest } from "@/http/v1/requests/product-variant/product-variant.update.request.js";
+
 
 const router = Router();
 

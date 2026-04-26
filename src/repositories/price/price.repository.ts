@@ -1,6 +1,6 @@
 import { Kysely } from "kysely";
-import Repository from "../../boot/repositories/repository";
-import { IDatabase } from "../../boot/database/schemas/index.schema";
+import type { IDatabase } from "@/boot/database/schemas/index.schema.js";
+import Repository from "@/boot/repositories/repository.js";
 
 
 export default class PriceRepository extends Repository<'prices'> {

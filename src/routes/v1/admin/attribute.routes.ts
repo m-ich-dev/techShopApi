@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { resolveSlug } from "../../../midllewares/resolve-slug.midlleware";
-import { attributeAdminController } from "../../../boot/container";
-import { resolveFormRequest } from "../../../midllewares/resolve-request.midlleware";
-import { attributeStoreRequest } from "../../../http/v1/requests/attribute/attribute.store.request";
-import { attributeUpdatedRequest } from "../../../http/v1/requests/attribute/attribute.update.request";
+import { resolveSlug } from "@/midllewares/resolve-slug.midlleware.js";
+import { attributeAdminController } from "@/boot/container.js";
+import { resolveFormRequest } from "@/midllewares/resolve-request.midlleware.js";
+import { attributeStoreRequest } from "@/http/v1/requests/attribute/attribute.store.request.js";
+import { attributeUpdatedRequest } from "@/http/v1/requests/attribute/attribute.update.request.js";
 
 
 const router = Router();

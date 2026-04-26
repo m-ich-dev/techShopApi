@@ -1,9 +1,10 @@
-import { Kysely, SelectType, Transaction, Updateable } from "kysely";
-import { IDatabase, TInsertable } from "../database/schemas/index.schema";
-import HTTPError from "../http/http.error";
-import { ENTITY_BY_TABLE } from "../enums/entities.enum";
-import { TDeleteParams, TSelectParams, TUpdateParams, TWhereParams } from "../types/repository.types";
-import { capitalize } from "../utils/capitalize";
+import { Kysely, type SelectType, type Transaction, type Updateable } from "kysely";
+import type { IDatabase, TInsertable } from "@/boot/database/schemas/index.schema.js";
+import HTTPError from "@/boot/http/http.error.js";
+import { ENTITY_BY_TABLE } from "@/boot/enums/entities.enum.js";
+import type { TDeleteParams, TSelectParams, TUpdateParams, TWhereParams } from "@/boot/types/repository.types.js";
+import { capitalize } from "@/boot/utils/capitalize.js";
+
 
 export default abstract class Repository<TTable extends keyof IDatabase> {
 

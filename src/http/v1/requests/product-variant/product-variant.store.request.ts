@@ -1,5 +1,6 @@
 import z from "zod";
-import { REQUEST_ERRORS, REQUEST_RULES } from "../../../../boot/enums/request-rules.enum";
+import { REQUEST_ERRORS, REQUEST_RULES } from "@/boot/enums/request-rules.enum.js";
+
 
 export const variantStoreRequest = z.object({
     parentId: REQUEST_RULES.number().nonnegative(REQUEST_ERRORS.negativeNotAllowed),

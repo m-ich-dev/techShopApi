@@ -1,8 +1,8 @@
-import { GenerateSlug } from "../boot/mixins/sluggable-service.mixin";
-import Service from "../boot/service";
-import { TVariantStoreRequest } from "../http/v1/requests/product-variant/product-variant.store.request";
-import { TVariantUpdateRequest } from "../http/v1/requests/product-variant/product-variant.update.request";
-import ProductVariantRepository from "../repositories/product-variant/product-variant.repository";
+import Service from "@/boot/service.js";
+import ProductVariantRepository from "@/repositories/product-variant/product-variant.repository.js";
+import { GenerateSlug } from "@/boot/mixins/service/sluggable-service.mixin.js";
+import type { TVariantStoreRequest } from "@/http/v1/requests/product-variant/product-variant.store.request.js";
+import type { TVariantUpdateRequest } from "@/http/v1/requests/product-variant/product-variant.update.request.js";
 
 
 export default class ProductVariantService extends GenerateSlug(Service) {

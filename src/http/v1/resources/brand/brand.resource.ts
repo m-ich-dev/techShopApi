@@ -1,6 +1,7 @@
-import Resource from "../../../../boot/http/resource";
-import { TRecordBrand } from "../../../../boot/database/schemas/brand.schema";
-import { TBrandClientResource } from "./brand.resource.types";
+import Resource from "@/boot/http/resource.js";
+import type { TRecordBrand } from "@/boot/database/schemas/brand.schema.js";
+import type { TBrandClientResource } from "@/types/resources/brand.resource.types.js";
+
 
 export default class BrandResource extends Resource {
     public static override transform(data: TRecordBrand): TBrandClientResource {

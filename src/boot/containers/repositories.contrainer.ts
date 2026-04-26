@@ -1,9 +1,9 @@
-import db from "../database/db.kysely";
-import CategoryRepository from "../../repositories/category/category.repository";
-import BrandRepository from "../../repositories/brand/brand.repository";
-import AttributeRepository from "../../repositories/attribute/attribute.repository";
-import ProductRepository from "../../repositories/product/product.repository";
-import ProductVariantRepository from "../../repositories/product-variant/product-variant.repository";
+import db from "@/boot/database/db.kysely.js";
+import CategoryRepository from "@/repositories/category/category.repository.js";
+import BrandRepository from "@/repositories/brand/brand.repository.js";
+import AttributeRepository from "@/repositories/attribute/attribute.repository.js";
+import ProductRepository from "@/repositories/product/product.repository.js";
+import ProductVariantRepository from "@/repositories/product-variant/product-variant.repository.js";
 
 
 const categoryRepository = new CategoryRepository(db);

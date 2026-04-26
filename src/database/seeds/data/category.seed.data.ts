@@ -1,5 +1,6 @@
-import { TInsertCategory } from "../../../boot/database/schemas/category.schema";
-import slugify from "../../../boot/utils/slugify";
+import type { TInsertCategory } from "@/boot/database/schemas/category.schema.js";
+import slugify from "@/boot/utils/slugify.js";
+
 
 const categoryTitles = ['Смартфоны', 'Наушники', 'Планшеты', 'Часы'];
 

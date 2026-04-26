@@ -1,7 +1,7 @@
-import { HTTP_CODES } from "../../../../boot/enums/http.enum";
-import Controller from "../../../../boot/http/controller";
-import { THttp, THttpLocals } from "../../../../boot/types/http.types";
-import ProductService from "../../../../services/product.service";
+import Controller from "@/boot/http/controller.js";
+import ProductService from "@/services/product.service.js";
+import { HTTP_CODES } from "@/boot/enums/http.enum.js";
+import type { THttp, THttpLocals } from "@/boot/types/http.types.js";
 
 
 export default class ProductAdminController extends Controller {

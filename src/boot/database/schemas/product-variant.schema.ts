@@ -1,5 +1,6 @@
-import { ColumnType, Generated, Insertable, Selectable, Updateable } from "kysely";
-import { Requestable } from "../../types/db.types";
+import type { ColumnType, Generated, Insertable, Selectable, Updateable } from "kysely";
+import type { Requestable } from "@/boot/types/db.types.js";
+
 
 export interface IProductVariantTable {
     id: Generated<number>;

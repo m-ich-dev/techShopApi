@@ -1,8 +1,8 @@
-import Service from "../boot/service";
-import { GenerateSlug } from "../boot/mixins/sluggable-service.mixin";
-import AttributeRepository from "../repositories/attribute/attribute.repository";
-import { TAttributeStoreRequest } from "../http/v1/requests/attribute/attribute.store.request";
-import { TAttributeUpdateRequest } from "../http/v1/requests/attribute/attribute.update.request";
+import Service from "@/boot/service.js";
+import AttributeRepository from "@/repositories/attribute/attribute.repository.js";
+import { GenerateSlug } from "@/boot/mixins/service/sluggable-service.mixin.js";
+import type { TAttributeStoreRequest } from "@/http/v1/requests/attribute/attribute.store.request.js";
+import type { TAttributeUpdateRequest } from "@/http/v1/requests/attribute/attribute.update.request.js";
 
 
 export default class AttributeService extends GenerateSlug(Service) {

@@ -1,6 +1,6 @@
 import z, { ZodType } from "zod";
-import { TMWare } from "../boot/types/http.types";
-import HTTPError from "../boot/http/http.error";
+import type { TMWare } from "@/boot/types/http.types.js";
+import HTTPError from "@/boot/http/http.error.js";
 
 
 export function resolveFormRequest<T extends ZodType>(zodSchema: T): TMWare {

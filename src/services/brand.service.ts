@@ -1,8 +1,8 @@
-import Service from "../boot/service";
-import { GenerateSlug } from "../boot/mixins/sluggable-service.mixin";
-import { TBrandStoreRequest } from "../http/v1/requests/brand/brand.store.request";
-import { TBrandUpdateRequest } from "../http/v1/requests/brand/brand.update.request";
-import BrandRepository from "../repositories/brand/brand.repository";
+import Service from "@/boot/service.js";
+import BrandRepository from "@/repositories/brand/brand.repository.js";
+import { GenerateSlug } from "@/boot/mixins/service/sluggable-service.mixin.js";
+import type { TBrandStoreRequest } from "@/http/v1/requests/brand/brand.store.request.js";
+import type { TBrandUpdateRequest } from "@/http/v1/requests/brand/brand.update.request.js";
 
 
 export default class BrandService extends GenerateSlug(Service) {

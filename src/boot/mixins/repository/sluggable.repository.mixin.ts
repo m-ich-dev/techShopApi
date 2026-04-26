@@ -1,21 +1,24 @@
-import { Kysely } from "kysely";
-import { IDatabase, TSluggable } from "../../database/schemas/index.schema";
-import { AbstractConstructor } from "../../types/mixin.types";
-import Repository from "../../repositories/repository";
+import Repository from "@/boot/repositories/repository.js";
+import type { TSluggable } from "@/boot/database/schemas/index.schema.js";
+import type { AbstractConstructor } from "@/boot/types/mixin.types.js";
 
 
 export function Sluggable<
   TTable extends keyof TSluggable,
   TBase extends AbstractConstructor<Repository<TTable>>
->(Base: TBase) {
+>(
+  Base: TBase
+) {
+
   abstract class SluggableRepository extends Base {
 
-    protected abstract readonly db: Kysely<IDatabase>
+    async lastSlugIndex(
+      baseSlug: string
+    ): Promise<number | null> {
+      const { ref, table } = this.db.dynamic;
 
-    async lastSlugIndex(baseSlug: string): Promise<number | null> {
-      const { ref } = this.db.dynamic;
-      const row = await this.qr()
-        .where(ref('slug'), 'like', `${baseSlug}%`)
+      const row = await this.db.selectFrom(table(this.tableName).as('t')).select('t.slug')
+        .where(ref('t.slug'), 'like', `${baseSlug}%`)
         .orderBy('slug', 'desc')
         .limit(1)
         .executeTakeFirst();

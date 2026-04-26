@@ -1,16 +1,13 @@
-import Service from "../boot/service";
-import ProductRepository from "../repositories/product/product.repository";
-import { GenerateSlug } from "../boot/mixins/sluggable-service.mixin";
-import { TProductStoreRequest } from "../http/v1/requests/product/product.store.request";
-import { TProductUpdateRequest } from "../http/v1/requests/product/product.update.request";
-import CategoryRepository from "../repositories/category/category.repository";
-import BrandRepository from "../repositories/brand/brand.repository";
+import Service from "@/boot/service.js";
+import ProductRepository from "@/repositories/product/product.repository.js";
+import { GenerateSlug } from "@/boot/mixins/service/sluggable-service.mixin.js";
+import type { TProductStoreRequest } from "@/http/v1/requests/product/product.store.request.js";
+import type { TProductUpdateRequest } from "@/http/v1/requests/product/product.update.request.js";
+
 
 export default class ProductService extends GenerateSlug(Service) {
     constructor(
         private readonly productRepository: ProductRepository,
-        private readonly categoryRepository: CategoryRepository,
-        private readonly brandRepository: BrandRepository
     ) { super(); }
 
     public async all() {
@@ -34,7 +31,9 @@ export default class ProductService extends GenerateSlug(Service) {
 
     public async store(data: TProductStoreRequest) {
         const slug = await this.generateSlug(this.productRepository, data.title);
-        const insertData = { ...data, slug };
+        const insertData = {
+            ...data, slug
+        };
         return this.productRepository.insert(insertData);
     }
 
@@ -42,11 +41,14 @@ export default class ProductService extends GenerateSlug(Service) {
         let updateData = data;
         if (updateData.title) {
             const updateSlug = await this.generateSlug(this.productRepository, updateData.title);
-            updateData = { ...data, slug: updateSlug };
+            updateData = {
+                ...data, slug: updateSlug
+            };
         }
         const product = this.productRepository.update(updateData, { column: 'slug', value: slug });
         return product;
     }
+
     public async delete(slug: string) {
         const result = await this.productRepository.softDelete({ column: 'slug', value: slug });
         return result;

@@ -1,7 +1,7 @@
-import Controller from "../../../../boot/http/controller";
-import BrandService from "../../../../services/brand.service";
-import { THttp, THttpLocals } from "../../../../boot/types/http.types";
-import { HTTP_CODES } from "../../../../boot/enums/http.enum";
+import Controller from "@/boot/http/controller.js";
+import BrandService from "@/services/brand.service.js";
+import type { THttp, THttpLocals } from "@/boot/types/http.types.js";
+import { HTTP_CODES } from "@/boot/enums/http.enum.js";
 
 
 export default class BrandAdminController extends Controller {

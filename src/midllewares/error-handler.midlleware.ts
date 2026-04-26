@@ -1,7 +1,8 @@
-import { NextFunction, Request, Response } from "express";
-import HTTPError from "../boot/http/http.error";
+import type { NextFunction, Request, Response } from "express";
+import HTTPError from "@/boot/http/http.error.js";
 import { DatabaseError } from "pg";
-import { HTTP_CODES, HTTP_TITLES } from "../boot/enums/http.enum";
+import { HTTP_CODES, HTTP_TITLES } from "@/boot/enums/http.enum.js";
+
 
 export function errorHandler(error: unknown, req: Request, res: Response, next: NextFunction) {
     if (error instanceof HTTPError) {

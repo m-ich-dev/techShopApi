@@ -1,11 +1,11 @@
-import { Insertable, Selectable, Updateable } from "kysely";
-import { ICategoryTable } from "./category.schema";
-import { IBrandTable } from "./brand.schema";
-import { IAttributeTable } from "./attribute.schema";
-import { IPriceTable } from "./price.schema";
-import { IProductTable } from "./product.schema";
-import { IProductVariantTable } from "./product-variant.schema";
-import { IProductVariantAttributeTable } from "./product-variant-atrribute.schema";
+import type { Insertable, Selectable, Updateable } from "kysely";
+import type { ICategoryTable } from "@/boot/database/schemas/category.schema.js";
+import type { IBrandTable } from "@/boot/database/schemas/brand.schema.js";
+import type { IAttributeTable } from "@/boot/database/schemas/attribute.schema.js";
+import type { IPriceTable } from "@/boot/database/schemas/price.schema.js";
+import type { IProductTable } from "@/boot/database/schemas/product.schema.js";
+import type { IProductVariantTable } from "@/boot/database/schemas/product-variant.schema.js";
+import type { IProductVariantAttributeTable } from "@/boot/database/schemas/product-variant-atrribute.schema.js";
 
 
 export interface IDatabase {

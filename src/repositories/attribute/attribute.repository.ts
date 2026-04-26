@@ -1,11 +1,11 @@
 import { Kysely } from "kysely";
-import { IDatabase } from "../../boot/database/schemas/index.schema";
-import Repositorty from "../../boot/repositories/repository";
-import { Sluggable } from "../../boot/mixins/repository/sluggable.repository.mixin";
-import { SoftDeletable } from "../../boot/mixins/repository/soft-deletable.repository.mixin";
+import type { IDatabase } from "@/boot/database/schemas/index.schema.js";
+import Repository from "@/boot/repositories/repository.js";
+import { Sluggable } from "@/boot/mixins/repository/sluggable.repository.mixin.js";
+import { SoftDeletable } from "@/boot/mixins/repository/soft-deletable.repository.mixin.js";
 
 
-export default class AttributeRepository extends SoftDeletable(Sluggable(Repositorty<'attributes'>)) {
+export default class AttributeRepository extends SoftDeletable(Sluggable(Repository<'attributes'>)) {
     public readonly tableName: "attributes" = 'attributes';
     public softDeletable: boolean = true;
 

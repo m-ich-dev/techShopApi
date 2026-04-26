@@ -1,6 +1,7 @@
 import { Pool } from 'pg';
 import { Kysely, PostgresDialect, CamelCasePlugin } from 'kysely';
-import { IDatabase } from './schemas/index.schema';
+import type { IDatabase } from '@/boot/database/schemas/index.schema.js';
+
 
 const PORT = Number(process.env.APP_DB_PORT) ?? 5432;
 const MIN = Number(process.env.APP_DB_MIN_CONS) ?? 2;

@@ -1,7 +1,7 @@
-import Controller from "../../../../boot/http/controller";
-import { THttp, THttpLocals } from "../../../../boot/types/http.types";
-import CategoryService from "../../../../services/category.service";
-import { HTTP_CODES } from "../../../../boot/enums/http.enum";
+import Controller from "@/boot/http/controller.js";
+import CategoryService from "@/services/category.service.js";
+import { HTTP_CODES } from "@/boot/enums/http.enum.js";
+import type { THttp, THttpLocals } from "@/boot/types/http.types.js";
 
 
 export default class CategoryAdminController extends Controller {
@@ -12,7 +12,7 @@ export default class CategoryAdminController extends Controller {
 
         return res.status(HTTP_CODES.OK).json({ data: categories });
     };
-    
+
     public store: THttp = async (req, res) => {
         const category = await this.categoryService.store(req.body);
         return res.status(HTTP_CODES.OK).json({ data: category });

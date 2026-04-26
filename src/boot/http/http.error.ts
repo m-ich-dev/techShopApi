@@ -1,5 +1,5 @@
-import { HTTP_CODES, HTTP_TITLES, THttpCode, THttpTitle } from "../enums/http.enum";
-import { IHTTPError, TErrorBodyDetail, THTTPErrorBody } from "../types/http-error.types";
+import { HTTP_CODES, HTTP_TITLES, type THttpCode, type THttpTitle } from "@/boot/enums/http.enum.js";
+import type { IHTTPError, TErrorBodyDetail, THTTPErrorBody } from "@/boot/types/http-error.types.js";
 
 
 export default class HTTPError extends Error implements IHTTPError {

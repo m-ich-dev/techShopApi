@@ -1,9 +1,10 @@
 import { Router } from "express";
-import brandRouter from './brand.routes';
-import categoryRouter from './category.routes';
-import productRouter from './product.routes';
-import attributeRouter from './attribute.routes';
-import variantRouter from './product-variant.routes';
+import brandRouter from '@/routes/v1/admin/brand.routes.js';
+import categoryRouter from '@/routes/v1/admin/category.routes.js';
+import productRouter from '@/routes/v1/admin/product.routes.js';
+import attributeRouter from '@/routes/v1/admin/attribute.routes.js';
+import variantRouter from '@/routes/v1/admin/product-variant.routes.js';
+
 
 const router = Router();
 

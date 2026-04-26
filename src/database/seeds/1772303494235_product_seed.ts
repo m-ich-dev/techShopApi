@@ -1,8 +1,9 @@
 import { sql, type Kysely } from 'kysely';
-import { IDatabase } from '../../boot/database/schemas/index.schema';
-import { TInsertProduct } from '../../boot/database/schemas/product.schema';
-import { productData } from './data/product.seed.data';
-import slugify from '../../boot/utils/slugify';
+import type { IDatabase } from '@/boot/database/schemas/index.schema.js';
+import type { TInsertProduct } from '@/boot/database/schemas/product.schema.js';
+import { productData } from '@/database/seeds/data/product.seed.data.js';
+import slugify from '@/boot/utils/slugify.js';
+
 
 export async function seed(db: Kysely<IDatabase>): Promise<void> {
 	await sql`TRUNCATE TABLE products RESTART IDENTITY CASCADE`.execute(db);

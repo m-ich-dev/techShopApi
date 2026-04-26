@@ -1,8 +1,8 @@
-import { GenerateSlug } from "../boot/mixins/sluggable-service.mixin";
-import Service from "../boot/service";
-import { TCategoryStoreRequest } from "../http/v1/requests/category/category.store.request";
-import { TCategoryUpdateRequest } from "../http/v1/requests/category/category.update.request";
-import CategoryRepository from "../repositories/category/category.repository";
+import Service from "../boot/service.js";
+import CategoryRepository from "../repositories/category/category.repository.js";
+import { GenerateSlug } from "../boot/mixins/service/sluggable-service.mixin.js";
+import type { TCategoryStoreRequest } from "../http/v1/requests/category/category.store.request.js";
+import type { TCategoryUpdateRequest } from "../http/v1/requests/category/category.update.request.js";
 
 
 export default class CategoryService extends GenerateSlug(Service) {

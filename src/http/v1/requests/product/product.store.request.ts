@@ -1,5 +1,5 @@
 import z from "zod";
-import { REQUEST_RULES } from "../../../../boot/enums/request-rules.enum";
+import { REQUEST_RULES } from "@/boot/enums/request-rules.enum.js";
 
 
 export const productStoreRequest = z.object({

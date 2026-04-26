@@ -1,5 +1,6 @@
 import slug from "slug";
 
+
 function slugy(str: string) {
     return slug(str, {
         replacement: '-',

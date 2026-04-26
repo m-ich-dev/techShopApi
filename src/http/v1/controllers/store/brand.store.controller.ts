@@ -1,8 +1,9 @@
-import { HTTP_CODES } from "../../../../boot/enums/http.enum";
-import Controller from "../../../../boot/http/controller";
-import { THttp, THttpLocals } from "../../../../boot/types/http.types";
-import BrandService from "../../../../services/brand.service";
-import BrandResource from "../../resources/brand/brand.resource";
+import { HTTP_CODES } from "@/boot/enums/http.enum.js";
+import Controller from "@/boot/http/controller.js";
+import BrandService from "@/services/brand.service.js";
+import BrandResource from "@/http/v1/resources/brand/brand.resource.js";
+import type { THttp, THttpLocals } from "@/boot/types/http.types.js";
+
 
 export default class BrandStoreController extends Controller {
     constructor(private readonly brandService: BrandService) { super(); }

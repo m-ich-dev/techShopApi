@@ -1,4 +1,5 @@
-import { THttpTitle } from "../enums/http.enum";
+import type { THttpTitle } from "@/boot/enums/http.enum.js";
+
 
 export type TErrorBodyDetail =
     | { path: string | number, message: string }

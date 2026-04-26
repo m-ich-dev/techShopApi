@@ -1,3 +1,3 @@
-export * from "./containers/repositories.contrainer";
-export * from "./containers/services.container";
-export * from "./containers/controllers.container";
+export * from "@/boot/containers/repositories.contrainer.js";
+export * from "@/boot/containers/services.container.js";
+export * from "@/boot/containers/controllers.container.js";

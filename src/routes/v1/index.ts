@@ -1,6 +1,7 @@
 import { Router } from "express";
-import adminRouter from './admin/index';
-import storeRouter from './store/index';
+import adminRouter from '@/routes/v1/admin/index.js';
+import storeRouter from '@/routes/v1/store/index.js';
+
 
 const v1Router = Router();
 

@@ -1,6 +1,6 @@
-import ProductVariantReadRepository from "../repositories/product-variant/product-variant.repository";
-import ProductReadRepository from "../repositories/product/product.repository";
-import MasterProduct from "../views/master-product.view";
+import ProductVariantReadRepository from "@/repositories/product-variant/product-variant.repository.js";
+import ProductReadRepository from "@/repositories/product/product.repository.js";
+import MasterProduct from "@/views/master-product.view.js";
 
 
 export default class MasterProductService {

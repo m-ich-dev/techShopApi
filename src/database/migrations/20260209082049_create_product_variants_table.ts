@@ -1,5 +1,6 @@
 import { Kysely, sql } from "kysely";
-import { updatedAtTrigger } from "./triggers/updated-at.trigger";
+import updatedAtTrigger from '@/database/migrations/triggers/updated-at.trigger.js';
+
 
 const tableName = 'product_variants';
 

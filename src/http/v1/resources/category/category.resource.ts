@@ -1,6 +1,6 @@
-import Resource from "../../../../boot/http/resource";
-import { TRecordCategory } from "../../../../boot/database/schemas/category.schema";
-import { TCategoryClientResource } from "./category.resource.types";
+import Resource from "@/boot/http/resource.js";
+import type { TRecordCategory } from "@/boot/database/schemas/category.schema.js";
+import type { TCategoryClientResource } from "@/types/resources/category.resource.types.js";
 
 
 export default class CategoryResource extends Resource {
