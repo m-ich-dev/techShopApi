@@ -35,5 +35,9 @@ export function Sluggable<
     }
 
   }
-  return SluggableRepository;
+  return SluggableRepository as unknown as TBase & {
+    new(...args: any[]): {
+      lastSlugIndex(baseSlug: string): Promise<number | null>
+    }
+  };
 }
