@@ -1,5 +1,5 @@
 import type { Kysely } from 'kysely';
-import updatedAtTrigger from '@/database/migrations/triggers/updated-at.trigger.js';
+import updatedAtTrigger from '../migrations/triggers/updated-at.trigger.js';
 
 
 export async function up(db: Kysely<any>): Promise<void> {

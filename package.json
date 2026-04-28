@@ -10,6 +10,7 @@
     "start": "node dist/index.js",
     "seed": "kysely seed:run",
     "seed:run": "kysely seed:run --specific",
+    "seed:make": "kysely seed:make",
     "migrate": "kysely migrate:latest",
     "migrate:rollback": "kysely migrate:rollback --all",
     "migrate:refresh": "npm run migrate:rollback && npm run migrate",
