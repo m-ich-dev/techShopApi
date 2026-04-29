@@ -19,6 +19,7 @@
   "author": "mich",
   "license": "ISC",
   "dependencies": {
+    "argon2": "^0.44.0",
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
     "kysely": "^0.28.11",

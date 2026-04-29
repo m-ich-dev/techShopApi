@@ -1,8 +1,8 @@
 import { sql, type Kysely } from 'kysely';
 import type { IDatabase } from '@/boot/database/schemas/index.schema.js';
 import type { TInsertProduct } from '@/boot/database/schemas/product.schema.js';
-import { productData } from '@/database/seeds/data/product.seed.data.js';
-import slugify from '@/boot/utils/slugify.js';
+import { productData } from '../seeds/data/product.seed.data.js';
+import slugify from '../../boot/utils/slugify.js';
 
 
 export async function seed(db: Kysely<IDatabase>): Promise<void> {
