@@ -8,8 +8,8 @@ export interface IRefreshTokenTable {
     created_at: ColumnType<Date, never, never>;
     expires_at: Date;
     revoked_at: Date | null;
-    user_agent: string;
-    ip: string;
+    user_agent: string | null;
+    ip: string | null;
 }
 
 export type TRecordRefreshToken = Selectable<IRefreshTokenTable>;

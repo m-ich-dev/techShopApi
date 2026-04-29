@@ -12,8 +12,8 @@ export async function up(db: Kysely<any>): Promise<void> {
 		.addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull())
 		.addColumn('expires_at', 'timestamptz', (col) => col.notNull())
 		.addColumn('revoked_at', 'timestamptz')
-		.addColumn('user_agent', 'varchar', (col) => col.notNull())
-		.addColumn('ip', 'varchar', (col) => col.notNull())
+		.addColumn('user_agent', 'varchar')
+		.addColumn('ip', 'varchar')
 		.ifNotExists()
 		.execute();
 

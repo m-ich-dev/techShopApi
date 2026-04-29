@@ -11,7 +11,7 @@ export interface IUserTable {
     is_active: boolean;
     created_at: ColumnType<Date, never, never>;
     updated_at: ColumnType<Date, never, never>;
-    deleted_at: ColumnType<Date, never, never>;
+    deleted_at: Date | null;
 }
 
 export type TRecordUser = Selectable<IUserTable>;
