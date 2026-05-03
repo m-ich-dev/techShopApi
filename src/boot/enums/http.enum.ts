@@ -5,6 +5,7 @@ export const HTTP_CODES = {
     UNAUTHORIZED: 401,
     FORBIDDEN: 403,
     NOT_FOUND: 404,
+    CONFLICT: 409,
     UNPROCESSABLE_CONTENT: 422,
     INTERNAL_SERVER: 500
 } as const;
@@ -18,6 +19,7 @@ export const HTTP_TITLES = {
     401: 'Unauthorized',
     403: 'Forbidden',
     404: 'Not found',
+    409: 'Conflict',
     422: 'Unprocessable content',
     500: 'Internal server error',
 } as const;

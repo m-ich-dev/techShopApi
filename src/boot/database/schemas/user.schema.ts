@@ -1,17 +1,19 @@
 import type { ColumnType, Generated, Insertable, Selectable, Updateable } from "kysely";
+import type { UUID } from "crypto";
+import type { TRoles } from "@/boot/enums/roles.enum.js";
 
 
 export interface IUserTable {
-    id: Generated<number>;
-    first_name: string;
-    last_name: string;
+    id: Generated<UUID>;
+    firstName: string;
+    lastName: string;
     email: string;
-    password_hash: string;
-    role: number,
-    is_active: boolean;
-    created_at: ColumnType<Date, never, never>;
-    updated_at: ColumnType<Date, never, never>;
-    deleted_at: Date | null;
+    passwordHash: string;
+    role: TRoles,
+    isActive: boolean;
+    createdAt: ColumnType<Date, never, never>;
+    updatedAt: ColumnType<Date, never, never>;
+    deletedAt: Date | null;
 }
 
 export type TRecordUser = Selectable<IUserTable>;

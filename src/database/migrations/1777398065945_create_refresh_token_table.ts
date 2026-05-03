@@ -10,7 +10,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 		.addColumn('user_id', 'uuid', (col) => col.references('users.id').notNull().onUpdate('cascade').onDelete('cascade'))
 		.addColumn('token_hash', 'varchar', (col) => col.notNull())
 		.addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull())
-		.addColumn('expires_at', 'timestamptz', (col) => col.notNull())
+		.addColumn('expired_at', 'timestamptz', (col) => col.notNull())
 		.addColumn('revoked_at', 'timestamptz')
 		.addColumn('user_agent', 'varchar')
 		.addColumn('ip', 'varchar')

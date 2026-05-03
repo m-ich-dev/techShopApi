@@ -7,12 +7,12 @@ import type { TInsertUser } from '@/boot/database/schemas/user.schema.js';
 export async function seed(db: Kysely<IDatabase>): Promise<void> {
     const pass = await toHash('12345');
     const admin: TInsertUser = {
-        first_name: 'admin',
-        last_name: 'admin',
+        firstName: 'admin',
+        lastName: 'admin',
         email: 'test@gmail.com',
-        password_hash: pass,
+        passwordHash: pass,
         role: 1,
-        is_active: true,
+        isActive: true,
     };
 
     await db.insertInto('users').values(admin).execute();
