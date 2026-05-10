@@ -1,10 +1,9 @@
 import type { ColumnType, Generated, Insertable, Selectable, Updateable } from "kysely";
-import type { UUID } from "crypto";
 import type { TRoles } from "@/boot/enums/roles.enum.js";
 
 
 export interface IUserTable {
-    id: Generated<UUID>;
+    id: Generated<string>;
     firstName: string;
     lastName: string;
     email: string;

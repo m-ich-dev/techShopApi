@@ -24,6 +24,13 @@ export default class AuthService {
         return date;
     }
 
+    private toCryptToken(token: string) {
+        return crypto.
+            createHash('sha256')
+            .update(token)
+            .digest('hex');
+    }
+
     private async issueTokens(user: TRecordUser) {
         const accessToken = await this.JWT.generateAccesToken({
             userId: user.id,
@@ -32,10 +39,7 @@ export default class AuthService {
 
         const refreshToken = crypto.randomBytes(64).toString('hex');
 
-        const tokenHash = crypto
-            .createHash('sha256')
-            .update(refreshToken)
-            .digest('hex');
+        const tokenHash = this.toCryptToken(refreshToken);
 
         await this.tokenRepository.insert({
             userId: user.id,
@@ -76,15 +80,13 @@ export default class AuthService {
         const user = await this.userRepository.firstByEmail({ email: credentials.email });
         if (!user) throw HTTPError.unauthorized({
             message: 'Invalid credentials',
-            detail: { path: 'credential', message: 'email or password' }
+            detail: { path: 'credentials', message: 'email or password' }
         });
-        console.log(user);
         if (user.isActive === false) throw HTTPError.forbidden({
             message: 'User is disabled',
             detail: { path: 'email', message: credentials.email }
         });
         const isUser = await verify(user.passwordHash, credentials.password);
-        console.log('argon2 valid:' + isUser);
         if (!isUser) throw HTTPError.unauthorized({
             message: 'Invalid credentials',
             detail: { path: 'credential', message: 'email or password' }
@@ -93,4 +95,44 @@ export default class AuthService {
         return this.issueTokens(user);
     }
 
+    public async refresh(refreshToken: string) {
+        const tokenHash = this.toCryptToken(refreshToken);
+
+        const tokenExist = await this.tokenRepository.firstByHash({ tokenHash, withRevoked: true });
+        if (!tokenExist) {
+            throw HTTPError.unauthorized({
+                message: 'token not found'
+            });
+        }
+        if (tokenExist.expiredAt <= new Date()) {
+            throw HTTPError.unauthorized({
+                message: 'token is expired'
+            });
+        }
+        if (tokenExist.revokedAt !== null) {
+            await this.logoutAll(tokenExist.userId);
+            throw HTTPError.unauthorized({
+                message: 'Token reuse detected'
+            });
+        }
+        const user = await this.userRepository.first({
+            column: 'id',
+            value: tokenExist.userId
+        });
+        await this.tokenRepository.revoke({ tokenId: tokenExist.id });
+        return this.issueTokens(user);
+    }
+
+    public async logout(refreshToken: string) {
+        const tokenHash = this.toCryptToken(refreshToken);
+        const token = await this.tokenRepository.firstByHash({ tokenHash });
+        if (!token) return true;
+        await this.tokenRepository.revoke({ tokenId: token.id });
+        return true;
+    }
+
+    public async logoutAll(userId: string) {
+        await this.tokenRepository.revokeAllByUser({ userId });
+        return true;
+    }
 }

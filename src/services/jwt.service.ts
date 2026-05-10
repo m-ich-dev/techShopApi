@@ -1,10 +1,10 @@
 import * as jose from 'jose';
 import 'dotenv/config';
-import type { UUID } from 'crypto';
 import type { TRoles } from '@/boot/enums/roles.enum.js';
+import type { TTokenPayload } from '@/boot/types/express.js';
 
 
-type TTokenUserPayload = { userId: UUID, role: TRoles };
+type TTokenUserPayload = { userId: string, role: TRoles };
 
 export default class JWTService {
     private readonly JWT_ACCESS_SECRET = new TextEncoder().encode(process.env.APP_JWT_ACCESS_SECRET_KEY
@@ -23,6 +23,7 @@ export default class JWTService {
     }
 
     public async verifyAccessToken(token: string) {
-        return await jose.jwtVerify(token, this.JWT_ACCESS_SECRET);
+        const { payload } = await jose.jwtVerify(token, this.JWT_ACCESS_SECRET);
+        return payload as TTokenPayload;
     }
 }

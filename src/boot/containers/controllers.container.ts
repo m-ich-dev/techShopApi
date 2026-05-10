@@ -16,6 +16,7 @@ const attributeAdminController = new AttributeAdminController(services.attribute
 const productAdminController = new ProductAdminController(services.productService);
 const productVariantAdminController = new ProductVariantAdminController(services.productVariantService);
 
+
 export {
     categoryAdminController,
     categoryStoreController,

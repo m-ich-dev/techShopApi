@@ -1,10 +1,9 @@
-import type { UUID } from "crypto";
 import type { ColumnType, Generated, Insertable, Selectable, Updateable } from "kysely";
 
 
 export interface IRefreshTokenTable {
     id: Generated<number>;
-    userId: UUID;
+    userId: string;
     tokenHash: string;
     createdAt: ColumnType<Date, never, never>;
     expiredAt: Date;
