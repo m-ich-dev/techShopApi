@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { brandAdminController } from "@/boot/container.js";
-import { resolveFormRequest } from "@/midllewares/resolve-request.midlleware.js";
+import { resolveFormRequest } from "@/middlewares/resolvers/resolve-request.middleware.js";
 import { brandStoreRequest } from "@/http/v1/requests/brand/brand.store.request.js";
-import { resolveSlug } from "@/midllewares/resolve-slug.midlleware.js";
+import { resolveSlug } from "@/middlewares/resolvers/resolve-slug.middleware.js";
 import { brandUpdateRequest } from "@/http/v1/requests/brand/brand.update.request.js";
 
 

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { resolveSlug } from "@/midllewares/resolve-slug.midlleware.js";
+import { resolveSlug } from "@/middlewares/resolvers/resolve-slug.middleware.js";
 import { categoryStoreController } from "@/boot/container.js";
 
 
