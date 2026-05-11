@@ -8,12 +8,17 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    
     "seed": "kysely seed:run",
     "seed:run": "kysely seed:run --specific",
+
     "migrate": "kysely migrate:latest",
     "migrate:rollback": "kysely migrate:rollback --all",
     "migrate:refresh": "npm run migrate:rollback && npm run migrate",
-    "migrate:make": "kysely migrate:make"
+    "migrate:make": "kysely migrate:make",
+
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "author": "mich",
   "license": "ISC",
@@ -41,6 +46,7 @@
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.54.0"
+    "typescript-eslint": "^8.54.0",
+    "vitest": "^4.1.5"
   }
 }
