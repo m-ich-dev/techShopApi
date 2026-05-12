@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { brandStoreController } from "@/boot/container.js";
-import { resolveSlug } from "@/midllewares/resolve-slug.midlleware.js";
+import { resolveSlug } from "@/middlewares/resolvers/resolve-slug.middleware.js";
 
 
 const router = Router();

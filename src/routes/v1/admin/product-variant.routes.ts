@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { resolveSlug } from "@/midllewares/resolve-slug.midlleware.js";
+import { resolveSlug } from "@/middlewares/resolvers/resolve-slug.middleware.js";
 import { productVariantAdminController } from "@/boot/container.js";
-import { resolveFormRequest } from "@/midllewares/resolve-request.midlleware.js";
+import { resolveFormRequest } from "@/middlewares/resolvers/resolve-request.middleware.js";
 import { variantStoreRequest } from "@/http/v1/requests/product-variant/product-variant.store.request.js";
 import { variantUpdateRequest } from "@/http/v1/requests/product-variant/product-variant.update.request.js";
 
