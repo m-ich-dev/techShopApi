@@ -10,7 +10,7 @@ export default function roleMiddleware(roles: TRoles[]): TMWare {
 
         if (!userPayload) {
             throw HTTPError.unauthorized({
-                message: "authentication failure"
+                message: 'Authentication failure'
             });
         }
 
@@ -18,7 +18,7 @@ export default function roleMiddleware(roles: TRoles[]): TMWare {
 
         if (!hasRole) {
             throw HTTPError.forbidden({
-                message: "access denied"
+                message: 'Access denied'
             });
         }
 
