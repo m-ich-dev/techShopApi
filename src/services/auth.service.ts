@@ -31,6 +31,12 @@ export default class AuthService {
             .digest('hex');
     }
 
+    private toPublicUser(user: TRecordUser) {
+        const { passwordHash: _, ...publicUser } = user;
+
+        return publicUser;
+    }
+
     private async issueTokens(user: TRecordUser) {
         const accessToken = await this.JWT.generateAccesToken({
             userId: user.id,
@@ -73,7 +79,9 @@ export default class AuthService {
         } else {
             user = await this.userRepository.insert(userInsert);
         }
-        return this.issueTokens(user);
+        const tokens = await this.issueTokens(user);
+        const publicUser = this.toPublicUser(user);
+        return { tokens, publicUser };
     };
 
     public async login(credentials: TUserLoginRequest) {
@@ -91,8 +99,8 @@ export default class AuthService {
             message: 'Invalid credentials',
             detail: { path: 'credential', message: 'email or password' }
         });
-
-        return this.issueTokens(user);
+        const tokens = await this.issueTokens(user);
+        return tokens;
     }
 
     public async refresh(refreshToken: string) {
@@ -120,7 +128,8 @@ export default class AuthService {
             value: tokenExist.userId
         });
         await this.tokenRepository.revoke({ tokenId: tokenExist.id });
-        return this.issueTokens(user);
+        const tokens = await this.issueTokens(user);
+        return tokens;
     }
 
     public async logout(refreshToken: string) {
