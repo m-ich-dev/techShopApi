@@ -17,14 +17,13 @@ export default class ProductVariantRepository extends SoftDeletable(Sluggable(Re
     constructor(protected readonly db: Kysely<IDatabase>) { super(); }
 
     private queryWithPivot(withTrash: boolean) {
-        const { table, ref } = this.db.dynamic;
 
-        let query = this.db.selectFrom(table(this.tableName).as('t')).selectAll();
+        const baseQ = this.db
+            .selectFrom(`${this.tableName} as t`)
+            .selectAll()
+            .$if(this.softDeletable && !withTrash, (qb) => qb.where('t.deletedAt', 'is', null));
 
-        if (this.softDeletable && !withTrash) {
-            query = query.where(ref('t.deletedAt'), 'is', null);
-        }
-        return query
+        return baseQ
             .select((eb) => [
                 jsonObjectFrom(
                     eb.selectFrom('prices')

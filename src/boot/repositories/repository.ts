@@ -15,15 +15,11 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
   protected qr(withTrash: boolean = false) {
     const { table, ref } = this.db.dynamic;
 
-    let query = this.db
+    return this.db
       .selectFrom(table(this.tableName).as('t'))
-      .selectAll();
+      .selectAll()
+      .$if(this.softDeletable && !withTrash, (qb) => qb.where(ref('deletedAt'), 'is', null));
 
-    if (this.softDeletable && !withTrash) {
-      query = query.where(ref('t.deletedAt'), 'is', null);
-    }
-
-    return query;
   }
 
   public async first<

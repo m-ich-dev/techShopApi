@@ -16,15 +16,13 @@ export default class ProductRepository extends SoftDeletable(Sluggable(Repositor
     constructor(protected readonly db: Kysely<IDatabase>) { super(); }
 
     protected queryWithPivot(withTrash: boolean) {
-        const { table, ref } = this.db.dynamic;
 
-        let query = this.db.selectFrom(table(this.tableName).as('t')).selectAll();
+        const baseQ = this.db
+            .selectFrom(`${this.tableName} as t`)
+            .selectAll()
+            .$if(this.softDeletable && !withTrash, (qb) => qb.where('t.deletedAt', 'is', null));
 
-        if (this.softDeletable && !withTrash) {
-            query = query.where(ref('t.deletedAt'), 'is', null);
-        }
-
-        return query
+        return baseQ
             .innerJoin('categories', 'categories.id', 't.categoryId')
             .innerJoin('brands', 'brands.id', 't.brandId')
             .select([
@@ -32,6 +30,7 @@ export default class ProductRepository extends SoftDeletable(Sluggable(Repositor
                 'brands.title as brandTitle'
             ]);
     }
+
     public allPivot(
         { withTrash = false }: { withTrash?: boolean }
     ) {
