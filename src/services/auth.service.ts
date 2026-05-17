@@ -10,6 +10,8 @@ import type { TInsertUser, TRecordUser } from "@/boot/database/schemas/user.sche
 import type { TUserLoginRequest } from "@/http/v1/requests/user/user.login.request.js";
 
 
+export type TPublicUser = Omit<TRecordUser, 'passwordHash'>;
+
 export default class AuthService {
 
     constructor(
@@ -31,7 +33,7 @@ export default class AuthService {
             .digest('hex');
     }
 
-    private toPublicUser(user: TRecordUser) {
+    private toPublicUser(user: TRecordUser): TPublicUser {
         const { passwordHash: _, ...publicUser } = user;
 
         return publicUser;
@@ -100,7 +102,8 @@ export default class AuthService {
             detail: { path: 'credential', message: 'email or password' }
         });
         const tokens = await this.issueTokens(user);
-        return tokens;
+        const publicUser = this.toPublicUser(user);
+        return { tokens, publicUser };
     }
 
     public async refresh(refreshToken: string) {
