@@ -131,8 +131,9 @@ export default class AuthService {
             value: tokenExist.userId
         });
         await this.tokenRepository.revoke({ tokenId: tokenExist.id });
+        const publicUser = this.toPublicUser(user);
         const tokens = await this.issueTokens(user);
-        return tokens;
+        return { publicUser, tokens };
     }
 
     public async logout(refreshToken: string) {
@@ -146,5 +147,11 @@ export default class AuthService {
     public async logoutAll(userId: string) {
         await this.tokenRepository.revokeAllByUser({ userId });
         return true;
+    }
+
+    public async getUser(userId: string) {
+        const user = await this.userRepository.first({ column: 'id', value: userId });
+        const publicUser = this.toPublicUser(user);
+        return publicUser;
     }
 }
