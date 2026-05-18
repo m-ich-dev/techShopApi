@@ -10,5 +10,5 @@ const v1Router = Router();
 
 v1Router.use('/admin', authMiddleware, roleMiddleware([1, 0]), adminRouter);
 v1Router.use(storeRouter);
-v1Router.use(authRouter);
+v1Router.use('/auth', authRouter);
 export default v1Router;

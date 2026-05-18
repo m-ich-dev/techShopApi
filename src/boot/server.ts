@@ -7,6 +7,9 @@ import cookieParser from 'cookie-parser';
 const PORT = process.env.APP_PORT ?? 3030;
 
 const app = express();
+
+app.set('trust proxy', 1);
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(router);
