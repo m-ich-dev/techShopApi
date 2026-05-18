@@ -2,26 +2,27 @@ import { Kysely, sql } from "kysely";
 import updatedAtTrigger from '../migrations/triggers/updated-at.trigger.js';
 
 
-const tableName = 'prices';
+const tableName = 'product_variants';
 
 export async function up(db: Kysely<any>): Promise<void> {
-    db.schema.createTable(tableName)
+    await db.schema.createTable(tableName)
         .addColumn('id', 'serial', (col) => col.primaryKey())
 
-        .addColumn('product_variant_id', 'integer', (col) => col.notNull())
-        .addForeignKeyConstraint('product_variant_id_foreign', ['product_variant_id'], 'product_variants', ['id'])
+        .addColumn('parent_id', 'integer', (col) => col.notNull())
+        .addForeignKeyConstraint('parent_id_foreign', ['parent_id'], 'products', ['id'],
+            (col) => col.onDelete('restrict').onUpdate('cascade'))
 
-        .addColumn('price', 'decimal', (col) => col.defaultTo(0).notNull())
-        .addColumn('old_price', 'decimal', (col) => col.defaultTo(0).notNull())
-        .addColumn('discount', 'integer', (col) => col.defaultTo(0).notNull())
+        .addColumn('current_price_id', 'integer')
+        .addColumn('title', 'varchar', (col) => col.notNull())
+        .addColumn('stock', 'integer', (col) => col.defaultTo(0).notNull())
+        .addColumn('slug', 'varchar', (col) => col.unique().notNull())
 
         .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull())
         .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull())
         .addColumn('deleted_at', 'timestamptz')
         .execute();
 
-    await db.schema
-        .createIndex(`idx_${tableName}_deleted_at`)
+    await db.schema.createIndex(`idx_${tableName}_deleted_at`)
         .on(tableName)
         .column('deleted_at')
         .execute();

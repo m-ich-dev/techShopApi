@@ -1,0 +1,35 @@
+import { Kysely, sql } from "kysely";
+import updatedAtTrigger from '../migrations/triggers/updated-at.trigger.js';
+
+
+const tableName = 'categories';
+
+export async function up(db: Kysely<any>): Promise<void> {
+
+	await db.schema
+		.createTable(tableName)
+		.addColumn('id', 'serial', (col) => col.primaryKey())
+		.addColumn('title', 'varchar', (col) => col.notNull())
+		.addColumn('slug', 'varchar', (col) => col.unique())
+
+		.addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull())
+		.addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull())
+		.addColumn('deleted_at', 'timestamptz')
+		.execute();
+
+	await db.schema
+		.createIndex(`idx_${tableName}_deleted_at`)
+		.on(tableName)
+		.column('deleted_at')
+		.execute();
+
+	await updatedAtTrigger.createTrigger(db, tableName);
+}
+
+
+export async function down(db: Kysely<any>): Promise<void> {
+	await updatedAtTrigger.dropTrigger(db, tableName);
+	await db.schema.dropIndex(`idx_${tableName}_deleted_at`).ifExists().execute();
+	await db.schema.dropTable(tableName).ifExists().execute();
+}
+
