@@ -99,7 +99,7 @@ export default class AuthService {
         const isUser = await verify(user.passwordHash, credentials.password);
         if (!isUser) throw HTTPError.unauthorized({
             message: 'Invalid credentials',
-            detail: { path: 'credential', message: 'email or password' }
+            detail: { path: 'credentials', message: 'email or password' }
         });
         const tokens = await this.issueTokens(user);
         const publicUser = this.toPublicUser(user);
