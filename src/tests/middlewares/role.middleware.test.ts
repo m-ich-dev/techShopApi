@@ -26,7 +26,7 @@ describe('Role middleware', () => {
         expect(next).toHaveBeenCalledWith();
     });
 
-    it('should throw forbidden error for low access role', () => {
+    it('should throw forbidden error for low access role', async () => {
         const req = {
             user: {
                 userId: '1',
@@ -38,7 +38,7 @@ describe('Role middleware', () => {
 
         const roleMware = roleMiddleware([1, 0]);
 
-        expect(() => roleMware(req, res, next))
+        await expect(() => roleMware(req, res, next))
             .rejects
             .toThrow(HTTPError.forbidden({
                 message: 'Access denied'
@@ -47,14 +47,14 @@ describe('Role middleware', () => {
         expect(next).not.toHaveBeenCalled();
     });
 
-    it('should throw error for invalid request payload', () => {
+    it('should throw error for invalid request payload', async () => {
         const req = {} as Request;
         const res = {} as Response;
         const next = vi.fn();
 
         const roleMware = roleMiddleware([1, 0]);
 
-        expect(() => roleMware(req, res, next))
+        await expect(() => roleMware(req, res, next))
             .rejects
             .toThrow(HTTPError.unauthorized({
                 message: 'Authentication failure'
