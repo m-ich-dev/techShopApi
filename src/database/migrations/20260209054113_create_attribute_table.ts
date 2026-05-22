@@ -1,5 +1,5 @@
 import { Kysely, sql } from "kysely";
-import updatedAtTrigger from '@/database/migrations/triggers/updated-at.trigger.js';
+import updatedAtTrigger from '../migrations/triggers/updated-at.trigger.js';
 
 
 const tableName = 'attributes';

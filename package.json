@@ -16,15 +16,18 @@
     "migrate:rollback": "kysely migrate:rollback --all",
     "migrate:refresh": "npm run migrate:rollback && npm run migrate",
     "migrate:make": "kysely migrate:make",
-
     "test": "vitest",
     "test:run": "vitest run"
   },
   "author": "mich",
   "license": "ISC",
   "dependencies": {
+    "argon2": "^0.44.0",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.5.2",
+    "jose": "^6.2.3",
     "kysely": "^0.28.11",
     "mariadb": "^3.4.5",
     "mysql2": "^3.16.3",
@@ -34,8 +37,10 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
     "@types/node": "^25.2.1",
+    "@types/node-jose": "^1.1.13",
     "@types/pg": "^8.16.0",
     "@types/slug": "^5.0.9",
     "@types/typescript": "^0.4.29",

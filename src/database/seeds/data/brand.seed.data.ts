@@ -1,5 +1,5 @@
 import type { TInsertBrand } from "@/boot/database/schemas/brand.schema.js";
-import slugify from "@/boot/utils/slugify.js";
+import slugify from "../../../boot/utils/slugify.js";
 
 
 export const brandTitles = [

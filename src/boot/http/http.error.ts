@@ -22,8 +22,17 @@ export default class HTTPError extends Error implements IHTTPError {
     static unauthorized(body: THTTPErrorBody) {
         return new HTTPError(HTTP_CODES.UNAUTHORIZED, body);
     }
+    static forbidden(body: THTTPErrorBody) {
+        return new HTTPError(HTTP_CODES.FORBIDDEN, body);
+    }
+    static conflict(body: THTTPErrorBody) {
+        return new HTTPError(HTTP_CODES.CONFLICT, body);
+    }
     static unprocessable(body: THTTPErrorBody) {
         return new HTTPError(HTTP_CODES.UNPROCESSABLE_CONTENT, body);
+    }
+    static tooManyReq(body: THTTPErrorBody) {
+        return new HTTPError(HTTP_CODES.TOO_MANY_REQUESTS, body);
     }
     static internalServer(body: THTTPErrorBody) {
         return new HTTPError(HTTP_CODES.INTERNAL_SERVER, body);

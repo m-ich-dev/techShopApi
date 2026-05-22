@@ -18,8 +18,7 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     return this.db
       .selectFrom(table(this.tableName).as('t'))
       .selectAll()
-      .$if(this.softDeletable && !withTrash, (qb) => qb.where(ref('deletedAt'), 'is', null));
-
+      .$if(this.softDeletable && !withTrash, (qb) => qb.where(ref('t.deletedAt'), 'is', null));
   }
 
   public async first<

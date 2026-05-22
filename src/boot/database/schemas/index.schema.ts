@@ -6,6 +6,8 @@ import type { IPriceTable } from "@/boot/database/schemas/price.schema.js";
 import type { IProductTable } from "@/boot/database/schemas/product.schema.js";
 import type { IProductVariantTable } from "@/boot/database/schemas/product-variant.schema.js";
 import type { IProductVariantAttributeTable } from "@/boot/database/schemas/product-variant-atrribute.schema.js";
+import type { IUserTable } from "./user.schema.js";
+import type { IRefreshTokenTable } from "./refresh-token.schema.js";
 
 
 export interface IDatabase {
@@ -16,6 +18,8 @@ export interface IDatabase {
     products: IProductTable;
     productVariants: IProductVariantTable;
     productVariantAttributes: IProductVariantAttributeTable;
+    users: IUserTable;
+    refreshTokens: IRefreshTokenTable;
 }
 
 export type TSelectable = {

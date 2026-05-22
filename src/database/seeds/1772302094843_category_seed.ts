@@ -1,6 +1,6 @@
 import { sql, type Kysely } from 'kysely';
 import type { IDatabase } from '@/boot/database/schemas/index.schema.js';
-import { categorySeedData } from '@/database/seeds/data/category.seed.data.js';
+import { categorySeedData } from '../seeds/data/category.seed.data.js';
 
 
 export async function seed(db: Kysely<IDatabase>): Promise<void> {
