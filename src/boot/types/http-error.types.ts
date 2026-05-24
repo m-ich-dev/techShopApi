@@ -6,8 +6,8 @@ export type TErrorBodyDetail =
     | { path: string | number, message: string }[]
 
 export type THTTPErrorBody = {
-    title?: THttpTitle;
-    message?: string;
+    title?: THttpTitle | 'HTTP API ERROR';
+    message: string;
     detail?: TErrorBodyDetail;
 }
 
