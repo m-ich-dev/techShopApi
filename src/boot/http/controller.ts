@@ -1,5 +1,6 @@
-import type { Request } from "express";
+import type { Request, Response } from "express";
 import type { TPaginateMeta } from "../types/repository.types.js";
+import { HTTP_CODES } from "../enums/http.enum.js";
 
 
 export default abstract class Controller {
@@ -21,5 +22,8 @@ export default abstract class Controller {
             first: this.createPaginationLink(req, meta.first),
             last: this.createPaginationLink(req, meta.last)
         };
+    }
+    protected resOk(res: Response, payload: object) {
+        return res.status(HTTP_CODES.OK).json(payload);
     }
 }
