@@ -3,6 +3,7 @@ import ProductRepository from "@/repositories/product/product.repository.js";
 import { GenerateSlug } from "@/boot/mixins/service/sluggable-service.mixin.js";
 import type { TProductStoreRequest } from "@/http/v1/requests/product/product.store.request.js";
 import type { TProductUpdateRequest } from "@/http/v1/requests/product/product.update.request.js";
+import type { TPaginateParams } from "@/boot/types/repository.types.js";
 
 
 export default class ProductService extends GenerateSlug(Service) {
@@ -10,18 +11,33 @@ export default class ProductService extends GenerateSlug(Service) {
         private readonly productRepository: ProductRepository,
     ) { super(); }
 
-    public async all() {
-        const products = await this.productRepository.all({});
-        return products;
+    public async all(
+        {
+            page = 1,
+            limit = 15,
+            withTrash = false
+        }:
+            TPaginateParams
+    ) {
+        const productData = await this.productRepository.paginate({ page, limit, withTrash });
+        return productData;
     }
+
+    public async allPivot(
+        {
+            page = 1,
+            limit = 15,
+            withTrash = false
+        }:
+            TPaginateParams
+    ) {
+        const productData = await this.productRepository.paginatePivot({ page, limit, withTrash });
+        return productData;
+    }
+
     public async show(slug: string) {
         const product = await this.productRepository.first({ column: 'slug', value: slug });
         return product;
-    }
-
-    public async allPivot() {
-        const products = await this.productRepository.allPivot({});
-        return products;
     }
 
     public async showPivotBySlug(slug: string) {
