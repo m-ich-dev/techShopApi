@@ -1,6 +1,5 @@
 import Controller from "@/boot/http/controller.js";
 import CategoryService from "@/services/category.service.js";
-import { HTTP_CODES } from "@/boot/enums/http.enum.js";
 import type { THttp, THttpLocals } from "@/boot/types/http.types.js";
 
 
@@ -9,31 +8,29 @@ export default class CategoryAdminController extends Controller {
 
     public index: THttp = async (req, res) => {
         const categories = await this.categoryService.all();
-
-        return res.status(HTTP_CODES.OK).json({ data: categories });
+        return this.resOk(res, { data: categories });
     };
 
     public store: THttp = async (req, res) => {
         const category = await this.categoryService.store(req.body);
-        return res.status(HTTP_CODES.OK).json({ data: category });
+        return this.resOk(res, { data: category });
     };
 
     public show: THttpLocals<{ slug: string }> = async (req, res) => {
         const slug = res.locals.slug;
         const category = await this.categoryService.showBySlug(slug);
-
-        return res.status(HTTP_CODES.OK).json({ data: category });
+        return this.resOk(res, { data: category });
     };
 
     public update: THttpLocals<{ slug: string }> = async (req, res) => {
         const slug = res.locals.slug;
         const category = await this.categoryService.update(req.body, slug);
-        return res.status(HTTP_CODES.OK).json({ data: category });
+        return this.resOk(res, { data: category });
     };
 
     public destroy: THttpLocals<{ slug: string }> = async (req, res) => {
         const slug = res.locals.slug;
         const result = await this.categoryService.delete(slug);
-        return res.status(HTTP_CODES.OK).json({ data: result });
+        return this.resOk(res, { data: result });
     };
 }
