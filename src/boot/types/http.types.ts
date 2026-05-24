@@ -9,7 +9,7 @@ export type THttp<
     ReqBody = any,
     ReqQuery = any,
     Locals extends Record<string, any> = object
-> = (req: Request<P, ResBody, ReqBody, ReqQuery>, res: Response<ResBody, Locals>) => Promise<Response<ResBody, Locals>>;
+> = (req: Request<P, ResBody, ReqBody, ReqQuery>, res: Response<ResBody, Locals>) => Promise<Response>;
 
 export type THttpLocals<L extends Record<string, any> = object> = THttp<any, any, any, any, L>;
 export type THttpQuery<Q extends Record<string, any>> = THttp<any, any, any, Q, any>;
