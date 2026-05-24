@@ -1,7 +1,8 @@
 import Controller from "@/boot/http/controller.js";
 import ProductService from "@/services/product.service.js";
 import { HTTP_CODES } from "@/boot/enums/http.enum.js";
-import type { THttp, THttpLocals } from "@/boot/types/http.types.js";
+import type { THttp, THttpLocals, THttpQuery } from "@/boot/types/http.types.js";
+import HTTPError from "@/boot/http/http.error.js";
 
 
 export default class ProductAdminController extends Controller {
@@ -9,9 +10,18 @@ export default class ProductAdminController extends Controller {
         private readonly productService: ProductService,
     ) { super(); }
 
-    public index: THttp = async (req, res) => {
-        const products = await this.productService.all();
-        return res.status(HTTP_CODES.OK).json({ data: products });
+    public index: THttpQuery<{ page?: string }> = async (req, res) => {
+        const page = Number(req.query.page);
+        if (Number.isNaN(page) || page < 1) {
+            throw HTTPError.badRequest({
+                message: 'Invalid page number',
+                detail: { path: 'page', message: page.toString() }
+            });
+        }
+        const { data, meta } = await this.productService.all({ page, limit: 2 });
+        const links = this.paginationLinks(req, meta);
+
+        return res.status(HTTP_CODES.OK).json({ data, links });
     };
     public store: THttp = async (req, res) => {
         const product = await this.productService.store(req.body);
