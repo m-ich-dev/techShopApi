@@ -2,7 +2,7 @@ import { Kysely, type SelectType, type Transaction, type Updateable } from "kyse
 import type { IDatabase, TInsertable } from "@/boot/database/schemas/index.schema.js";
 import HTTPError from "@/boot/http/http.error.js";
 import { ENTITY_BY_TABLE } from "@/boot/enums/entities.enum.js";
-import type { TDeleteParams, TSelectParams, TUpdateParams, TWhereParams } from "@/boot/types/repository.types.js";
+import type { TDeleteParams, TPaginateMeta, TPaginateParams, TSelectParams, TUpdateParams, TWhereParams } from "@/boot/types/repository.types.js";
 import { capitalize } from "@/boot/utils/capitalize.js";
 
 
@@ -17,8 +17,68 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
 
     return this.db
       .selectFrom(table(this.tableName).as('t'))
-      .selectAll()
+      .selectAll('t')
       .$if(this.softDeletable && !withTrash, (qb) => qb.where(ref('t.deletedAt'), 'is', null));
+  }
+
+  protected async counter(withTrash: boolean = false) {
+    const { table, ref } = this.db.dynamic;
+
+    return this.db
+      .selectFrom(table(this.tableName).as('t'))
+      .select((eb) => eb.fn.countAll().as('total'))
+      .$if(this.softDeletable && !withTrash, (qb) => qb.where(ref('t.deletedAt'), 'is', null))
+      .executeTakeFirst();
+  }
+
+  public async all(
+    { withTrash = false }:
+      TSelectParams
+  ) {
+    return await this.qr(withTrash).execute();
+  }
+
+  public async paginate(
+    {
+      page = 1,
+      limit = 15,
+      withTrash = false
+    }:
+      TPaginateParams
+  ) {
+    const { ref } = this.db.dynamic;
+
+    const pageLimit = Math.min(limit, 100);
+    const offset = (page - 1) * pageLimit;
+
+    const [data, count] = await Promise.all([
+      this.qr(withTrash)
+        .offset(offset)
+        .limit(pageLimit)
+        .orderBy(ref('createdAt'), 'desc')
+        .orderBy('id', 'asc')
+        .execute(),
+      this.counter(withTrash)
+    ]);
+    const totalRecords = Number(count?.total);
+    const totalPages = Math.ceil(totalRecords / pageLimit);
+    const next = page < totalPages ? page + 1 : totalPages;
+    const prev = page > 1 ? page - 1 : 1;
+
+    const meta: TPaginateMeta = {
+      page,
+      next,
+      prev,
+      last: totalPages,
+      first: 1,
+      limit: pageLimit,
+      total: totalRecords
+    };
+
+    return {
+      data,
+      meta
+    };
   }
 
   public async first<
@@ -59,13 +119,6 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
       .where(ref(`t.${column}`), '=', value)
       .orderBy('t.id')
       .execute();
-  }
-
-  public async all(
-    { withTrash = false }:
-      TSelectParams
-  ) {
-    return await this.qr(withTrash).execute();
   }
 
   public async insert<T extends TInsertable[TTable]>(data: T, trx?: Transaction<IDatabase>) {
