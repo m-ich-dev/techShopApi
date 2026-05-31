@@ -8,7 +8,8 @@ import { ENTITY_BY_TABLE } from "@/boot/enums/entities.enum.js";
 import type { TPaginateMeta, TPaginateParams, TWhereParams } from "@/boot/types/repository.types.js";
 import { capitalize } from "@/boot/utils/capitalize.js";
 
-type ProductPivotQuery = ReturnType<ProductRepository['queryWithPivot']>;
+
+export type TProductPivotQuery = ReturnType<ProductRepository['queryWithPivot']>;
 
 export default class ProductRepository extends SoftDeletable(Sluggable(Repository<'products'>)) {
     public readonly tableName: "products" = 'products';
@@ -43,7 +44,7 @@ export default class ProductRepository extends SoftDeletable(Sluggable(Repositor
         limit = 15,
         withTrash = false,
         build
-    }: TPaginateParams<ProductPivotQuery>) {
+    }: TPaginateParams<TProductPivotQuery>) {
 
         const pageLimit = Math.min(limit, 100);
         const offset = (page - 1) * pageLimit;

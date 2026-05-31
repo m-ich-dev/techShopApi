@@ -21,10 +21,10 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
       .$if(this.softDeletable && !withTrash, (qb) => qb.where(ref('t.deletedAt'), 'is', null));
   }
 
-  protected applyBuild<T extends TQuery>(
-    query: T,
-    build?: ((qb: T) => T) | Array<(qb: T) => T>
-  ): T {
+  protected applyBuild<Q extends TQuery>(
+    query: Q,
+    build?: ((qb: Q) => Q) | Array<(qb: Q) => Q>
+  ): Q {
     let q = query;
 
     if (!build) {
