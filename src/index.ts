@@ -1,3 +1,3 @@
-import { serve } from "@/boot/server.js";
+import { serve } from "@/server/server.js";
 
 serve();
