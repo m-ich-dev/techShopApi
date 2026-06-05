@@ -5,6 +5,7 @@ import { errorHandler } from '@/middlewares/error-handler.middleware.js';
 import cookieParser from 'cookie-parser';
 import { appCors } from './config/cors.config.js';
 import { appHelmet } from './config/helmet.config.js';
+import setCache from '@/middlewares/server/cache-controll.middleware.js';
 
 const PORT = process.env.APP_PORT ?? 3030;
 
@@ -14,6 +15,8 @@ app.set('trust proxy', 1);
 
 app.use(appCors);
 app.use(appHelmet);
+
+app.use(setCache());
 
 app.use(express.json());
 app.use(cookieParser());
