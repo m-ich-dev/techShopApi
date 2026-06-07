@@ -23,6 +23,15 @@ export default abstract class Controller {
             last: this.createPaginationLink(req, meta.last)
         };
     }
+    protected parseQueryParams(params: Record<string, string | string[]>) {
+        const parsed: Record<string, string | string[]> = {};
+        for (const [param, val] of Object.entries(params)) {
+            const v = typeof val === 'string' && val.includes(',') ? val.split(',').map(v => v.trim()).filter(Boolean) : val;
+            if (v === '') continue;
+            parsed[param] = v;
+        };
+        return parsed;
+    }
     protected resOk(res: Response, payload: object) {
         return res.status(HTTP_CODES.OK).json(payload);
     }
