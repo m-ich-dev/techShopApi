@@ -7,24 +7,37 @@ import BrandStoreController from "@/http/v1/controllers/store/brand.store.contro
 import CategoryStoreController from "@/http/v1/controllers/store/category.store.controller.js";
 import * as services from "@/boot/containers/services.container.js";
 import AuthController from "@/http/v1/controllers/auth.controller.js";
+import ProductStoreController from "@/http/v1/controllers/store/product.store.controller.js";
 
 
 const categoryAdminController = new CategoryAdminController(services.categoryService);
 const categoryStoreController = new CategoryStoreController(services.categoryService);
+
 const brandAdminController = new BrandAdminController(services.brandService);
 const brandStoreController = new BrandStoreController(services.brandService);
+
 const attributeAdminController = new AttributeAdminController(services.attributeService);
+
 const productAdminController = new ProductAdminController(services.productService);
+const productStoreController = new ProductStoreController(services.productService);
+
 const productVariantAdminController = new ProductVariantAdminController(services.productVariantService);
+
 const authController = new AuthController(services.authService);
 
 export {
     categoryAdminController,
     categoryStoreController,
+
     brandAdminController,
     brandStoreController,
+
     attributeAdminController,
+
     productAdminController,
+    productStoreController,
+
     productVariantAdminController,
+
     authController
 };
