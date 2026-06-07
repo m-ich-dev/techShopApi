@@ -8,10 +8,8 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    
     "seed": "kysely seed:run",
     "seed:run": "kysely seed:run --specific",
-
     "migrate": "kysely migrate:latest",
     "migrate:rollback": "kysely migrate:rollback --all",
     "migrate:refresh": "npm run migrate:rollback && npm run migrate",
@@ -24,9 +22,11 @@
   "dependencies": {
     "argon2": "^0.44.0",
     "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
     "express-rate-limit": "^8.5.2",
+    "helmet": "^8.2.0",
     "jose": "^6.2.3",
     "kysely": "^0.28.11",
     "mariadb": "^3.4.5",
@@ -38,6 +38,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.2.1",
     "@types/node-jose": "^1.1.13",
