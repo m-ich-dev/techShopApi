@@ -4,11 +4,15 @@ import { GenerateSlug } from "@/boot/mixins/service/sluggable-service.mixin.js";
 import type { TProductStoreRequest } from "@/http/v1/requests/product/product.store.request.js";
 import type { TProductUpdateRequest } from "@/http/v1/requests/product/product.update.request.js";
 import type { TPaginateParams } from "@/boot/types/repository.types.js";
+import type ProductVariantRepository from "@/repositories/product-variant/product-variant.repository.js";
+import type { TCatalogFilters } from "@/types/filters/catalog-filter.types.js";
+import CatalogFilter from "@/http/v1/filters/catalog.filter.js";
 
 
 export default class ProductService extends GenerateSlug(Service) {
     constructor(
         private readonly productRepository: ProductRepository,
+        private readonly variantRepository: ProductVariantRepository,
     ) { super(); }
 
     public async all(
@@ -21,6 +25,26 @@ export default class ProductService extends GenerateSlug(Service) {
     ) {
         const productData = await this.productRepository.paginate({ page, limit, withTrash });
         return productData;
+    }
+
+    public async catalog({
+        page,
+        limit,
+        withTrash,
+        filters = {}
+    }: {
+        page?: number;
+        limit?: number;
+        withTrash?: boolean;
+        filters: TCatalogFilters;
+    }) {
+        const filter = new CatalogFilter(filters);
+        return await this.variantRepository.paginatePivot({
+            page,
+            limit,
+            withTrash,
+            build: (qb) => filter.apply(qb)
+        });
     }
 
     public async allPivot(
