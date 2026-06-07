@@ -1,9 +1,9 @@
-import { Kysely, type SelectType, type Transaction, type Updateable } from "kysely";
-import type { IDatabase, TInsertable } from "@/boot/database/schemas/index.schema.js";
-import HTTPError from "@/boot/http/http.error.js";
-import { ENTITY_BY_TABLE } from "@/boot/enums/entities.enum.js";
-import type { TDeleteParams, TPaginateMeta, TPaginateParams, TSelectParams, TUpdateParams, TWhereParams } from "@/boot/types/repository.types.js";
-import { capitalize } from "@/boot/utils/capitalize.js";
+import { Kysely, type SelectType, type Transaction, type Updateable } from 'kysely';
+import type { IDatabase, TInsertable } from '@/boot/database/schemas/index.schema.js';
+import HTTPError from '@/boot/http/http.error.js';
+import { ENTITY_BY_TABLE } from '@/boot/enums/entities.enum.js';
+import { capitalize } from '@/boot/utils/capitalize.js';
+import type { TDeleteParams, TPaginateMeta, TPaginateParams, TQuery, TSelectParams, TUpdateParams, TWhereParams } from '@/boot/types/repository.types.js';
 
 
 export default abstract class Repository<TTable extends keyof IDatabase> {
@@ -12,7 +12,7 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
   public readonly abstract softDeletable: boolean;
   protected readonly abstract db: Kysely<IDatabase>;
 
-  protected qr(withTrash: boolean = false) {
+  protected qr(withTrash = false) {
     const { table, ref } = this.db.dynamic;
 
     return this.db
@@ -21,47 +21,65 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
       .$if(this.softDeletable && !withTrash, (qb) => qb.where(ref('t.deletedAt'), 'is', null));
   }
 
-  protected async counter(withTrash: boolean = false) {
-    const { table, ref } = this.db.dynamic;
+  protected applyBuild<Q extends TQuery>(
+    query: Q,
+    build?: ((qb: Q) => Q) | Array<(qb: Q) => Q>
+  ): Q {
+    let q = query;
 
-    return this.db
-      .selectFrom(table(this.tableName).as('t'))
-      .select((eb) => eb.fn.countAll().as('total'))
-      .$if(this.softDeletable && !withTrash, (qb) => qb.where(ref('t.deletedAt'), 'is', null))
-      .executeTakeFirst();
+    if (!build) {
+      return q;
+    }
+
+    const scopes = Array.isArray(build)
+      ? build
+      : [build];
+
+    for (const scope of scopes) {
+      q = scope(q);
+    }
+
+    return q;
   }
 
-  public async all(
-    { withTrash = false }:
-      TSelectParams
-  ) {
-    return await this.qr(withTrash).execute();
-  }
+  public async paginate({
+    page = 1,
+    limit = 15,
+    withTrash = false,
+    build
+  }: TPaginateParams) {
 
-  public async paginate(
-    {
-      page = 1,
-      limit = 15,
-      withTrash = false
-    }:
-      TPaginateParams
-  ) {
     const { ref } = this.db.dynamic;
 
     const pageLimit = Math.min(limit, 100);
     const offset = (page - 1) * pageLimit;
 
+    const baseQuery = this.applyBuild(
+      this.qr(withTrash),
+      build
+    );
+
+    const dataQuery = baseQuery
+      .offset(offset)
+      .limit(pageLimit)
+      .orderBy(ref('t.createdAt'), 'desc')
+      .orderBy('t.id', 'asc');
+
+    const countQuery = baseQuery
+      .clearSelect()
+      .clearLimit()
+      .clearOffset()
+      .select((eb) => eb.fn.countAll().as('total'));
+
     const [data, count] = await Promise.all([
-      this.qr(withTrash)
-        .offset(offset)
-        .limit(pageLimit)
-        .orderBy(ref('createdAt'), 'desc')
-        .orderBy('id', 'asc')
-        .execute(),
-      this.counter(withTrash)
+      dataQuery.execute(),
+      countQuery.executeTakeFirst()
     ]);
-    const totalRecords = Number(count?.total);
-    const totalPages = Math.ceil(totalRecords / pageLimit);
+
+    const totalRecords = Number(count?.total ?? 0);
+    const totalPages = Math.max(1, Math.ceil(totalRecords / pageLimit)
+    );
+
     const next = page < totalPages ? page + 1 : totalPages;
     const prev = page > 1 ? page - 1 : 1;
 
@@ -69,8 +87,8 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
       page,
       next,
       prev,
-      last: totalPages,
       first: 1,
+      last: totalPages,
       limit: pageLimit,
       total: totalRecords
     };
@@ -79,6 +97,12 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
       data,
       meta
     };
+  }
+
+  public async all({
+    withTrash = false
+  }: TSelectParams = {}) {
+    return await this.qr(withTrash).execute();
   }
 
   public async first<

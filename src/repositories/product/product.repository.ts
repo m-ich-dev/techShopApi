@@ -5,9 +5,11 @@ import { Sluggable } from "@/boot/mixins/repository/sluggable.repository.mixin.j
 import { SoftDeletable } from "@/boot/mixins/repository/soft-deletable.repository.mixin.js";
 import HTTPError from "@/boot/http/http.error.js";
 import { ENTITY_BY_TABLE } from "@/boot/enums/entities.enum.js";
-import type { TPaginateParams, TWhereParams } from "@/boot/types/repository.types.js";
+import type { TPaginateMeta, TPaginateParams, TWhereParams } from "@/boot/types/repository.types.js";
 import { capitalize } from "@/boot/utils/capitalize.js";
 
+
+export type TProductPivotQuery = ReturnType<ProductRepository['queryWithPivot']>;
 
 export default class ProductRepository extends SoftDeletable(Sluggable(Repository<'products'>)) {
     public readonly tableName: "products" = 'products';
@@ -40,42 +42,54 @@ export default class ProductRepository extends SoftDeletable(Sluggable(Repositor
     public async paginatePivot({
         page = 1,
         limit = 15,
-        withTrash = false
-    }: TPaginateParams) {
+        withTrash = false,
+        build
+    }: TPaginateParams<TProductPivotQuery>) {
 
         const pageLimit = Math.min(limit, 100);
         const offset = (page - 1) * pageLimit;
+        const baseQuery = this.applyBuild(
+            this.queryWithPivot(withTrash),
+            build
+        );
 
-        const dataQuery = this.queryWithPivot(withTrash)
+        const dataQuery = baseQuery
             .offset(offset)
             .limit(pageLimit)
             .orderBy('t.createdAt', 'desc')
             .orderBy('t.id', 'asc');
 
+        const countQuery = baseQuery
+            .clearSelect()
+            .clearLimit()
+            .clearOffset()
+            .select((eb) => eb.fn.countAll().as('total'));
+
         const [data, count] = await Promise.all([
             dataQuery.execute(),
-            this.counter()
+            countQuery.executeTakeFirst()
         ]);
 
         const totalRecords = Number(count?.total ?? 0);
-        const totalPages = Math.max(1, Math.ceil(totalRecords / pageLimit));
+        const totalPages = Math.max(1, Math.ceil(totalRecords / pageLimit)
+        );
 
-        const safePage = Math.min(Math.max(page, 1), totalPages);
+        const next = page < totalPages ? page + 1 : totalPages;
+        const prev = page > 1 ? page - 1 : 1;
 
-        const next = safePage < totalPages ? safePage + 1 : totalPages;
-        const prev = safePage > 1 ? safePage - 1 : 1;
+        const meta: TPaginateMeta = {
+            page,
+            next,
+            prev,
+            first: 1,
+            last: totalPages,
+            limit: pageLimit,
+            total: totalRecords
+        };
 
         return {
             data,
-            meta: {
-                page: safePage,
-                limit: pageLimit,
-                total: totalRecords,
-                last: totalPages,
-                next,
-                prev,
-                first: 1
-            }
+            meta
         };
     }
 

@@ -11,7 +11,7 @@ import JWTService from "@/services/jwt.service.js";
 const categoryService = new CategoryService(repositories.categoryRepository);
 const brandService = new BrandService(repositories.brandRepository);
 const attributeService = new AttributeService(repositories.attributeRepository);
-const productService = new ProductService(repositories.productRepository);
+const productService = new ProductService(repositories.productRepository, repositories.productVariantRepository);
 const productVariantService = new ProductVariantService(repositories.productVariantRepository);
 const JwtService = new JWTService();
 const authService = new AuthService(
