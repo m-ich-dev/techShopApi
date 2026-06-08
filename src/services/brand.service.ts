@@ -1,6 +1,6 @@
 import Service from "@/boot/service.js";
-import BrandRepository from "@/repositories/brand/brand.repository.js";
 import { GenerateSlug } from "@/boot/mixins/service/sluggable-service.mixin.js";
+import type BrandRepository from "@/repositories/brand/brand.repository.js";
 import type { TBrandStoreRequest } from "@/http/v1/requests/brand/brand.store.request.js";
 import type { TBrandUpdateRequest } from "@/http/v1/requests/brand/brand.update.request.js";
 

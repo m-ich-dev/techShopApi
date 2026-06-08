@@ -1,5 +1,5 @@
 import Controller from "@/boot/http/controller.js";
-import ProductVariantService from "@/services/product-variant.service.js";
+import type ProductVariantService from "@/services/product-variant.service.js";
 import type { THttp, THttpLocals } from "@/boot/types/http.types.js";
 
 

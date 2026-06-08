@@ -1,12 +1,12 @@
 import Service from "@/boot/service.js";
-import ProductRepository from "@/repositories/product/product.repository.js";
 import { GenerateSlug } from "@/boot/mixins/service/sluggable-service.mixin.js";
+import CatalogFilter from "@/http/v1/filters/catalog.filter.js";
+import type ProductRepository from "@/repositories/product/product.repository.js";
 import type { TProductStoreRequest } from "@/http/v1/requests/product/product.store.request.js";
 import type { TProductUpdateRequest } from "@/http/v1/requests/product/product.update.request.js";
 import type { TPaginateParams } from "@/boot/types/repository.types.js";
 import type ProductVariantRepository from "@/repositories/product-variant/product-variant.repository.js";
 import type { TCatalogFilters } from "@/types/filters/catalog-filter.types.js";
-import CatalogFilter from "@/http/v1/filters/catalog.filter.js";
 
 
 export default class ProductService extends GenerateSlug(Service) {

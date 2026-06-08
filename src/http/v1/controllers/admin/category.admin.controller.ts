@@ -1,5 +1,5 @@
 import Controller from "@/boot/http/controller.js";
-import CategoryService from "@/services/category.service.js";
+import type CategoryService from "@/services/category.service.js";
 import type { THttp, THttpLocals } from "@/boot/types/http.types.js";
 
 

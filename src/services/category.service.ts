@@ -1,6 +1,6 @@
 import Service from "../boot/service.js";
-import CategoryRepository from "../repositories/category/category.repository.js";
 import { GenerateSlug } from "../boot/mixins/service/sluggable-service.mixin.js";
+import type CategoryRepository from "../repositories/category/category.repository.js";
 import type { TCategoryStoreRequest } from "../http/v1/requests/category/category.store.request.js";
 import type { TCategoryUpdateRequest } from "../http/v1/requests/category/category.update.request.js";
 

@@ -1,7 +1,7 @@
 import Controller from "@/boot/http/controller.js";
-import type { THttp, THttpLocals } from "@/boot/types/http.types.js";
-import CategoryService from "@/services/category.service.js";
 import CategoryResource from "@/http/v1/resources/category/category.resource.js";
+import type { THttp, THttpLocals } from "@/boot/types/http.types.js";
+import type CategoryService from "@/services/category.service.js";
 
 
 export default class CategoryStoreController extends Controller {

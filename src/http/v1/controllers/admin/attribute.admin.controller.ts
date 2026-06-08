@@ -1,5 +1,5 @@
 import Controller from "@/boot/http/controller.js";
-import AttributeService from "@/services/attribute.service.js";
+import type AttributeService from "@/services/attribute.service.js";
 import type { THttp, THttpLocals } from "@/boot/types/http.types.js";
 
 

@@ -1,6 +1,6 @@
 import Controller from "@/boot/http/controller.js";
-import BrandService from "@/services/brand.service.js";
 import BrandResource from "@/http/v1/resources/brand/brand.resource.js";
+import type BrandService from "@/services/brand.service.js";
 import type { THttp, THttpLocals } from "@/boot/types/http.types.js";
 
 

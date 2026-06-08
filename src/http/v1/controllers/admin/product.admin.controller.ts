@@ -1,7 +1,7 @@
 import Controller from "@/boot/http/controller.js";
-import ProductService from "@/services/product.service.js";
-import type { THttp, THttpLocals, THttpQuery } from "@/boot/types/http.types.js";
 import HTTPError from "@/boot/http/http.error.js";
+import type ProductService from "@/services/product.service.js";
+import type { THttp, THttpLocals, THttpQuery } from "@/boot/types/http.types.js";
 
 
 export default class ProductAdminController extends Controller {

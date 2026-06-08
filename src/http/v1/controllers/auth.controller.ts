@@ -1,8 +1,8 @@
+import HTTPError from "@/boot/http/http.error.js";
 import { HTTP_CODES } from "@/boot/enums/http.enum.js";
+import UserResource from "../resources/user/user.resource.js";
 import type { THttp } from "@/boot/types/http.types.js";
 import type AuthService from "@/services/auth.service.js";
-import UserResource from "../resources/user/user.resource.js";
-import HTTPError from "@/boot/http/http.error.js";
 
 
 export default class AuthController {
