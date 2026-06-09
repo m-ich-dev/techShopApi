@@ -4,6 +4,7 @@ on:
   push:
     branches: 
       - master
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -37,6 +38,7 @@ jobs:
     - name: Setup .env file
       run: |
         cd /var/www/techapi
+
         echo "APP_NAME=${{ secrets.APP_NAME }}" > .env
         echo "APP_PORT=${{ secrets.APP_PORT }}" >> .env
         echo "APP_JWT_ACCESS_SECRET_KEY=${{ secrets.APP_JWT_ACCESS_SECRET_KEY }}" >> .env
