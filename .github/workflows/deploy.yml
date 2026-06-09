@@ -1,0 +1,56 @@
+name: Deploy API
+
+on:
+  push:
+    branches: 
+      - master
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, rpi]
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: '24'
+        cache: 'npm'
+        
+    - name: Install and Build
+      run: |
+        npm ci
+        npm run build
+        
+    - name: Deploy files to Server
+      run: |
+        rsync -rlptz --no-g --delete dist/ /var/www/techapi/
+        cp package*.json /var/www/techapi/
+        
+    - name: Install Production Dependencies
+      run: |
+        cd /var/www/techapi
+        npm ci --omit=dev
+        
+    - name: Setup .env file
+      run: |
+        cd /var/www/techapi
+        echo "APP_NAME=${{ secrets.APP_NAME }}" > .env
+        echo "APP_PORT=${{ secrets.APP_PORT }}" >> .env
+        echo "APP_JWT_ACCESS_SECRET_KEY=${{ secrets.APP_JWT_ACCESS_SECRET_KEY }}" >> .env
+        echo "APP_DB_HOST=${{ secrets.APP_DB_HOST }}" >> .env
+        echo "APP_DB_PORT=${{ secrets.APP_DB_PORT }}" >> .env
+        echo "APP_DB_USER=${{ secrets.APP_DB_USER }}" >> .env
+        echo "APP_DB_NAME=${{ secrets.APP_DB_NAME }}" >> .env
+        echo "APP_DB_PASSWORD=${{ secrets.APP_DB_PASSWORD }}" >> .env
+        echo "APP_DB_MAX_CONS=${{ secrets.APP_DB_MAX_CONS }}" >> .env
+        echo "APP_DB_MIN_CONS=${{ secrets.APP_DB_MIN_CONS }}" >> .env
+        echo "NODE_ENV=production" >> .env
+        
+    - name: Start or Restart with PM2
+      run: |
+        cd /var/www/techapi
+        pm2 restart techapi || pm2 start index.js --name techapi
+        pm2 save
