@@ -6,12 +6,19 @@ import { HTTP_CODES } from "../enums/http.enum.js";
 export default abstract class Controller {
 
     protected currentUrl(req: Request) {
-        const url = req.get('host') + req.originalUrl;
-        return url;
+        return new URL(
+            req.originalUrl,
+            `${req.protocol}://${req.hostname}`
+        ).toString();
     }
     private createPaginationLink(req: Request, targetPage: number) {
-        const url = new URL(this.currentUrl(req));
-        url.searchParams.set('page', targetPage.toString());
+        const url =
+            new URL(this.currentUrl(req));
+
+        url.searchParams.set(
+            'page',
+            targetPage.toString()
+        );
         return url.toString();
     }
     protected paginationLinks(req: Request, meta: TPaginateMeta) {
