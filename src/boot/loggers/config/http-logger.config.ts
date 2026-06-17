@@ -1,5 +1,6 @@
-import type { Options } from "pino-http";
 import logger from "@/boot/loggers/logger.js";
+import type { Options } from "pino-http";
+import type { IncomingMessage, ServerResponse } from "node:http";
 
 
 const httpPinoConfig: Options = {
@@ -7,20 +8,21 @@ const httpPinoConfig: Options = {
     autoLogging: false,
 
     serializers: {
-        req(req) {
+        req(req: IncomingMessage) {
             return {
                 method: req.method,
-                url: req.url
+                url: req.url,
+                ip: req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown',
+                agent: req.headers['user-agent'] || 'unknown'
             };
         },
-        res(res) {
+        res(res: ServerResponse) {
             return {
                 statusCode:
                     res.statusCode
             };
-        },
-
-    }
+        }
+    },
 };
 
 export default httpPinoConfig;
