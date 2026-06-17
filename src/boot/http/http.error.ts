@@ -1,8 +1,8 @@
 import { HTTP_CODES, HTTP_TITLES, type THttpCode, type THttpTitle } from "@/boot/enums/http.enum.js";
-import type { IHTTPError, TErrorBodyDetail, THTTPErrorBody } from "@/boot/types/http-error.types.js";
+import type { TErrorBodyDetail, THTTPErrorBody } from "@/boot/types/http-error.types.js";
 
 
-export default class HTTPError extends Error implements IHTTPError {
+export default class HTTPError extends Error {
     public readonly title: THttpTitle | 'HTTP API ERROR';
     public readonly detail?: TErrorBodyDetail;
 
