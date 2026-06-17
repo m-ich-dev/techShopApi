@@ -7,7 +7,8 @@ import { appCors } from './config/cors.config.js';
 import { appHelmet } from './config/helmet.config.js';
 import setCache from '@/middlewares/server/cache-controll.middleware.js';
 import notFoundHandler from '@/middlewares/server/404.middleware.js';
-import { httpLogger } from '@/boot/logger.js';
+import logger from '@/boot/loggers/logger.js';
+import httpLogger from '@/boot/loggers/http-logger.js';
 
 
 const PORT = process.env.APP_PORT ?? 3030;
@@ -32,7 +33,7 @@ app.use(errorHandler);
 
 export const serve = () => {
     const server = app.listen(PORT, () => {
-        console.log('the server is running...');
+        logger.info('the server is running...');
     });
 
     return server;
