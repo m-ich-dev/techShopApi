@@ -4,6 +4,14 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import crypto from 'node:crypto';
 
 
+type PinoIncomingMessage = IncomingMessage & {
+    raw?: {
+        socket?: {
+            remoteAddress?: string;
+        };
+    };
+};
+
 const httpPinoConfig: Options = {
     logger,
     autoLogging: false,
@@ -16,12 +24,12 @@ const httpPinoConfig: Options = {
         return id;
     },
     serializers: {
-        req(req: IncomingMessage) {
+        req(req: PinoIncomingMessage) {
             return {
                 reqId: req.id,
                 method: req.method,
                 url: req.url,
-                ip: req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown',
+                ip: req.headers['x-forwarded-for'] || req.raw?.socket?.remoteAddress || req.socket?.remoteAddress || 'unknown',
                 agent: req.headers['user-agent'] || 'unknown'
             };
         },
@@ -31,7 +39,7 @@ const httpPinoConfig: Options = {
                     res.statusCode
             };
         }
-    },
+    }
 };
 
 export default httpPinoConfig;
