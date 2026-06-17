@@ -1,22 +1,9 @@
 import type { DatabaseError } from "pg";
 import type HTTPError from "@/boot/http/http.error.js";
-import type { TErrorBodyDetail } from "@/boot/types/http-error.types.js";
 import { HTTP_CODES, HTTP_TITLES } from "@/boot/enums/http.enum.js";
 import type { JOSEError } from "jose/errors";
+import type { TErrorResponse } from "../types/http-error.types.js";
 
-
-export type TAPIError = {
-    name: string;
-    title: string;
-    message: string;
-    detail?: TErrorBodyDetail;
-    stack?: string
-};
-
-export type TErrorResponse = {
-    status: number;
-    errors: TAPIError[];
-};
 
 export default class ResponseFormatter {
 

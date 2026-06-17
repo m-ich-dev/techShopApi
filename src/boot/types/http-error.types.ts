@@ -1,17 +1,24 @@
 import type { THttpTitle } from "@/boot/enums/http.enum.js";
 
-
-export type TErrorBodyDetail =
-    | { path: string | number, message: string }
-    | { path: string | number, message: string }[]
-
-export type THTTPErrorBody = {
-    title?: THttpTitle | 'HTTP API ERROR';
+type TErrorDetail = {
+    path: string | number;
     message: string;
+};
+export type TErrorBodyDetail =
+    | TErrorDetail
+    | TErrorDetail[];
+
+export interface IApiError {
+    name: string;
+    message: string;
+    title?: THttpTitle | "HTTP API ERROR";
     detail?: TErrorBodyDetail;
+    stack?: string;
 }
 
-export interface IHTTPError {
-    title: THttpTitle | 'HTTP API ERROR';
-    detail?: TErrorBodyDetail;
-}
+export type THTTPErrorBody = Pick<IApiError, 'title' | 'message' | 'detail'>;
+
+export type TErrorResponse = {
+    status: number;
+    errors: IApiError[];
+};
