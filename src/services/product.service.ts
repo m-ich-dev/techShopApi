@@ -17,8 +17,8 @@ export default class ProductService extends GenerateSlug(Service) {
 
     public async all(
         {
-            page = 1,
-            limit = 15,
+            page,
+            limit,
             withTrash = false
         }:
             TPaginateParams
