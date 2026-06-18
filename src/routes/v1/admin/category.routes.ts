@@ -4,13 +4,15 @@ import { resolveSlug } from "@/middlewares/resolvers/resolve-slug.middleware.js"
 import { resolveFormRequest } from "@/middlewares/resolvers/resolve-request.middleware.js";
 import { categoryStoreRequest } from "@/http/v1/requests/category/category.store.request.js";
 import { categoryUpdateRequest } from "@/http/v1/requests/category/category.update.request.js";
+import resolveReqQuery from "@/middlewares/resolvers/resolve-request-queries.middleware.js";
+import { paginateQuery } from "@/http/v1/request-queries/paginate.query.js";
 
 
 const router = Router();
 
 router.param('slug', resolveSlug);
 
-router.get('/', categoryAdminController.index);
+router.get('/', resolveReqQuery(paginateQuery), categoryAdminController.index);
 router.post('/', resolveFormRequest(categoryStoreRequest), categoryAdminController.store);
 router.get('/:slug', categoryAdminController.show);
 router.patch('/:slug', resolveFormRequest(categoryUpdateRequest), categoryAdminController.update);
