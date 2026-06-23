@@ -7,31 +7,24 @@ on:
 
 jobs:
   deploy:
-    runs-on: [self-hosted, rpi]
+    runs-on:
+      - self-hosted
+      - rpi
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Sync source code
-        run: |
-          mkdir -p /var/www/techapi
-
-          rsync -rlptDz --delete \
-            --exclude=node_modules \
-            --exclude=dist \
-            --exclude=.git \
-            ./ /var/www/techapi/
+      - uses: actions/checkout@v6
 
       - name: Create .env
         run: |
-          cat > /var/www/techapi/.env << EOF
+          cat > .env << EOF
           APP_NAME=${{ secrets.APP_NAME }}
           APP_PORT=${{ secrets.APP_PORT }}
+
           APP_JWT_ACCESS_SECRET_KEY=${{ secrets.APP_JWT_ACCESS_SECRET_KEY }}
 
           APP_DB_HOST=pg
           APP_DB_PORT=${{ secrets.APP_DB_PORT }}
+
           APP_DB_USER=${{ secrets.APP_DB_USER }}
           APP_DB_NAME=${{ secrets.APP_DB_NAME }}
           APP_DB_PASSWORD=${{ secrets.APP_DB_PASSWORD }}
@@ -42,9 +35,6 @@ jobs:
           NODE_ENV=production
           EOF
 
-      - name: Rebuild container
+      - name: Build and deploy
         run: |
-          cd /mnt/docker/docker-compose/node/techapi
-
-          docker compose --profile techapi build
-          docker compose --profile techapi up -d
+          docker compose up -d --build
