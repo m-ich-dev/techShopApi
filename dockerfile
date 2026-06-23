@@ -4,9 +4,12 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 
 COPY . .
+
+ENV NODE_ENV=production
 
 RUN npm run build
 
@@ -17,9 +20,12 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci --omit=dev
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev
 
 COPY --from=builder /app/dist ./dist
+
+ENV NODE_ENV=production
 
 EXPOSE 3038
 

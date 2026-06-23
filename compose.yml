@@ -1,0 +1,19 @@
+services:
+  api:
+    image: demapi:latest
+    container_name: demapi
+    build:
+      context: .
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - www
+      - pg_network
+
+networks:
+  www:
+    external: true
+
+  pg_network:
+    external: true
