@@ -1,5 +1,8 @@
-import { PostgresDialect } from "kysely";
+import type { MigrationProvider } from "kysely";
+import { FileMigrationProvider, PostgresDialect } from "kysely";
 import { Pool, type PoolConfig } from "pg";
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 
 const PORT = Number(process.env.APP_DB_PORT) || 5432;
@@ -15,6 +18,12 @@ const pgConnection: PoolConfig = {
     min: MIN,
     max: MAX,
 };
+
+export const fsProvider: MigrationProvider = new FileMigrationProvider({
+    fs,
+    path,
+    migrationFolder: path.resolve(process.cwd(),'dist/database/migrations')
+});
 
 export const dialect = new PostgresDialect({
     pool: new Pool(pgConnection)
