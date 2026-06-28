@@ -41,7 +41,7 @@ jobs:
 
       - name: Execute migrations
         run: |
-          docker compose --profile demapi run --rm npm run migrate:pr:latest
+          docker compose --profile demapi run --rm migrate
 
       - name: Build and deploy
         run: |
