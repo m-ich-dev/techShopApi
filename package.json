@@ -17,7 +17,8 @@
     "migrate:make": "kysely migrate:make",
 
     "migrate:pr:latest": "node dist/boot/database/run/migrateToLatest.js",
-
+    "migrate:pr:rollback": "node dist/boot/database/run/oneStepRollback.js",
+    
     "test": "vitest",
     "test:run": "vitest run"
   },
