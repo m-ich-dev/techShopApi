@@ -12,6 +12,15 @@ services:
       - www
       - pg_network
 
+  migrate:
+    build: .
+    command: npm run migrate:pr:latest
+    env_file:
+      - .env
+    profiles: ["demapi"]
+    networks:
+      - pg_network
+
 networks:
   www:
     external: true
