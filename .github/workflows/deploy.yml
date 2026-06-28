@@ -35,6 +35,14 @@ jobs:
           NODE_ENV=production
           EOF
 
+      - name: Build image
+        run: |
+          docker compose --profile demapi build
+
+      - name: Execute migrations
+        run: |
+          docker compose --profile demapi run --rm npm run migrate:pr:latest
+
       - name: Build and deploy
         run: |
-          docker compose up -d --build
+          docker compose --profile demapi up -d

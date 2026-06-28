@@ -7,6 +7,7 @@ services:
     env_file:
       - .env
     restart: unless-stopped
+    profiles: ["root", "api", "demapi"]
     networks:
       - www
       - pg_network
