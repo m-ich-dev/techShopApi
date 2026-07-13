@@ -4,13 +4,15 @@ import { resolveFormRequest } from "@/middlewares/resolvers/resolve-request.midd
 import { brandStoreRequest } from "@/http/v1/requests/brand/brand.store.request.js";
 import { resolveSlug } from "@/middlewares/resolvers/resolve-slug.middleware.js";
 import { brandUpdateRequest } from "@/http/v1/requests/brand/brand.update.request.js";
+import resolveReqQuery from "@/middlewares/resolvers/resolve-request-queries.middleware.js";
+import { paginateQuery } from "@/http/v1/request-queries/paginate.query.js";
 
 
 const router = Router();
 
 router.param('slug', resolveSlug);
 
-router.get('/', brandAdminController.index);
+router.get('/', resolveReqQuery(paginateQuery), brandAdminController.index);
 router.post('/', resolveFormRequest(brandStoreRequest), brandAdminController.store);
 router.get('/:slug', brandAdminController.show);
 router.patch('/:slug', resolveFormRequest(brandUpdateRequest), brandAdminController.update);

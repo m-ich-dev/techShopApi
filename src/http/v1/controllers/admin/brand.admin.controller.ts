@@ -1,15 +1,27 @@
 import Controller from "@/boot/http/controller.js";
 import type BrandService from "@/services/brand.service.js";
 import type { THttp, THttpLocals } from "@/boot/types/http.types.js";
+import type { TPaginateQuery } from "@/http/v1/request-queries/paginate.query.js";
 
 
 export default class BrandAdminController extends Controller {
     constructor(private readonly brandSerivce: BrandService) { super(); }
 
-    public index: THttp = async (req, res) => {
-        const brands = await this.brandSerivce.all();
-        return this.resOk(res, { data: brands });
-        return this.resOk(res, { data: brands });
+    public index: THttpLocals<{ reqQuery: TPaginateQuery }> = async (req, res) => {
+
+        const {
+            page,
+            limit
+        } = res.locals.reqQuery;
+
+        const { data, meta } = await this.brandSerivce.all({ page, limit });
+        const links = this.paginationLinks(req, meta);
+
+        return this.resOk(res, {
+            data,
+            links
+        });
+
     };
 
     public store: THttp = async (req, res) => {
@@ -28,7 +40,7 @@ export default class BrandAdminController extends Controller {
         const brand = await this.brandSerivce.update(req.body, slug);
         return this.resOk(res, { data: brand });
     };
-    
+
     public destroy: THttpLocals<{ slug: string }> = async (req, res) => {
         const slug = res.locals.slug;
         const result = await this.brandSerivce.delete(slug);

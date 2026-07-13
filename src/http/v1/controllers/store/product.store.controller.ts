@@ -10,6 +10,7 @@ export default class ProductStoreController extends Controller {
     public index: THttpLocals<{ reqQuery: TCatalogQuery }> = async (req, res) => {
         const {
             page,
+            limit,
             brand,
             category,
             minPrice,
@@ -21,7 +22,7 @@ export default class ProductStoreController extends Controller {
         const { data, meta } =
             await this.productService.catalog({
                 page,
-                limit: 6,
+                limit,
                 filters: {
                     brand,
                     category,
