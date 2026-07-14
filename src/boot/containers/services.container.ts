@@ -1,4 +1,4 @@
-import * as repositories from "@/boot/containers/repositories.contrainer.js";
+import * as repositories from "@/boot/containers/repositories.container.js";
 import AttributeService from "@/services/attribute.service.js";
 import BrandService from "@/services/brand.service.js";
 import CategoryService from "@/services/category.service.js";
