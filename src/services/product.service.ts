@@ -85,7 +85,7 @@ export default class ProductService extends GenerateSlug(Service) {
                 ...data, slug: updateSlug
             };
         }
-        const product = this.productRepository.update(updateData, { column: 'slug', value: slug });
+        const product = await this.productRepository.update(updateData, { column: 'slug', value: slug });
         return product;
     }
 

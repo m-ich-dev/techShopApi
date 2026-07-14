@@ -47,7 +47,7 @@ export default class ProductVariantService extends GenerateSlug(Service) {
             const updateSlug = await this.generateSlug(this.variantRepository, updateData.title);
             updateData = { ...data, slug: updateSlug };
         }
-        const variant = this.variantRepository.update(updateData, { column: 'slug', value: slug });
+        const variant = await this.variantRepository.update(updateData, { column: 'slug', value: slug });
         return variant;
     }
 
