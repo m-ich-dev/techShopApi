@@ -164,7 +164,9 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     const executer = trx ?? this.db;
 
     return await executer.updateTable(table(this.tableName).as('t'))
-      .set(data as any).where(ref(`${column}`), '=', value)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Kysely cannot infer Updateable<T> through generic table
+      .set(data as any)
+      .where(ref(`${column}`), '=', value)
       .returningAll()
       .executeTakeFirstOrThrow(
         () => HTTPError.notFound({
