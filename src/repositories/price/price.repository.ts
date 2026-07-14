@@ -4,7 +4,7 @@ import Repository from "@/boot/repositories/repository.js";
 
 
 export default class PriceRepository extends Repository<'prices'> {
-    public readonly softDeletable: boolean = true;
+    public readonly softDeletable: boolean = false;
     public readonly tableName: "prices" = 'prices';
 
     constructor(protected readonly db: Kysely<IDatabase>) { super(); }
