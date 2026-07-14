@@ -39,6 +39,6 @@ export default class CategoryService extends GenerateSlug(Service) {
         return category;
     }
     public async delete(slug: string) {
-        return await this.categoryRepository.delete({ column: 'slug', value: slug });
+        return await this.categoryRepository.softDelete({ column: 'slug', value: slug });
     }
 }
