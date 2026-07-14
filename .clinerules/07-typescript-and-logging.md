@@ -64,3 +64,9 @@ type AbstractConstructor<T = any> = abstract new (...args: any[]) => T
 Если `any` находится в инфраструктурном коде (generic helpers, mixins, utility types, адаптеры, базовые классы) и обусловлен ограничениями TypeScript или сторонней библиотеки, это считается допустимым использованием.
 
 Сообщай о таком коде как об исключении, а не как о нарушении.
+
+# Логирование
+
+Никогда не используй `console.log`, `console.error`, `console.warn`.
+
+Используй только настроенные экземпляры Pino/Pino-http из `src/boot/loggers`.
