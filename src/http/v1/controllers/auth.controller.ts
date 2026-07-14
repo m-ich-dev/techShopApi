@@ -3,13 +3,14 @@ import { HTTP_CODES } from "@/boot/enums/http.enum.js";
 import UserResource from "../resources/user/user.resource.js";
 import type { THttp } from "@/boot/types/http.types.js";
 import type AuthService from "@/services/auth.service.js";
+import Controller from "@/boot/http/controller.js";
 
 
-export default class AuthController {
+export default class AuthController extends Controller {
 
     constructor(
         private readonly auth: AuthService
-    ) { }
+    ) { super(); }
 
     public login: THttp = async (req, res) => {
 
