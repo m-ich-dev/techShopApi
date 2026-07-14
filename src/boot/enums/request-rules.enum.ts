@@ -7,7 +7,7 @@ export const REQUEST_RULES = {
     string: () => z.string(REQUEST_ERRORS.invalidString),
     number: () => z.coerce.number().refine(v => !Number.isNaN(v), REQUEST_ERRORS.invalidNumber),
     toPrice: () => z.coerce.number(REQUEST_ERRORS.invalidNumber)
-        .multipleOf(2, REQUEST_ERRORS.invalidPrecision)
+        .multipleOf(0.01, REQUEST_ERRORS.invalidPrecision)
         .nonnegative(REQUEST_ERRORS.negativeNotAllowed)
 } as const;
 
