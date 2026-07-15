@@ -6,7 +6,7 @@ import { Sluggable } from "@/boot/mixins/repository/sluggable.repository.mixin.j
 import { SoftDeletable } from "@/boot/mixins/repository/soft-deletable.repository.mixin.js";
 import HTTPError from "@/boot/http/http.error.js";
 import { ENTITY_BY_TABLE } from "@/boot/enums/entities.enum.js";
-import type { TPaginateMeta, TPaginateParams, TWhereParams } from "@/boot/types/repository.types.js";
+import type { TPaginateMeta, TPaginateParams, TPivotParams, TWhereParams } from "@/boot/types/repository.types.js";
 import { capitalize } from "@/boot/utils/capitalize.js";
 
 
@@ -78,13 +78,14 @@ export default class ProductVariantRepository extends SoftDeletable(Sluggable(Re
         page = 1,
         limit = 15,
         withTrash = false,
+        withAttrs = false,
         build
-    }: TPaginateParams<TVariantPivotQuery>) {
+    }: TPaginateParams<TVariantPivotQuery> & TPivotParams) {
 
         const pageLimit = Math.min(limit, 100);
         const offset = (page - 1) * pageLimit;
         const baseQuery = this.applyBuild(
-            this.queryWithPivot(withTrash, false),
+            this.queryWithPivot(withTrash, withAttrs),
             build
         );
 
@@ -129,9 +130,9 @@ export default class ProductVariantRepository extends SoftDeletable(Sluggable(Re
     }
 
     public async allPivot(
-        { withTrash = false }: { withTrash?: boolean }
+        { withTrash = false, withAttrs = false }: { withTrash?: boolean } & TPivotParams
     ) {
-        return await this.queryWithPivot(withTrash, true).execute();
+        return await this.queryWithPivot(withTrash, withAttrs).execute();
     }
 
     public async firstWithPivot<
@@ -139,13 +140,13 @@ export default class ProductVariantRepository extends SoftDeletable(Sluggable(Re
         Column extends keyof IDatabase[T] & string,
         Value extends SelectType<IDatabase[T][Column]>,
     >(
-        { column, value, withTrash = false }:
-            TWhereParams<Column, Value>
+        { column, value, withTrash = false, withAttrs = false }:
+            TWhereParams<Column, Value> & TPivotParams
     ) {
 
         const { ref } = this.db.dynamic;
 
-        const qr = this.queryWithPivot(withTrash, true);
+        const qr = this.queryWithPivot(withTrash, withAttrs);
 
         return await qr
             .where(ref(`t.${column}`), '=', value)
@@ -163,13 +164,13 @@ export default class ProductVariantRepository extends SoftDeletable(Sluggable(Re
         Column extends keyof IDatabase[T] & string,
         Value extends SelectType<IDatabase[T][Column]>,
     >(
-        { column, value, withTrash = false }:
-            TWhereParams<Column, Value>
+        { column, value, withTrash = false, withAttrs = false }:
+            TWhereParams<Column, Value> & TPivotParams
     ) {
 
         const { ref } = this.db.dynamic;
 
-        const qr = this.queryWithPivot(withTrash, true);
+        const qr = this.queryWithPivot(withTrash, withAttrs);
 
         return await qr
             .where(ref(`t.${column}`), '=', value)
