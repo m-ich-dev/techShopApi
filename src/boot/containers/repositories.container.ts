@@ -4,6 +4,8 @@ import BrandRepository from "@/repositories/brand/brand.repository.js";
 import AttributeRepository from "@/repositories/attribute/attribute.repository.js";
 import ProductRepository from "@/repositories/product/product.repository.js";
 import ProductVariantRepository from "@/repositories/product-variant/product-variant.repository.js";
+import ProductVariantAttributeRepository from "@/repositories/product-variant-attribute/product-variant-attribute.repository.js";
+import PriceRepository from "@/repositories/price/price.repository.js";
 import UserRepository from "@/repositories/user/user.repository.js";
 import RefreshTokenRepository from "@/repositories/token/refresh-token.repository.js";
 
@@ -13,6 +15,8 @@ const brandRepository = new BrandRepository(db);
 const attributeRepository = new AttributeRepository(db);
 const productRepository = new ProductRepository(db);
 const productVariantRepository = new ProductVariantRepository(db);
+const productVariantAttributeRepository = new ProductVariantAttributeRepository(db);
+const priceRepository = new PriceRepository(db);
 const userRepository = new UserRepository(db);
 const refreshTokenRepository = new RefreshTokenRepository(db);
 export {
@@ -21,6 +25,8 @@ export {
     attributeRepository,
     productRepository,
     productVariantRepository,
+    productVariantAttributeRepository,
+    priceRepository,
     userRepository,
     refreshTokenRepository
 };

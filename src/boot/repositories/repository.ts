@@ -152,6 +152,11 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     );
   }
 
+  public async bulkInsert<T extends TInsertable[TTable]>(data: T[], trx?: Transaction<IDatabase>) {
+    const executer = trx ?? this.db;
+    return await executer.insertInto(this.tableName).values(data).returningAll().execute();
+  }
+
   public async update<
     Column extends keyof IDatabase[TTable] & string,
     Value extends SelectType<IDatabase[TTable][Column]>,
@@ -193,7 +198,7 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     );
   }
 
-  public async transaction(callback: (trx: Transaction<IDatabase>) => Promise<unknown>) {
+  public async transaction<T>(callback: (trx: Transaction<IDatabase>) => Promise<T>): Promise<T> {
     return await this.db.transaction().execute(callback);
   }
 
