@@ -64,6 +64,10 @@ export default class ProductService extends GenerateSlug(Service) {
         return product;
     }
 
+    public async masterShow(slug: string) {
+        return await this.variantRepository.firstWithPivot({ column: 'slug', value: slug });
+    }
+
     public async showPivotBySlug(slug: string) {
         const product = await this.productRepository.firstWithPivot({ column: 'slug', value: slug });
         return product;

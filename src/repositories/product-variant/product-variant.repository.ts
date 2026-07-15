@@ -18,7 +18,7 @@ export default class ProductVariantRepository extends SoftDeletable(Sluggable(Re
 
     constructor(protected readonly db: Kysely<IDatabase>) { super(); }
 
-    private queryWithPivot(withTrash: boolean) {
+    private queryWithPivot(withTrash: boolean, withAttrs: boolean) {
 
         const baseQ = this.db
             .selectFrom(`${this.tableName} as t`)
@@ -49,27 +49,29 @@ export default class ProductVariantRepository extends SoftDeletable(Sluggable(Re
                         .select(['prices.id', 'prices.price as current', 'prices.oldPrice as old'])
                         .whereRef('prices.id', '=', 't.currentPriceId')
                 ).as('price'),
-                jsonArrayFrom(
-                    eb
-                        .selectFrom('productVariantAttributes')
-                        .innerJoin(
-                            'attributes',
-                            'attributes.id',
-                            'productVariantAttributes.attributeId'
-                        )
-                        .select([
-                            'attributes.id',
-                            'attributes.title',
-                            'productVariantAttributes.value'
-                        ])
-                        .whereRef(
-                            'productVariantAttributes.productVariantId',
-                            '=',
-                            't.id'
-                        )
-                ).as('attributes')
 
-            ]);
+
+            ])
+            .$if(withAttrs, (qb) => qb.select((eb) => [jsonArrayFrom(
+                eb
+                    .selectFrom('productVariantAttributes')
+                    .innerJoin(
+                        'attributes',
+                        'attributes.id',
+                        'productVariantAttributes.attributeId'
+                    )
+                    .select([
+                        'attributes.id',
+                        'attributes.title',
+                        'productVariantAttributes.value'
+                    ])
+                    .whereRef(
+                        'productVariantAttributes.productVariantId',
+                        '=',
+                        't.id'
+                    )
+            ).as('attributes')]))
+            ;
     }
 
     public async paginatePivot({
@@ -82,7 +84,7 @@ export default class ProductVariantRepository extends SoftDeletable(Sluggable(Re
         const pageLimit = Math.min(limit, 100);
         const offset = (page - 1) * pageLimit;
         const baseQuery = this.applyBuild(
-            this.queryWithPivot(withTrash),
+            this.queryWithPivot(withTrash, false),
             build
         );
 
@@ -129,7 +131,7 @@ export default class ProductVariantRepository extends SoftDeletable(Sluggable(Re
     public async allPivot(
         { withTrash = false }: { withTrash?: boolean }
     ) {
-        return await this.queryWithPivot(withTrash).execute();
+        return await this.queryWithPivot(withTrash, true).execute();
     }
 
     public async firstWithPivot<
@@ -143,7 +145,7 @@ export default class ProductVariantRepository extends SoftDeletable(Sluggable(Re
 
         const { ref } = this.db.dynamic;
 
-        const qr = this.queryWithPivot(withTrash);
+        const qr = this.queryWithPivot(withTrash, true);
 
         return await qr
             .where(ref(`t.${column}`), '=', value)
@@ -167,7 +169,7 @@ export default class ProductVariantRepository extends SoftDeletable(Sluggable(Re
 
         const { ref } = this.db.dynamic;
 
-        const qr = this.queryWithPivot(withTrash);
+        const qr = this.queryWithPivot(withTrash, true);
 
         return await qr
             .where(ref(`t.${column}`), '=', value)
