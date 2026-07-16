@@ -32,6 +32,11 @@ export default class ProductAdminController extends Controller {
         const product = await this.productService.store(req.body);
         return this.resOk(res, { data: product });
     };
+
+    public masterStore: THttp = async (req, res) => {
+        const result = await this.productService.masterCreate(req.body);
+        return this.resOk(res, { data: result });
+    };
     public show: THttpLocals<{ slug: string }> = async (req, res) => {
         const slug = res.locals.slug;
         const product = await this.productService.show(slug);
