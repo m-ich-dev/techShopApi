@@ -3,9 +3,9 @@ import type { IDatabase } from "@/boot/database/schemas/index.schema.js";
 import Repository from "@/boot/repositories/repository.js";
 
 
-export default class PriceRepository extends Repository<'prices'> {
+export default class ProductVariantAttributeRepository extends Repository<'productVariantAttributes'> {
     public readonly softDeletable: boolean = false;
-    public readonly tableName: "prices" = 'prices';
+    public readonly tableName: "productVariantAttributes" = 'productVariantAttributes';
 
     constructor(protected readonly db: Kysely<IDatabase>) { super(); }
 }

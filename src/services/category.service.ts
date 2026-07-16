@@ -1,15 +1,22 @@
-import Service from "../boot/service.js";
-import { GenerateSlug } from "../boot/mixins/service/sluggable-service.mixin.js";
-import type CategoryRepository from "../repositories/category/category.repository.js";
-import type { TCategoryStoreRequest } from "../http/v1/requests/category/category.store.request.js";
-import type { TCategoryUpdateRequest } from "../http/v1/requests/category/category.update.request.js";
+import Service from "@/boot/service.js";
+import { GenerateSlug } from "@/boot/mixins/service/sluggable-service.mixin.js";
+import type CategoryRepository from "@/repositories/category/category.repository.js";
+import type { TCategoryStoreRequest } from "@/http/v1/requests/category/category.store.request.js";
+import type { TCategoryUpdateRequest } from "@/http/v1/requests/category/category.update.request.js";
+import type { TPaginateParams } from "@/boot/types/repository.types.js";
 
 
 export default class CategoryService extends GenerateSlug(Service) {
     constructor(private readonly categoryRepository: CategoryRepository) { super(); }
 
-    public async all() {
-        const category = await this.categoryRepository.all({});
+    public async all({
+        page,
+        limit,
+        withTrash
+    }:
+        TPaginateParams
+    ) {
+        const category = await this.categoryRepository.paginate({ page, limit, withTrash });
         return category;
     }
     public async showBySlug(slug: string) {
@@ -32,6 +39,6 @@ export default class CategoryService extends GenerateSlug(Service) {
         return category;
     }
     public async delete(slug: string) {
-        return await this.categoryRepository.delete({ column: 'slug', value: slug });
+        return await this.categoryRepository.softDelete({ column: 'slug', value: slug });
     }
 }

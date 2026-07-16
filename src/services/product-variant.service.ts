@@ -3,13 +3,20 @@ import { GenerateSlug } from "@/boot/mixins/service/sluggable-service.mixin.js";
 import type ProductVariantRepository from "@/repositories/product-variant/product-variant.repository.js";
 import type { TVariantStoreRequest } from "@/http/v1/requests/product-variant/product-variant.store.request.js";
 import type { TVariantUpdateRequest } from "@/http/v1/requests/product-variant/product-variant.update.request.js";
+import type { TPaginateParams } from "@/boot/types/repository.types.js";
 
 
 export default class ProductVariantService extends GenerateSlug(Service) {
     constructor(private readonly variantRepository: ProductVariantRepository) { super(); }
 
-    public async all() {
-        const variants = await this.variantRepository.all({});
+    public async all({
+        page,
+        limit,
+        withTrash
+    }:
+        TPaginateParams
+    ) {
+        const variants = await this.variantRepository.paginate({ page, limit, withTrash });
         return variants;
     }
 
@@ -19,12 +26,12 @@ export default class ProductVariantService extends GenerateSlug(Service) {
     }
 
     public async allPivot() {
-        const variants = await this.variantRepository.allPivot({});
+        const variants = await this.variantRepository.allPivot({ withAttrs: true });
         return variants;
     }
 
     public async showPivotBySlug(slug: string) {
-        const variant = await this.variantRepository.firstWithPivot({ column: 'slug', value: slug });
+        const variant = await this.variantRepository.firstWithPivot({ column: 'slug', value: slug, withAttrs: true });
         return variant;
     }
 
@@ -40,7 +47,7 @@ export default class ProductVariantService extends GenerateSlug(Service) {
             const updateSlug = await this.generateSlug(this.variantRepository, updateData.title);
             updateData = { ...data, slug: updateSlug };
         }
-        const variant = this.variantRepository.update(updateData, { column: 'slug', value: slug });
+        const variant = await this.variantRepository.update(updateData, { column: 'slug', value: slug });
         return variant;
     }
 

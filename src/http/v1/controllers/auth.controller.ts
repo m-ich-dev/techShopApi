@@ -1,26 +1,32 @@
+import type { Response } from "express";
 import HTTPError from "@/boot/http/http.error.js";
 import { HTTP_CODES } from "@/boot/enums/http.enum.js";
 import UserResource from "../resources/user/user.resource.js";
 import type { THttp } from "@/boot/types/http.types.js";
 import type AuthService from "@/services/auth.service.js";
+import Controller from "@/boot/http/controller.js";
 
 
-export default class AuthController {
+export default class AuthController extends Controller {
 
     constructor(
         private readonly auth: AuthService
-    ) { }
+    ) { super(); }
 
-    public login: THttp = async (req, res) => {
-
-        const { tokens, publicUser } = await this.auth.login(req.body);
-
-        res.cookie('refreshToken', tokens.refreshToken, {
+    private setRefreshCookie(res: Response, refreshToken: string): void {
+        res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
             maxAge: 30 * 24 * 60 * 60 * 1000
         });
+    }
+
+    public login: THttp = async (req, res) => {
+
+        const { tokens, publicUser } = await this.auth.login(req.body);
+
+        this.setRefreshCookie(res, tokens.refreshToken);
         return res
             .status(HTTP_CODES.OK)
             .set('authorization', `Bearer ${tokens.accessToken}`)
@@ -38,12 +44,7 @@ export default class AuthController {
 
         const { tokens, publicUser } = await this.auth.refresh(refreshToken);
 
-        res.cookie('refreshToken', tokens.refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            maxAge: 30 * 24 * 60 * 60 * 1000
-        });
+        this.setRefreshCookie(res, tokens.refreshToken);
 
         return res
             .status(HTTP_CODES.OK)
@@ -55,12 +56,7 @@ export default class AuthController {
 
         const { publicUser, tokens } = await this.auth.register(req.body);
 
-        res.cookie('refreshToken', tokens.refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            maxAge: 30 * 24 * 60 * 60 * 1000
-        });
+        this.setRefreshCookie(res, tokens.refreshToken);
 
         return res
             .status(HTTP_CODES.CREATED)

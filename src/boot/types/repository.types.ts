@@ -8,6 +8,7 @@ export type TBuild<Q extends TSelectQueryBuilder> = (qb: TQuery<Q>) => TQuery<Q>
 
 export type TWhereParams<C, V> = { column: C, value: V, withTrash?: boolean };
 export type TSelectParams = Partial<{ withTrash?: boolean }>;
+export type TPivotParams = Partial<{ withAttrs?: boolean }>;
 export type TUpdateParams<C, V> = { column: C, value: V };
 export type TDeleteParams<C, V> = { column: C, value: V };
 export type TSoftDeleteParams<C, V> = { column: C, value: V };

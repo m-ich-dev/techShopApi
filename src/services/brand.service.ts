@@ -3,13 +3,18 @@ import { GenerateSlug } from "@/boot/mixins/service/sluggable-service.mixin.js";
 import type BrandRepository from "@/repositories/brand/brand.repository.js";
 import type { TBrandStoreRequest } from "@/http/v1/requests/brand/brand.store.request.js";
 import type { TBrandUpdateRequest } from "@/http/v1/requests/brand/brand.update.request.js";
+import type { TPaginateParams } from "@/boot/types/repository.types.js";
 
 
 export default class BrandService extends GenerateSlug(Service) {
     constructor(private readonly brandRepository: BrandRepository) { super(); }
 
-    public async all() {
-        const brands = await this.brandRepository.all({});
+    public async all({
+        page,
+        limit,
+        withTrash
+    }: TPaginateParams) {
+        const brands = await this.brandRepository.paginate({ page, limit, withTrash });
         return brands;
     }
 

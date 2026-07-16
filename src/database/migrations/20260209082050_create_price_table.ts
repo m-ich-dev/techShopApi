@@ -13,11 +13,9 @@ export async function up(db: Kysely<any>): Promise<void> {
 
         .addColumn('price', 'decimal', (col) => col.defaultTo(0).notNull())
         .addColumn('old_price', 'decimal', (col) => col.defaultTo(0).notNull())
-        .addColumn('discount', 'integer', (col) => col.defaultTo(0).notNull())
 
         .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull())
         .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull())
-        .addColumn('deleted_at', 'timestamptz')
         .execute();
 
     await db.schema

@@ -12,10 +12,11 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
   public readonly abstract softDeletable: boolean;
   protected readonly abstract db: Kysely<IDatabase>;
 
-  protected qr(withTrash = false) {
+  protected qr(withTrash = false, trx?: Transaction<IDatabase>) {
     const { table, ref } = this.db.dynamic;
+    const executor = trx ?? this.db;
 
-    return this.db
+    return executor
       .selectFrom(table(this.tableName).as('t'))
       .selectAll('t')
       .$if(this.softDeletable && !withTrash, (qb) => qb.where(ref('t.deletedAt'), 'is', null));
@@ -47,7 +48,7 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     limit = 15,
     withTrash = false,
     build
-  }: TPaginateParams) {
+  }: TPaginateParams, trx?: Transaction<IDatabase>) {
 
     const { ref } = this.db.dynamic;
 
@@ -55,7 +56,7 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     const offset = (page - 1) * pageLimit;
 
     const baseQuery = this.applyBuild(
-      this.qr(withTrash),
+      this.qr(withTrash, trx),
       build
     );
 
@@ -101,8 +102,8 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
 
   public async all({
     withTrash = false
-  }: TSelectParams = {}) {
-    return await this.qr(withTrash).execute();
+  }: TSelectParams = {}, trx?: Transaction<IDatabase>) {
+    return await this.qr(withTrash, trx).execute();
   }
 
   public async first<
@@ -110,12 +111,13 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     Value extends SelectType<IDatabase[TTable][Column]>,
   >(
     { column, value, withTrash = false }:
-      TWhereParams<Column, Value>
+      TWhereParams<Column, Value>,
+    trx?: Transaction<IDatabase>
   ) {
 
     const { ref } = this.db.dynamic;
 
-    const qr = this.qr(withTrash);
+    const qr = this.qr(withTrash, trx);
 
     return await qr
       .where(ref(`t.${column}`), '=', value)
@@ -133,12 +135,13 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     Value extends SelectType<IDatabase[TTable][Column]>,
   >(
     { column, value, withTrash = false }:
-      TWhereParams<Column, Value>
+      TWhereParams<Column, Value>,
+    trx?: Transaction<IDatabase>
   ) {
 
     const { ref } = this.db.dynamic;
 
-    const qr = this.qr(withTrash);
+    const qr = this.qr(withTrash, trx);
     return await qr
       .where(ref(`t.${column}`), '=', value)
       .orderBy('t.id')
@@ -150,6 +153,11 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     return await executer.insertInto(this.tableName).values(data).returningAll().executeTakeFirstOrThrow(
       () => HTTPError.internalServer({ message: `Failed to insert and retrieve data in ${ENTITY_BY_TABLE[this.tableName]}` })
     );
+  }
+
+  public async bulkInsert<T extends TInsertable[TTable]>(data: T[], trx?: Transaction<IDatabase>) {
+    const executer = trx ?? this.db;
+    return await executer.insertInto(this.tableName).values(data).returningAll().execute();
   }
 
   public async update<
@@ -164,7 +172,9 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     const executer = trx ?? this.db;
 
     return await executer.updateTable(table(this.tableName).as('t'))
-      .set(data as any).where(ref(`${column}`), '=', value)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Kysely cannot infer Updateable<T> through generic table
+      .set(data as any)
+      .where(ref(`${column}`), '=', value)
       .returningAll()
       .executeTakeFirstOrThrow(
         () => HTTPError.notFound({
@@ -191,7 +201,7 @@ export default abstract class Repository<TTable extends keyof IDatabase> {
     );
   }
 
-  public async transaction(callback: (trx: Transaction<IDatabase>) => Promise<unknown>) {
+  public async transaction<T>(callback: (trx: Transaction<IDatabase>) => Promise<T>): Promise<T> {
     return await this.db.transaction().execute(callback);
   }
 
