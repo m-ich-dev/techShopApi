@@ -8,6 +8,11 @@ import type { IProductVariantTable } from "@/boot/database/schemas/product-varia
 import type { IProductVariantAttributeTable } from "@/boot/database/schemas/product-variant-atrribute.schema.js";
 import type { IUserTable } from "./user.schema.js";
 import type { IRefreshTokenTable } from "./refresh-token.schema.js";
+import type { IOrderStatusTable } from "@/boot/database/schemas/order-status.schema.js";
+import type { IOrderTable } from "@/boot/database/schemas/order.schema.js";
+import type { IOrderItemTable } from "@/boot/database/schemas/order-item.schema.js";
+import type { ICartTable } from "@/boot/database/schemas/cart.schema.js";
+import type { IBookmarkTable } from "@/boot/database/schemas/bookmark.schema.js";
 
 
 export interface IDatabase {
@@ -20,6 +25,11 @@ export interface IDatabase {
     productVariantAttributes: IProductVariantAttributeTable;
     users: IUserTable;
     refreshTokens: IRefreshTokenTable;
+    orderStatuses: IOrderStatusTable;
+    orders: IOrderTable;
+    orderItems: IOrderItemTable;
+    cart: ICartTable;
+    bookmarks: IBookmarkTable;
 }
 
 export type TSelectable = {

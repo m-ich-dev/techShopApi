@@ -10,5 +10,10 @@ export const ENTITY_BY_TABLE: Record<keyof IDatabase, string> = {
     productVariants: 'product variant',
     productVariantAttributes: 'product variant attribute',
     users: 'user',
-    refreshTokens: 'refresh token'
+    refreshTokens: 'refresh token',
+    orderStatuses: 'order status',
+    orders: 'order',
+    orderItems: 'order item',
+    cart: 'cart',
+    bookmarks: 'bookmark'
 } as const;
