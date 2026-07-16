@@ -6,6 +6,7 @@ import ProductService from "@/services/product.service.js";
 import ProductVariantService from "@/services/product-variant.service.js";
 import AuthService from "@/services/auth.service.js";
 import JWTService from "@/services/jwt.service.js";
+import OrderStatusService from "@/services/order-status.service.js";
 
 
 const categoryService = new CategoryService(repositories.categoryRepository);
@@ -24,6 +25,7 @@ const authService = new AuthService(
     repositories.refreshTokenRepository,
     JwtService
 );
+const orderStatusService = new OrderStatusService(repositories.orderStatusRepository);
 
 
 export {
@@ -33,5 +35,6 @@ export {
     productService,
     productVariantService,
     authService,
-    JwtService
+    JwtService,
+    orderStatusService
 };

@@ -3,6 +3,7 @@ import BrandAdminController from "@/http/v1/controllers/admin/brand.admin.contro
 import CategoryAdminController from "@/http/v1/controllers/admin/category.admin.controller.js";
 import ProductVariantAdminController from "@/http/v1/controllers/admin/product-variant.admin.controller.js";
 import ProductAdminController from "@/http/v1/controllers/admin/product.admin.controller.js";
+import OrderStatusAdminController from "@/http/v1/controllers/admin/order-status.admin.controller.js";
 import BrandStoreController from "@/http/v1/controllers/store/brand.store.controller.js";
 import CategoryStoreController from "@/http/v1/controllers/store/category.store.controller.js";
 import * as services from "@/boot/containers/services.container.js";
@@ -25,6 +26,8 @@ const productVariantAdminController = new ProductVariantAdminController(services
 
 const authController = new AuthController(services.authService);
 
+const orderStatusAdminController = new OrderStatusAdminController(services.orderStatusService);
+
 export {
     categoryAdminController,
     categoryStoreController,
@@ -39,5 +42,7 @@ export {
 
     productVariantAdminController,
 
-    authController
+    authController,
+
+    orderStatusAdminController
 };
