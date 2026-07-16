@@ -7,6 +7,7 @@ import ProductVariantService from "@/services/product-variant.service.js";
 import AuthService from "@/services/auth.service.js";
 import JWTService from "@/services/jwt.service.js";
 import OrderStatusService from "@/services/order-status.service.js";
+import CartService from "@/services/cart.service.js";
 
 
 const categoryService = new CategoryService(repositories.categoryRepository);
@@ -26,6 +27,7 @@ const authService = new AuthService(
     JwtService
 );
 const orderStatusService = new OrderStatusService(repositories.orderStatusRepository);
+const cartService = new CartService(repositories.cartRepository, repositories.productVariantRepository);
 
 
 export {
@@ -36,5 +38,6 @@ export {
     productVariantService,
     authService,
     JwtService,
-    orderStatusService
+    orderStatusService,
+    cartService
 };

@@ -6,6 +6,7 @@ import ProductAdminController from "@/http/v1/controllers/admin/product.admin.co
 import OrderStatusAdminController from "@/http/v1/controllers/admin/order-status.admin.controller.js";
 import BrandStoreController from "@/http/v1/controllers/store/brand.store.controller.js";
 import CategoryStoreController from "@/http/v1/controllers/store/category.store.controller.js";
+import CartStoreController from "@/http/v1/controllers/store/cart.store.controller.js";
 import * as services from "@/boot/containers/services.container.js";
 import AuthController from "@/http/v1/controllers/auth.controller.js";
 import ProductStoreController from "@/http/v1/controllers/store/product.store.controller.js";
@@ -28,6 +29,8 @@ const authController = new AuthController(services.authService);
 
 const orderStatusAdminController = new OrderStatusAdminController(services.orderStatusService);
 
+const cartStoreController = new CartStoreController(services.cartService);
+
 export {
     categoryAdminController,
     categoryStoreController,
@@ -44,5 +47,7 @@ export {
 
     authController,
 
-    orderStatusAdminController
+    orderStatusAdminController,
+
+    cartStoreController
 };
