@@ -1,5 +1,6 @@
 import z from "zod";
 import { REQUEST_ERRORS, REQUEST_RULES } from "@/boot/enums/request-rules.enum.js";
+import slugify from "@/boot/utils/slugify.js";
 
 
 const attributeSchema = z.object({
@@ -28,17 +29,24 @@ const parentSchema = z.object({
     title: REQUEST_RULES.title()
 });
 
+const variantsArray = z.array(variantSchema)
+    .min(1)
+    .refine(arr => {
+        const slugs = arr.map(v => slugify(v.title));
+        return new Set(slugs).size === slugs.length;
+    }, "Duplicate variant titles");
+
 
 export const masterProductRequest = z.discriminatedUnion('type', [
     z.object({
         type: z.literal('attach'),
         parentId: REQUEST_RULES.number(),
-        variants: z.array(variantSchema).min(1)
+        variants: variantsArray
     }),
     z.object({
         type: z.literal('create'),
         parent: parentSchema,
-        variants: z.array(variantSchema).min(1)
+        variants: variantsArray
     })
 ]);
 
