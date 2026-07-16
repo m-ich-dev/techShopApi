@@ -26,12 +26,12 @@ export default class ProductVariantService extends GenerateSlug(Service) {
     }
 
     public async allPivot() {
-        const variants = await this.variantRepository.allPivot({});
+        const variants = await this.variantRepository.allPivot({ withAttrs: true });
         return variants;
     }
 
     public async showPivotBySlug(slug: string) {
-        const variant = await this.variantRepository.firstWithPivot({ column: 'slug', value: slug });
+        const variant = await this.variantRepository.firstWithPivot({ column: 'slug', value: slug, withAttrs: true });
         return variant;
     }
 
