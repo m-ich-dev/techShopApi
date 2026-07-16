@@ -1,14 +1,26 @@
 import Controller from "@/boot/http/controller.js";
 import type CategoryService from "@/services/category.service.js";
 import type { THttp, THttpLocals } from "@/boot/types/http.types.js";
+import type { TPaginateQuery } from "@/http/v1/request-queries/paginate.query.js";
 
 
 export default class CategoryAdminController extends Controller {
     constructor(private readonly categoryService: CategoryService) { super(); }
 
-    public index: THttp = async (req, res) => {
-        const categories = await this.categoryService.all();
-        return this.resOk(res, { data: categories });
+    public index: THttpLocals<{ reqQuery: TPaginateQuery }> = async (req, res) => {
+
+        const {
+            page,
+            limit
+        } = res.locals.reqQuery;
+
+        const { data, meta } = await this.categoryService.all({ page, limit });
+        const links = this.paginationLinks(req, meta);
+
+        return this.resOk(res, {
+            data,
+            links
+        });
     };
 
     public store: THttp = async (req, res) => {

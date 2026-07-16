@@ -28,6 +28,7 @@ export function SoftDeletable<
             const executer = trx ?? this.db;
 
             return await executer.updateTable(table(this.tableName).as('t'))
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Kysely cannot infer partial update shape for generic table
                 .set({ deletedAt: sql`now()` } as any)
                 .where(ref('deletedAt'), 'is', null)
                 .where(ref(`${column}`), '=', value)
@@ -42,6 +43,7 @@ export function SoftDeletable<
     }
 
     return SoftDeletableRepository as unknown as TBase & {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TypeScript limitation for generic mixin constructor
         new(...args: any[]): {
             softDelete<
                 Column extends keyof IDatabase[TInstanceTable] & string,

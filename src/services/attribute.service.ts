@@ -3,13 +3,20 @@ import { GenerateSlug } from "@/boot/mixins/service/sluggable-service.mixin.js";
 import type AttributeRepository from "@/repositories/attribute/attribute.repository.js";
 import type { TAttributeStoreRequest } from "@/http/v1/requests/attribute/attribute.store.request.js";
 import type { TAttributeUpdateRequest } from "@/http/v1/requests/attribute/attribute.update.request.js";
+import type { TPaginateParams } from "@/boot/types/repository.types.js";
 
 
 export default class AttributeService extends GenerateSlug(Service) {
     constructor(private readonly attributeRepository: AttributeRepository) { super(); }
 
-    public async all() {
-        const attributes = await this.attributeRepository.all({});
+    public async all({
+        page,
+        limit,
+        withTrash
+    }:
+        TPaginateParams
+    ) {
+        const attributes = await this.attributeRepository.paginate({ page, limit, withTrash });
         return attributes;
     }
 

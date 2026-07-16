@@ -17,8 +17,8 @@ export default class ProductService extends GenerateSlug(Service) {
 
     public async all(
         {
-            page = 1,
-            limit = 15,
+            page,
+            limit,
             withTrash = false
         }:
             TPaginateParams
@@ -64,6 +64,14 @@ export default class ProductService extends GenerateSlug(Service) {
         return product;
     }
 
+    public async masterShow(slug: string) {
+        return await this.variantRepository.firstWithPivot({
+            column: 'slug',
+            value: slug,
+            withAttrs: true
+        });
+    }
+
     public async showPivotBySlug(slug: string) {
         const product = await this.productRepository.firstWithPivot({ column: 'slug', value: slug });
         return product;
@@ -85,7 +93,7 @@ export default class ProductService extends GenerateSlug(Service) {
                 ...data, slug: updateSlug
             };
         }
-        const product = this.productRepository.update(updateData, { column: 'slug', value: slug });
+        const product = await this.productRepository.update(updateData, { column: 'slug', value: slug });
         return product;
     }
 

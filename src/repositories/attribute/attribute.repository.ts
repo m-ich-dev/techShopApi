@@ -7,7 +7,7 @@ import { SoftDeletable } from "@/boot/mixins/repository/soft-deletable.repositor
 
 export default class AttributeRepository extends SoftDeletable(Sluggable(Repository<'attributes'>)) {
     public readonly tableName: "attributes" = 'attributes';
-    public softDeletable: boolean = true;
+    public readonly softDeletable: boolean = true;
 
     constructor(protected readonly db: Kysely<IDatabase>) { super(); }
 }
