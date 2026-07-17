@@ -1,56 +1,37 @@
 import Controller from "@/boot/http/controller.js";
-import HTTPError from "@/boot/http/http.error.js";
 import type CartService from "@/services/cart.service.js";
-import type { THttp } from "@/boot/types/http.types.js";
+import type { THttpLocals } from "@/boot/types/http.types.js";
 import CartResource from "@/http/v1/resources/cart/cart.resource.js";
 
 
 export default class CartStoreController extends Controller {
     constructor(private readonly cartService: CartService) { super(); }
 
-    public index: THttp = async (req, res) => {
-        const userId = this.getUserId(req);
+    public index: THttpLocals<{ userId: string }> = async (_req, res) => {
+        const { userId } = res.locals;
         const items = await this.cartService.all(userId);
 
         return this.resOk(res, { data: CartResource.collection(items) });
     };
 
-    public add: THttp = async (req, res) => {
-        const userId = this.getUserId(req);
+    public add: THttpLocals<{ userId: string }> = async (req, res) => {
+        const { userId } = res.locals;
         const item = await this.cartService.add(userId, req.body);
 
-        return this.resOk(res, { data: item });
+        return this.resOk(res, { data: CartResource.transform(item) });
     };
 
-    public update: THttp<{ id: string }> = async (req, res) => {
-        const userId = this.getUserId(req);
-        const cartItemId = this.parseId(req.params.id);
-        const item = await this.cartService.updateQuantity(userId, cartItemId, req.body);
+    public update: THttpLocals<{ userId: string; id: number }> = async (req, res) => {
+        const { userId, id } = res.locals;
+        const item = await this.cartService.updateQuantity(userId, id, req.body);
 
-        return this.resOk(res, { data: item });
+        return this.resOk(res, { data: CartResource.transform(item) });
     };
 
-    public destroy: THttp<{ id: string }> = async (req, res) => {
-        const userId = this.getUserId(req);
-        const cartItemId = this.parseId(req.params.id);
-        const result = await this.cartService.remove(userId, cartItemId);
+    public destroy: THttpLocals<{ userId: string; id: number }> = async (_req, res) => {
+        const { userId, id } = res.locals;
+        const result = await this.cartService.remove(userId, id);
 
         return this.resOk(res, { data: result });
     };
-
-    private getUserId(req: Parameters<THttp>[0]): string {
-        const userId = req.user?.userId;
-        if (!userId) {
-            throw HTTPError.unauthorized({ message: 'User is not authenticated' });
-        }
-        return userId;
-    }
-
-    private parseId(raw: string): number {
-        const id = Number(raw);
-        if (!Number.isInteger(id) || id <= 0) {
-            throw HTTPError.badRequest({ message: 'id must be a positive integer', detail: { path: 'id', message: `with value: ${raw}` } });
-        }
-        return id;
-    }
 }

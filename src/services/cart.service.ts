@@ -18,7 +18,8 @@ export default class CartService extends Service {
     public async add(userId: string, { productVariantId, quantity }: TCartAddRequest) {
         await this.productVariantRepository.first({ column: 'id', value: productVariantId });
 
-        return await this.cartRepository.addOrIncrement(userId, productVariantId, quantity);
+        const item = await this.cartRepository.addOrIncrement(userId, productVariantId, quantity);
+        return await this.cartRepository.firstWithVariant(item.id);
     }
 
     /**
@@ -29,10 +30,11 @@ export default class CartService extends Service {
     public async updateQuantity(userId: string, cartItemId: number, data: TCartUpdateRequest) {
         await this.cartRepository.firstOwnedByUser(cartItemId, userId);
 
-        return await this.cartRepository.update(
+        await this.cartRepository.update(
             { quantity: data.quantity },
             { column: 'id', value: cartItemId }
         );
+        return await this.cartRepository.firstWithVariant(cartItemId);
     }
 
     /**

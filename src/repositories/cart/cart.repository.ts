@@ -82,6 +82,48 @@ export default class CartRepository extends Repository<'cart'> {
     }
 
     /**
+     * Находит запись корзины по id с данными варианта товара и ценой.
+     * Копия cartWithVariants, но для одной записи по id.
+     */
+    public async firstWithVariant(id: number, trx?: Transaction<IDatabase>) {
+        const executer = trx ?? this.db;
+
+        return await executer
+            .selectFrom(`${this.tableName} as t`)
+            .where('t.id', '=', id)
+            .select([
+                't.id',
+                't.quantity'
+            ])
+            .select((eb) => jsonObjectFrom(
+                eb.selectFrom('productVariants')
+                    .whereRef('productVariants.id', '=', 't.productVariantId')
+                    .where('productVariants.deletedAt', 'is', null)
+                    .select([
+                        'productVariants.id',
+                        'productVariants.title',
+                        'productVariants.slug',
+                        'productVariants.stock'
+                    ])
+                    .select((eb2) => jsonObjectFrom(
+                        eb2.selectFrom('prices')
+                            .whereRef('prices.id', '=', 'productVariants.currentPriceId')
+                            .where('prices.deletedAt', 'is', null)
+                            .select([
+                                'prices.price as current',
+                                'prices.oldPrice as old'
+                            ])
+                    ).as('price'))
+            ).as('variant'))
+            .executeTakeFirstOrThrow(
+                () => HTTPError.notFound({
+                    message: `${capitalize(ENTITY_BY_TABLE[this.tableName])} item not found`,
+                    detail: { path: 'id', message: `with value: ${id}` }
+                })
+            );
+    }
+
+    /**
      * Находит запись корзины по id с проверкой принадлежности пользователю.
      * Бросает notFound, если запись не существует или принадлежит другому пользователю.
      */

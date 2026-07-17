@@ -1,12 +1,12 @@
 import z from "zod";
-import { REQUEST_ERRORS } from "@/boot/enums/request-rules.enum.js";
+import { REQUEST_RULES, REQUEST_ERRORS } from "@/boot/enums/request-rules.enum.js";
 
 
 export const cartAddRequest = z.object({
-    productVariantId: z.coerce.number(REQUEST_ERRORS.invalidNumber)
+    productVariantId: REQUEST_RULES.number()
         .int(REQUEST_ERRORS.invalidNumber)
         .positive(REQUEST_ERRORS.negativeNotAllowed),
-    quantity: z.coerce.number(REQUEST_ERRORS.invalidNumber)
+    quantity: REQUEST_RULES.number()
         .int(REQUEST_ERRORS.invalidNumber)
         .positive(REQUEST_ERRORS.negativeNotAllowed)
 });
