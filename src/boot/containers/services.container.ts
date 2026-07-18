@@ -8,6 +8,8 @@ import AuthService from "@/services/auth.service.js";
 import JWTService from "@/services/jwt.service.js";
 import OrderStatusService from "@/services/order-status.service.js";
 import CartService from "@/services/cart.service.js";
+import OrderService from "@/services/order.service.js";
+import OrderCheckoutDomain from "@/domain/order/order-checkout.domain.js";
 
 
 const categoryService = new CategoryService(repositories.categoryRepository);
@@ -29,6 +31,15 @@ const authService = new AuthService(
 const orderStatusService = new OrderStatusService(repositories.orderStatusRepository);
 const cartService = new CartService(repositories.cartRepository, repositories.productVariantRepository);
 
+const orderCheckoutDomain = new OrderCheckoutDomain(
+    repositories.cartRepository,
+    repositories.orderRepository,
+    repositories.orderItemRepository,
+    repositories.orderStatusRepository,
+    repositories.productVariantRepository
+);
+const orderService = new OrderService(orderCheckoutDomain);
+
 
 export {
     categoryService,
@@ -39,5 +50,6 @@ export {
     authService,
     JwtService,
     orderStatusService,
-    cartService
+    cartService,
+    orderService
 };

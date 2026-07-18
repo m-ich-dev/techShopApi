@@ -1,4 +1,4 @@
-import type { Kysely, SelectType } from "kysely";
+import type { Kysely, SelectType, Transaction } from "kysely";
 import type { IDatabase } from "@/boot/database/schemas/index.schema.js";
 import { jsonArrayFrom, jsonObjectFrom } from "kysely/helpers/postgres";
 import Repository from "@/boot/repositories/repository.js";
@@ -182,5 +182,29 @@ export default class ProductVariantRepository extends SoftDeletable(Sluggable(Re
     //         .where('productVariants.parentId', '=', parentId)
     //         .execute();
     // }
+
+    /**
+     * Атомарное списание остатка варианта товара.
+     * Условие stock >= quantity в WHERE защищает от race condition:
+     * если кто-то параллельно уже списал остаток, UPDATE затронет 0 строк.
+     * Возвращает обновлённую запись, либо undefined (недостаточно stock).
+     */
+    public async decrementStockIfAvailable(
+        variantId: number,
+        quantity: number,
+        trx?: Transaction<IDatabase>
+    ) {
+        const executer = trx ?? this.db;
+
+        return await executer
+            .updateTable(this.tableName)
+            .set((eb) => ({
+                stock: eb('stock', '-', quantity)
+            }))
+            .where('id', '=', variantId)
+            .where('stock', '>=', quantity)
+            .returningAll()
+            .executeTakeFirst();
+    }
 
 }

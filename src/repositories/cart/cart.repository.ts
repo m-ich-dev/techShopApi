@@ -124,6 +124,19 @@ export default class CartRepository extends Repository<'cart'> {
     }
 
     /**
+     * Удаление всех позиций корзины пользователя одним запросом.
+     * Используется при checkout после успешного создания заказа.
+     */
+    public async deleteByUserId(userId: string, trx?: Transaction<IDatabase>) {
+        const executer = trx ?? this.db;
+
+        await executer
+            .deleteFrom(this.tableName)
+            .where('userId', '=', userId)
+            .execute();
+    }
+
+    /**
      * Находит запись корзины по id с проверкой принадлежности пользователю.
      * Бросает notFound, если запись не существует или принадлежит другому пользователю.
      */
