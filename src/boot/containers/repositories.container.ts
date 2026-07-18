@@ -8,6 +8,11 @@ import ProductVariantAttributeRepository from "@/repositories/product-variant-at
 import PriceRepository from "@/repositories/price/price.repository.js";
 import UserRepository from "@/repositories/user/user.repository.js";
 import RefreshTokenRepository from "@/repositories/token/refresh-token.repository.js";
+import OrderStatusRepository from "@/repositories/order-status/order-status.repository.js";
+import OrderRepository from "@/repositories/order/order.repository.js";
+import OrderItemRepository from "@/repositories/order-item/order-item.repository.js";
+import CartRepository from "@/repositories/cart/cart.repository.js";
+import BookmarkRepository from "@/repositories/bookmark/bookmark.repository.js";
 
 
 const categoryRepository = new CategoryRepository(db);
@@ -19,6 +24,11 @@ const productVariantAttributeRepository = new ProductVariantAttributeRepository(
 const priceRepository = new PriceRepository(db);
 const userRepository = new UserRepository(db);
 const refreshTokenRepository = new RefreshTokenRepository(db);
+const orderStatusRepository = new OrderStatusRepository(db);
+const orderRepository = new OrderRepository(db);
+const orderItemRepository = new OrderItemRepository(db);
+const cartRepository = new CartRepository(db);
+const bookmarkRepository = new BookmarkRepository(db);
 export {
     categoryRepository,
     brandRepository,
@@ -28,5 +38,10 @@ export {
     productVariantAttributeRepository,
     priceRepository,
     userRepository,
-    refreshTokenRepository
+    refreshTokenRepository,
+    orderStatusRepository,
+    orderRepository,
+    orderItemRepository,
+    cartRepository,
+    bookmarkRepository
 };
