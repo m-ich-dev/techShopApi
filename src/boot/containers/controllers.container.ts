@@ -8,6 +8,7 @@ import BrandStoreController from "@/http/v1/controllers/store/brand.store.contro
 import CategoryStoreController from "@/http/v1/controllers/store/category.store.controller.js";
 import CartStoreController from "@/http/v1/controllers/store/cart.store.controller.js";
 import OrderStoreController from "@/http/v1/controllers/store/order.store.controller.js";
+import BookmarkStoreController from "@/http/v1/controllers/store/bookmark.store.controller.js";
 import * as services from "@/boot/containers/services.container.js";
 import AuthController from "@/http/v1/controllers/auth.controller.js";
 import ProductStoreController from "@/http/v1/controllers/store/product.store.controller.js";
@@ -34,6 +35,8 @@ const cartStoreController = new CartStoreController(services.cartService);
 
 const orderStoreController = new OrderStoreController(services.orderService);
 
+const bookmarkStoreController = new BookmarkStoreController(services.bookmarkService);
+
 export {
     categoryAdminController,
     categoryStoreController,
@@ -54,5 +57,7 @@ export {
 
     cartStoreController,
 
-    orderStoreController
+    orderStoreController,
+
+    bookmarkStoreController
 };

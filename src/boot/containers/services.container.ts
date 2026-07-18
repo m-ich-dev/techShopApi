@@ -9,6 +9,7 @@ import JWTService from "@/services/jwt.service.js";
 import OrderStatusService from "@/services/order-status.service.js";
 import CartService from "@/services/cart.service.js";
 import OrderService from "@/services/order.service.js";
+import BookmarkService from "@/services/bookmark.service.js";
 import OrderCheckoutDomain from "@/domain/order/order-checkout.domain.js";
 
 
@@ -40,6 +41,8 @@ const orderCheckoutDomain = new OrderCheckoutDomain(
 );
 const orderService = new OrderService(orderCheckoutDomain, repositories.orderRepository);
 
+const bookmarkService = new BookmarkService(repositories.bookmarkRepository, repositories.productVariantRepository);
+
 
 export {
     categoryService,
@@ -51,5 +54,6 @@ export {
     JwtService,
     orderStatusService,
     cartService,
-    orderService
+    orderService,
+    bookmarkService
 };

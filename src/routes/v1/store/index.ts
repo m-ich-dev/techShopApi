@@ -4,6 +4,7 @@ import { Router } from "express";
 import productRouter from "@/routes/v1/store/product.routes.js";
 import cartRouter from "@/routes/v1/store/cart.routes.js";
 import orderRouter from "@/routes/v1/store/order.routes.js";
+import bookmarkRouter from "@/routes/v1/store/bookmark.routes.js";
 
 const router = Router();
 
@@ -12,4 +13,5 @@ const router = Router();
 router.use('/products', productRouter);
 router.use('/cart', cartRouter);
 router.use('/orders', orderRouter);
+router.use('/bookmarks', bookmarkRouter);
 export default router;
