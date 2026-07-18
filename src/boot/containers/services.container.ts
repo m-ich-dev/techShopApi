@@ -38,7 +38,7 @@ const orderCheckoutDomain = new OrderCheckoutDomain(
     repositories.orderStatusRepository,
     repositories.productVariantRepository
 );
-const orderService = new OrderService(orderCheckoutDomain);
+const orderService = new OrderService(orderCheckoutDomain, repositories.orderRepository);
 
 
 export {

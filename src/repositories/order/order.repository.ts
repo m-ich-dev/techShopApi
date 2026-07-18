@@ -5,6 +5,7 @@ import Repository from "@/boot/repositories/repository.js";
 import HTTPError from "@/boot/http/http.error.js";
 import { ENTITY_BY_TABLE } from "@/boot/enums/entities.enum.js";
 import { capitalize } from "@/boot/utils/capitalize.js";
+import type { TPaginateMeta, TPaginateParams } from "@/boot/types/repository.types.js";
 
 
 export default class OrderRepository extends Repository<'orders'> {
@@ -12,6 +13,76 @@ export default class OrderRepository extends Repository<'orders'> {
     public readonly softDeletable: boolean = false;
 
     constructor(protected readonly db: Kysely<IDatabase>) { super(); }
+
+    /**
+     * Базовый построитель списка заказов с подгрузкой status (без items).
+     * items не подгружаются для списка — это лишняя нагрузка,
+     * они нужны только в findByIdWithItems (show).
+     */
+    private queryList(trx?: Transaction<IDatabase>) {
+        const executer = trx ?? this.db;
+
+        return executer
+            .selectFrom(`${this.tableName} as t`)
+            .select([
+                't.id',
+                't.totalPrice',
+                't.createdAt'
+            ])
+            .select((eb) => jsonObjectFrom(
+                eb.selectFrom('orderStatuses')
+                    .whereRef('orderStatuses.id', '=', 't.orderStatusId')
+                    .select(['orderStatuses.id', 'orderStatuses.title'])
+            ).as('status'));
+    }
+
+    /**
+     * Пагинированный список заказов пользователя с подгрузкой status.
+     * Фильтр по userId обеспечивает IDOR-защиту на уровне запроса.
+     * По аналогии с ProductVariantRepository.paginatePivot.
+     */
+    public async paginateByUser(
+        userId: string,
+        { page = 1, limit = 15 }: TPaginateParams,
+        trx?: Transaction<IDatabase>
+    ) {
+        const executer = trx ?? this.db;
+
+        const pageLimit = Math.min(limit, 100);
+        const offset = (page - 1) * pageLimit;
+
+        const dataQuery = this.queryList(trx)
+            .where('t.userId', '=', userId)
+            .offset(offset)
+            .limit(pageLimit)
+            .orderBy('t.createdAt', 'desc')
+            .orderBy('t.id', 'asc');
+
+        const countQuery = executer
+            .selectFrom(`${this.tableName} as t`)
+            .where('t.userId', '=', userId)
+            .select((eb) => eb.fn.countAll().as('total'));
+
+        const [data, count] = await Promise.all([
+            dataQuery.execute(),
+            countQuery.executeTakeFirst()
+        ]);
+
+        const totalRecords = Number(count?.total ?? 0);
+        const totalPages = Math.max(1, Math.ceil(totalRecords / pageLimit));
+
+        const meta: TPaginateMeta = {
+            page,
+            next: page < totalPages ? page + 1 : totalPages,
+            prev: page > 1 ? page - 1 : 1,
+            first: 1,
+            last: totalPages,
+            limit: pageLimit,
+            total: totalRecords
+        };
+
+        return { data, meta };
+    }
 
     /**
      * Получение заказа по id со связанными позициями и статусом.
