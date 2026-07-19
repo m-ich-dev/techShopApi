@@ -1097,11 +1097,8 @@
           "401": {
             "description": "Не авторизован"
           },
-          "403": {
-            "description": "Позиция не принадлежит пользователю"
-          },
           "404": {
-            "description": "Позиция не найдена"
+            "description": "Позиция не найдена (включая чужие позиции — IDOR-защита)"
           },
           "422": {
             "description": "Ошибка валидации"
@@ -1170,11 +1167,412 @@
           "401": {
             "description": "Не авторизован"
           },
-          "403": {
-            "description": "Позиция не принадлежит пользователю"
+          "404": {
+            "description": "Позиция не найдена (включая чужие позиции — IDOR-защита)"
+          }
+        }
+      }
+    },
+    "/orders": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "description": "Список заказов текущего пользователя с пагинацией.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "default": 1
+            },
+            "required": false,
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "default": 15
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список заказов с pagination links",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "totalPrice": {
+                            "type": "number"
+                          },
+                          "status": {
+                            "type": "object",
+                            "nullable": true,
+                            "properties": {
+                              "id": {
+                                "type": "number"
+                              },
+                              "title": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "title"
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "nullable": true,
+                            "format": "date-time"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "totalPrice",
+                          "status",
+                          "createdAt"
+                        ]
+                      }
+                    },
+                    "links": {
+                      "type": "object",
+                      "properties": {
+                        "self": {
+                          "type": "string"
+                        },
+                        "prev": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "next": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "first": {
+                          "type": "string"
+                        },
+                        "last": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "self",
+                        "prev",
+                        "next",
+                        "first",
+                        "last"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "links"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован"
+          },
+          "422": {
+            "description": "Ошибка валидации query-параметров (page/limit)"
+          }
+        }
+      }
+    },
+    "/orders/{id}": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "description": "Детальная информация по заказу, включая позиции (items).",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "description": "ID заказа"
+            },
+            "required": true,
+            "description": "ID заказа",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Заказ найден",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number"
+                        },
+                        "totalPrice": {
+                          "type": "number"
+                        },
+                        "status": {
+                          "type": "object",
+                          "nullable": true,
+                          "properties": {
+                            "id": {
+                              "type": "number"
+                            },
+                            "title": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "title"
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "nullable": true,
+                          "format": "date-time"
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number"
+                              },
+                              "productVariantId": {
+                                "type": "number"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "quantity": {
+                                "type": "number"
+                              },
+                              "price": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "productVariantId",
+                              "title",
+                              "quantity",
+                              "price"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "totalPrice",
+                        "status",
+                        "createdAt",
+                        "items"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован"
           },
           "404": {
-            "description": "Позиция не найдена"
+            "description": "Заказ не найден (включая чужие заказы — IDOR-защита)"
+          }
+        }
+      }
+    },
+    "/orders/checkout": {
+      "post": {
+        "tags": [
+          "store"
+        ],
+        "description": "Оформление заказа из текущей корзины пользователя.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "shippingAddress": {
+                    "type": "string",
+                    "minLength": 5
+                  },
+                  "paymentMethod": {
+                    "type": "string",
+                    "enum": [
+                      "card",
+                      "cash_on_delivery"
+                    ]
+                  }
+                },
+                "required": [
+                  "shippingAddress",
+                  "paymentMethod"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Заказ создан",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number"
+                        },
+                        "totalPrice": {
+                          "type": "number"
+                        },
+                        "status": {
+                          "type": "object",
+                          "nullable": true,
+                          "properties": {
+                            "id": {
+                              "type": "number"
+                            },
+                            "title": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "title"
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "nullable": true,
+                          "format": "date-time"
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number"
+                              },
+                              "productVariantId": {
+                                "type": "number"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "quantity": {
+                                "type": "number"
+                              },
+                              "price": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "productVariantId",
+                              "title",
+                              "quantity",
+                              "price"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "totalPrice",
+                        "status",
+                        "createdAt",
+                        "items"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Корзина пуста"
+          },
+          "401": {
+            "description": "Не авторизован"
+          },
+          "409": {
+            "description": "Конфликт: недостаточно stock у одной или нескольких позиций, либо вариант/цена стали недоступны"
+          },
+          "422": {
+            "description": "Ошибка валидации тела запроса"
           }
         }
       }

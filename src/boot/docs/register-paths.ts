@@ -5,6 +5,7 @@ import { publicRegistry, fullRegistry } from "./openapi-registry.js";
 import { registerAuthPaths } from "./paths/auth.paths.js";
 import { registerProductPaths } from "./paths/product.paths.js";
 import { registerCartPaths } from "./paths/cart.paths.js";
+import { registerOrderPaths } from "./paths/order.paths.js";
 
 
 export function registerAllPaths(): void {
@@ -19,6 +20,10 @@ export function registerAllPaths(): void {
     // cart — публичный модуль (требует аутентификации), регистрируется в обоих registry.
     registerCartPaths(publicRegistry);
     registerCartPaths(fullRegistry);
+
+    // orders — публичный модуль (требует аутентификации), регистрируется в обоих registry.
+    registerOrderPaths(publicRegistry);
+    registerOrderPaths(fullRegistry);
 
     // Остальные store- и admin-модули будут добавлены здесь на следующих шагах.
 }

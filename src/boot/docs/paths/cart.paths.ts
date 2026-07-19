@@ -81,8 +81,7 @@ export function registerCartPaths(registry: OpenAPIRegistry): void {
                 content: { "application/json": { schema: cartItemResponseSchema } }
             },
             "401": { description: "Не авторизован" },
-            "403": { description: "Позиция не принадлежит пользователю" },
-            "404": { description: "Позиция не найдена" },
+            "404": { description: "Позиция не найдена (включая чужие позиции — IDOR-защита)" },
             "422": { description: "Ошибка валидации" }
         }
     });
@@ -103,8 +102,7 @@ export function registerCartPaths(registry: OpenAPIRegistry): void {
                 content: { "application/json": { schema: cartDeleteResponseSchema } }
             },
             "401": { description: "Не авторизован" },
-            "403": { description: "Позиция не принадлежит пользователю" },
-            "404": { description: "Позиция не найдена" }
+            "404": { description: "Позиция не найдена (включая чужие позиции — IDOR-защита)" }
         }
     });
 }
