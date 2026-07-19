@@ -6,6 +6,7 @@ import { registerAuthPaths } from "./paths/auth.paths.js";
 import { registerProductPaths } from "./paths/product.paths.js";
 import { registerCartPaths } from "./paths/cart.paths.js";
 import { registerOrderPaths } from "./paths/order.paths.js";
+import { registerBookmarkPaths } from "./paths/bookmark.paths.js";
 
 
 export function registerAllPaths(): void {
@@ -25,5 +26,9 @@ export function registerAllPaths(): void {
     registerOrderPaths(publicRegistry);
     registerOrderPaths(fullRegistry);
 
-    // Остальные store- и admin-модули будут добавлены здесь на следующих шагах.
+    // bookmarks — публичный модуль (требует аутентификации), регистрируется в обоих registry.
+    registerBookmarkPaths(publicRegistry);
+    registerBookmarkPaths(fullRegistry);
+
+    // Остальные admin-модули будут добавлены здесь на следующих шагах.
 }

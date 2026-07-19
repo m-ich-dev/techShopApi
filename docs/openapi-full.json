@@ -1576,6 +1576,179 @@
           }
         }
       }
+    },
+    "/bookmarks": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "description": "Список закладок текущего пользователя с данными вариантов товаров и ценами.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список закладок",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "variant": {
+                            "type": "object",
+                            "nullable": true,
+                            "properties": {
+                              "id": {
+                                "type": "number"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "slug": {
+                                "type": "string"
+                              },
+                              "stock": {
+                                "type": "number"
+                              },
+                              "price": {
+                                "type": "object",
+                                "nullable": true,
+                                "properties": {
+                                  "current": {
+                                    "type": "number"
+                                  },
+                                  "old": {
+                                    "type": "number",
+                                    "nullable": true
+                                  }
+                                },
+                                "required": [
+                                  "current",
+                                  "old"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "title",
+                              "slug",
+                              "stock",
+                              "price"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "variant"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован"
+          }
+        }
+      }
+    },
+    "/bookmarks/toggle": {
+      "post": {
+        "tags": [
+          "store"
+        ],
+        "description": "Идемпотентный toggle закладки: если закладка существует — удаляет, иначе — добавляет.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productVariantId": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true
+                  }
+                },
+                "required": [
+                  "productVariantId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Закладка добавлена или удалена",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "bookmarked": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "bookmarked"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован"
+          },
+          "404": {
+            "description": "Вариант товара не найден"
+          },
+          "422": {
+            "description": "Ошибка валидации"
+          }
+        }
+      }
     }
   }
 }
