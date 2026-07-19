@@ -1,0 +1,32 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "techshopapi",
+    "version": "2.0.0",
+    "description": "API for techShop"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3030/api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "store",
+      "description": "Storefront API"
+    },
+    {
+      "name": "auth",
+      "description": "Authentication"
+    },
+    {
+      "name": "admin",
+      "description": "Admin API"
+    }
+  ],
+  "components": {
+    "schemas": {},
+    "parameters": {}
+  },
+  "paths": {}
+}
