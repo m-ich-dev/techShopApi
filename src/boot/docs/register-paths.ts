@@ -3,6 +3,7 @@
 // fullRegistry — все роуты, включая admin (локальная полная документация).
 import { publicRegistry, fullRegistry } from "./openapi-registry.js";
 import { registerAuthPaths } from "./paths/auth.paths.js";
+import { registerProductPaths } from "./paths/product.paths.js";
 
 
 export function registerAllPaths(): void {
@@ -10,5 +11,9 @@ export function registerAllPaths(): void {
     registerAuthPaths(publicRegistry);
     registerAuthPaths(fullRegistry);
 
-    // store- и admin-модули будут добавлены здесь на следующих шагах.
+    // products/catalog — публичный модуль, регистрируется в обоих registry.
+    registerProductPaths(publicRegistry);
+    registerProductPaths(fullRegistry);
+
+    // Остальные store- и admin-модули будут добавлены здесь на следующих шагах.
 }

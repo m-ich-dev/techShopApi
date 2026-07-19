@@ -407,6 +407,342 @@
           }
         }
       }
+    },
+    "/products": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "description": "Каталог товаров с фильтрацией и пагинацией. Поддерживаются фильтры по brand (slug), category (slug), minPrice, maxPrice и динамическим атрибутам (любой ключ, не указанный в схеме, трактуется как атрибут: значения через запятую или повтор параметра).",
+        "parameters": [
+          {
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "default": 1
+            },
+            "required": false,
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "default": 15
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "brand",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "category",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "nullable": true,
+              "minimum": 0
+            },
+            "required": false,
+            "name": "minPrice",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "nullable": true,
+              "minimum": 0
+            },
+            "required": false,
+            "name": "maxPrice",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список товаров с pagination links",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "slug": {
+                            "type": "string"
+                          },
+                          "stock": {
+                            "type": "number"
+                          },
+                          "brand": {
+                            "type": "object",
+                            "properties": {
+                              "title": {
+                                "type": "string"
+                              },
+                              "slug": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "title",
+                              "slug"
+                            ]
+                          },
+                          "category": {
+                            "type": "object",
+                            "properties": {
+                              "title": {
+                                "type": "string"
+                              },
+                              "slug": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "title",
+                              "slug"
+                            ]
+                          },
+                          "price": {
+                            "type": "object",
+                            "nullable": true,
+                            "properties": {
+                              "current": {
+                                "type": "number"
+                              },
+                              "old": {
+                                "type": "number",
+                                "nullable": true
+                              },
+                              "discountPercent": {
+                                "type": "number",
+                                "nullable": true
+                              }
+                            },
+                            "required": [
+                              "current",
+                              "old",
+                              "discountPercent"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "slug",
+                          "stock",
+                          "brand",
+                          "category",
+                          "price"
+                        ]
+                      }
+                    },
+                    "links": {
+                      "type": "object",
+                      "properties": {
+                        "self": {
+                          "type": "string"
+                        },
+                        "prev": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "next": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "first": {
+                          "type": "string"
+                        },
+                        "last": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "self",
+                        "prev",
+                        "next",
+                        "first",
+                        "last"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "links"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Ошибка валидации query-параметров"
+          }
+        }
+      }
+    },
+    "/products/{slug}": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "description": "Детальная страница товара по slug. Включает атрибуты товара.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Slug товара"
+            },
+            "required": true,
+            "description": "Slug товара",
+            "name": "slug",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Товар найден",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "slug": {
+                          "type": "string"
+                        },
+                        "stock": {
+                          "type": "number"
+                        },
+                        "brand": {
+                          "type": "object",
+                          "properties": {
+                            "title": {
+                              "type": "string"
+                            },
+                            "slug": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "title",
+                            "slug"
+                          ]
+                        },
+                        "category": {
+                          "type": "object",
+                          "properties": {
+                            "title": {
+                              "type": "string"
+                            },
+                            "slug": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "title",
+                            "slug"
+                          ]
+                        },
+                        "price": {
+                          "type": "object",
+                          "nullable": true,
+                          "properties": {
+                            "current": {
+                              "type": "number"
+                            },
+                            "old": {
+                              "type": "number",
+                              "nullable": true
+                            },
+                            "discountPercent": {
+                              "type": "number",
+                              "nullable": true
+                            }
+                          },
+                          "required": [
+                            "current",
+                            "old",
+                            "discountPercent"
+                          ]
+                        },
+                        "attributes": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "title": {
+                                "type": "string"
+                              },
+                              "value": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "title",
+                              "value"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "title",
+                        "slug",
+                        "stock",
+                        "brand",
+                        "category",
+                        "price",
+                        "attributes"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Товар не найден"
+          }
+        }
+      }
     }
   }
 }
