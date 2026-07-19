@@ -411,7 +411,7 @@
     "/products": {
       "get": {
         "tags": [
-          "products"
+          "store"
         ],
         "description": "Каталог товаров с фильтрацией и пагинацией. Поддерживаются фильтры по brand (slug), category (slug), minPrice, maxPrice и динамическим атрибутам (любой ключ, не указанный в схеме, трактуется как атрибут: значения через запятую или повтор параметра).",
         "parameters": [
@@ -610,7 +610,7 @@
     "/products/{slug}": {
       "get": {
         "tags": [
-          "products"
+          "store"
         ],
         "description": "Детальная страница товара по slug. Включает атрибуты товара.",
         "parameters": [
@@ -740,6 +740,441 @@
           },
           "404": {
             "description": "Товар не найден"
+          }
+        }
+      }
+    },
+    "/cart": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "description": "Список позиций корзины текущего пользователя с данными вариантов товаров и ценами.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список позиций корзины",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "quantity": {
+                            "type": "number"
+                          },
+                          "variant": {
+                            "type": "object",
+                            "nullable": true,
+                            "properties": {
+                              "id": {
+                                "type": "number"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "slug": {
+                                "type": "string"
+                              },
+                              "stock": {
+                                "type": "number"
+                              },
+                              "price": {
+                                "type": "object",
+                                "nullable": true,
+                                "properties": {
+                                  "current": {
+                                    "type": "number"
+                                  },
+                                  "old": {
+                                    "type": "number",
+                                    "nullable": true
+                                  }
+                                },
+                                "required": [
+                                  "current",
+                                  "old"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "title",
+                              "slug",
+                              "stock",
+                              "price"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "quantity",
+                          "variant"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "store"
+        ],
+        "description": "Добавить товар в корзину (upsert: если вариант уже в корзине — количество увеличивается).",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productVariantId": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true
+                  }
+                },
+                "required": [
+                  "productVariantId",
+                  "quantity"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Позиция добавлена (или увеличено количество)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number"
+                        },
+                        "quantity": {
+                          "type": "number"
+                        },
+                        "variant": {
+                          "type": "object",
+                          "nullable": true,
+                          "properties": {
+                            "id": {
+                              "type": "number"
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "slug": {
+                              "type": "string"
+                            },
+                            "stock": {
+                              "type": "number"
+                            },
+                            "price": {
+                              "type": "object",
+                              "nullable": true,
+                              "properties": {
+                                "current": {
+                                  "type": "number"
+                                },
+                                "old": {
+                                  "type": "number",
+                                  "nullable": true
+                                }
+                              },
+                              "required": [
+                                "current",
+                                "old"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "title",
+                            "slug",
+                            "stock",
+                            "price"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "quantity",
+                        "variant"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован"
+          },
+          "404": {
+            "description": "Вариант товара не найден"
+          },
+          "422": {
+            "description": "Ошибка валидации"
+          }
+        }
+      }
+    },
+    "/cart/{id}": {
+      "patch": {
+        "tags": [
+          "store"
+        ],
+        "description": "Обновить количество позиции корзины.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "description": "ID позиции корзины"
+            },
+            "required": true,
+            "description": "ID позиции корзины",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "quantity"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Количество обновлено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number"
+                        },
+                        "quantity": {
+                          "type": "number"
+                        },
+                        "variant": {
+                          "type": "object",
+                          "nullable": true,
+                          "properties": {
+                            "id": {
+                              "type": "number"
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "slug": {
+                              "type": "string"
+                            },
+                            "stock": {
+                              "type": "number"
+                            },
+                            "price": {
+                              "type": "object",
+                              "nullable": true,
+                              "properties": {
+                                "current": {
+                                  "type": "number"
+                                },
+                                "old": {
+                                  "type": "number",
+                                  "nullable": true
+                                }
+                              },
+                              "required": [
+                                "current",
+                                "old"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "title",
+                            "slug",
+                            "stock",
+                            "price"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "quantity",
+                        "variant"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован"
+          },
+          "403": {
+            "description": "Позиция не принадлежит пользователю"
+          },
+          "404": {
+            "description": "Позиция не найдена"
+          },
+          "422": {
+            "description": "Ошибка валидации"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "store"
+        ],
+        "description": "Удалить позицию из корзины.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "description": "ID позиции корзины"
+            },
+            "required": true,
+            "description": "ID позиции корзины",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Позиция удалена",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean",
+                          "enum": [
+                            true
+                          ]
+                        }
+                      },
+                      "required": [
+                        "success"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован"
+          },
+          "403": {
+            "description": "Позиция не принадлежит пользователю"
+          },
+          "404": {
+            "description": "Позиция не найдена"
           }
         }
       }

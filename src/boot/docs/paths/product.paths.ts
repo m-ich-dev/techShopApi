@@ -11,7 +11,7 @@ export function registerProductPaths(registry: OpenAPIRegistry): void {
     registry.registerPath({
         method: "get",
         path: "/products",
-        tags: ["products"],
+        tags: ["store"],
         description:
             "Каталог товаров с фильтрацией и пагинацией. " +
             "Поддерживаются фильтры по brand (slug), category (slug), minPrice, maxPrice " +
@@ -33,7 +33,7 @@ export function registerProductPaths(registry: OpenAPIRegistry): void {
     registry.registerPath({
         method: "get",
         path: "/products/{slug}",
-        tags: ["products"],
+        tags: ["store"],
         description: "Детальная страница товара по slug. Включает атрибуты товара.",
         request: {
             params: z.object({

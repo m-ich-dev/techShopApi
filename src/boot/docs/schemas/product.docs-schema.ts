@@ -68,4 +68,4 @@ export const productCatalogQuerySchema = z.object({
     category: z.string().optional(),
     minPrice: z.coerce.number().nonnegative().optional(),
     maxPrice: z.coerce.number().nonnegative().optional()
-}).partial();
+});
