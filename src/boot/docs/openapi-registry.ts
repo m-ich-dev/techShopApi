@@ -15,10 +15,19 @@ extendZodWithOpenApi(z);
 
 const APP_PORT = process.env.APP_PORT ?? "3030";
 
-// Ограничение: servers формируются из APP_PORT.
-// Если приложение окажется за reverse-proxy/докером с другим внешним портом,
-// эту строку нужно поправить или вынести base URL в отдельную env-переменную.
-const servers = [{ url: `http://localhost:${APP_PORT}/api/v1` }];
+// Базовый внешний URL приложения.
+// В production указывает на публичный домен (например, https://public.url),
+// в development не задаётся — тогда servers строятся от localhost:APP_PORT.
+// По паттерну окружения, используемому в logger.config.ts/response.formatter.ts.
+const APP_PUBLIC_URL = process.env.APP_PUBLIC_URL;
+
+const isDevelopment = process.env.NODE_ENV === "development";
+
+const baseUrl = isDevelopment || !APP_PUBLIC_URL
+    ? `http://localhost:${APP_PORT}`
+    : APP_PUBLIC_URL;
+
+const servers = [{ url: `${baseUrl}/api/v1` }];
 
 export const openApiBaseInfo = {
     title: pkg.name,
