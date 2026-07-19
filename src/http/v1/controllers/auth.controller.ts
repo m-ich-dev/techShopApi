@@ -38,8 +38,7 @@ export default class AuthController extends Controller {
         const { refreshToken } = req.cookies as { refreshToken: string | undefined };
 
         if (!refreshToken) {
-            res.clearCookie('refreshToken');
-            return res.sendStatus(204);
+            throw HTTPError.unauthorized({ message: 'Refresh token is missing' });
         }
 
         const { tokens, publicUser } = await this.auth.refresh(refreshToken);
@@ -70,8 +69,7 @@ export default class AuthController extends Controller {
         const { refreshToken } = req.cookies as { refreshToken: string | undefined };
 
         if (!refreshToken) {
-            res.clearCookie('refreshToken');
-            return res.sendStatus(204);
+            throw HTTPError.unauthorized({ message: 'Refresh token is missing' });
         }
 
         await this.auth.logout(refreshToken);

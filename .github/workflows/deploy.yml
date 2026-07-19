@@ -19,6 +19,7 @@ jobs:
           cat > .env << EOF
           APP_NAME=${{ secrets.APP_NAME }}
           APP_PORT=${{ secrets.APP_PORT }}
+          APP_PUBLIC_URL=${{ secrets.APP_PUBLIC_URL }}
 
           APP_JWT_ACCESS_SECRET_KEY=${{ secrets.APP_JWT_ACCESS_SECRET_KEY }}
 

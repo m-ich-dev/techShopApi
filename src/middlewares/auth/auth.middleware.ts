@@ -15,5 +15,6 @@ export default async function authMiddleware(req: Request, res: Response, next: 
     const accessToken = authHeader.slice(startsWith.length).trim();
     const payload = await JwtService.verifyAccessToken(accessToken);
     req.user = payload;
+    res.locals.userId = payload.userId;
     next();
 }

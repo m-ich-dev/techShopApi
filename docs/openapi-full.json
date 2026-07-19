@@ -1,0 +1,1754 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "techshopapi",
+    "version": "2.0.0",
+    "description": "API for techShop"
+  },
+  "servers": [
+    {
+      "url": "http://localhost/api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "store",
+      "description": "Storefront API"
+    },
+    {
+      "name": "auth",
+      "description": "Authentication"
+    },
+    {
+      "name": "admin",
+      "description": "Admin API"
+    }
+  ],
+  "components": {
+    "schemas": {},
+    "parameters": {}
+  },
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "description": "Аутентификация пользователя. Возвращает access-токен в header Authorization, refresh-токен в httpOnly cookie.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 3
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешный вход",
+            "headers": {
+              "Authorization": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Bearer <accessToken>"
+              },
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "refreshToken=<token>; HttpOnly"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "firstName": {
+                          "type": "string"
+                        },
+                        "lastName": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "firstName",
+                        "lastName",
+                        "email"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Неверные учётные данные"
+          },
+          "429": {
+            "description": "Превышен rate limit"
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "description": "Регистрация нового пользователя. Возвращает access-токен в header Authorization, refresh-токен в httpOnly cookie.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "minLength": 2
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "minLength": 2
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 3
+                  }
+                },
+                "required": [
+                  "firstName",
+                  "lastName",
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Пользователь создан",
+            "headers": {
+              "Authorization": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Bearer <accessToken>"
+              },
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "refreshToken=<token>; HttpOnly"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "firstName": {
+                          "type": "string"
+                        },
+                        "lastName": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "firstName",
+                        "lastName",
+                        "email"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email уже занят"
+          },
+          "429": {
+            "description": "Превышен rate limit"
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "description": "Обновление access-токена через refresh-токен из cookie.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "refreshToken=<token>. httpOnly cookie, устанавливается сервером автоматически после успешного login/register в том же браузере. При тестировании через Swagger UI поле Cookie вручную заполнять не нужно — браузер сам передаст cookie (прочитать httpOnly-cookie из JS невозможно)."
+            },
+            "required": true,
+            "description": "refreshToken=<token>. httpOnly cookie, устанавливается сервером автоматически после успешного login/register в том же браузере. При тестировании через Swagger UI поле Cookie вручную заполнять не нужно — браузер сам передаст cookie (прочитать httpOnly-cookie из JS невозможно).",
+            "name": "Cookie",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Токен обновлён",
+            "headers": {
+              "Authorization": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Bearer <accessToken>"
+              },
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "refreshToken=<token>; HttpOnly"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "firstName": {
+                          "type": "string"
+                        },
+                        "lastName": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "firstName",
+                        "lastName",
+                        "email"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Refresh-токен отсутствует, истёк или отозван"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "description": "Выход из аккаунта. Отзывает refresh-токен и очищает cookie.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "refreshToken=<token>. httpOnly cookie, устанавливается сервером автоматически после успешного login/register в том же браузере. При тестировании через Swagger UI поле Cookie вручную заполнять не нужно — браузер сам передаст cookie (прочитать httpOnly-cookie из JS невозможно)."
+            },
+            "required": true,
+            "description": "refreshToken=<token>. httpOnly cookie, устанавливается сервером автоматически после успешного login/register в том же браузере. При тестировании через Swagger UI поле Cookie вручную заполнять не нужно — браузер сам передаст cookie (прочитать httpOnly-cookie из JS невозможно).",
+            "name": "Cookie",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный выход",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Refresh-токен отсутствует"
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "description": "Текущий пользователь по access-токену.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Данные текущего пользователя",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "firstName": {
+                          "type": "string"
+                        },
+                        "lastName": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "firstName",
+                        "lastName",
+                        "email"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован"
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "description": "Каталог товаров с фильтрацией и пагинацией. Поддерживаются фильтры по brand (slug), category (slug), minPrice, maxPrice и динамическим атрибутам (любой ключ, не указанный в схеме, трактуется как атрибут: значения через запятую или повтор параметра).",
+        "parameters": [
+          {
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "default": 1
+            },
+            "required": false,
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "default": 15
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "brand",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "category",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "nullable": true,
+              "minimum": 0
+            },
+            "required": false,
+            "name": "minPrice",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "nullable": true,
+              "minimum": 0
+            },
+            "required": false,
+            "name": "maxPrice",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список товаров с pagination links",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "slug": {
+                            "type": "string"
+                          },
+                          "stock": {
+                            "type": "number"
+                          },
+                          "brand": {
+                            "type": "object",
+                            "properties": {
+                              "title": {
+                                "type": "string"
+                              },
+                              "slug": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "title",
+                              "slug"
+                            ]
+                          },
+                          "category": {
+                            "type": "object",
+                            "properties": {
+                              "title": {
+                                "type": "string"
+                              },
+                              "slug": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "title",
+                              "slug"
+                            ]
+                          },
+                          "price": {
+                            "type": "object",
+                            "nullable": true,
+                            "properties": {
+                              "current": {
+                                "type": "number"
+                              },
+                              "old": {
+                                "type": "number",
+                                "nullable": true
+                              },
+                              "discountPercent": {
+                                "type": "number",
+                                "nullable": true
+                              }
+                            },
+                            "required": [
+                              "current",
+                              "old",
+                              "discountPercent"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "slug",
+                          "stock",
+                          "brand",
+                          "category",
+                          "price"
+                        ]
+                      }
+                    },
+                    "links": {
+                      "type": "object",
+                      "properties": {
+                        "self": {
+                          "type": "string"
+                        },
+                        "prev": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "next": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "first": {
+                          "type": "string"
+                        },
+                        "last": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "self",
+                        "prev",
+                        "next",
+                        "first",
+                        "last"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "links"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Ошибка валидации query-параметров"
+          }
+        }
+      }
+    },
+    "/products/{slug}": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "description": "Детальная страница товара по slug. Включает атрибуты товара.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Slug товара"
+            },
+            "required": true,
+            "description": "Slug товара",
+            "name": "slug",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Товар найден",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "slug": {
+                          "type": "string"
+                        },
+                        "stock": {
+                          "type": "number"
+                        },
+                        "brand": {
+                          "type": "object",
+                          "properties": {
+                            "title": {
+                              "type": "string"
+                            },
+                            "slug": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "title",
+                            "slug"
+                          ]
+                        },
+                        "category": {
+                          "type": "object",
+                          "properties": {
+                            "title": {
+                              "type": "string"
+                            },
+                            "slug": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "title",
+                            "slug"
+                          ]
+                        },
+                        "price": {
+                          "type": "object",
+                          "nullable": true,
+                          "properties": {
+                            "current": {
+                              "type": "number"
+                            },
+                            "old": {
+                              "type": "number",
+                              "nullable": true
+                            },
+                            "discountPercent": {
+                              "type": "number",
+                              "nullable": true
+                            }
+                          },
+                          "required": [
+                            "current",
+                            "old",
+                            "discountPercent"
+                          ]
+                        },
+                        "attributes": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "title": {
+                                "type": "string"
+                              },
+                              "value": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "title",
+                              "value"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "title",
+                        "slug",
+                        "stock",
+                        "brand",
+                        "category",
+                        "price",
+                        "attributes"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Товар не найден"
+          }
+        }
+      }
+    },
+    "/cart": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "description": "Список позиций корзины текущего пользователя с данными вариантов товаров и ценами.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список позиций корзины",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "quantity": {
+                            "type": "number"
+                          },
+                          "variant": {
+                            "type": "object",
+                            "nullable": true,
+                            "properties": {
+                              "id": {
+                                "type": "number"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "slug": {
+                                "type": "string"
+                              },
+                              "stock": {
+                                "type": "number"
+                              },
+                              "price": {
+                                "type": "object",
+                                "nullable": true,
+                                "properties": {
+                                  "current": {
+                                    "type": "number"
+                                  },
+                                  "old": {
+                                    "type": "number",
+                                    "nullable": true
+                                  }
+                                },
+                                "required": [
+                                  "current",
+                                  "old"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "title",
+                              "slug",
+                              "stock",
+                              "price"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "quantity",
+                          "variant"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "store"
+        ],
+        "description": "Добавить товар в корзину (upsert: если вариант уже в корзине — количество увеличивается).",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productVariantId": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true
+                  }
+                },
+                "required": [
+                  "productVariantId",
+                  "quantity"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Позиция добавлена (или увеличено количество)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number"
+                        },
+                        "quantity": {
+                          "type": "number"
+                        },
+                        "variant": {
+                          "type": "object",
+                          "nullable": true,
+                          "properties": {
+                            "id": {
+                              "type": "number"
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "slug": {
+                              "type": "string"
+                            },
+                            "stock": {
+                              "type": "number"
+                            },
+                            "price": {
+                              "type": "object",
+                              "nullable": true,
+                              "properties": {
+                                "current": {
+                                  "type": "number"
+                                },
+                                "old": {
+                                  "type": "number",
+                                  "nullable": true
+                                }
+                              },
+                              "required": [
+                                "current",
+                                "old"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "title",
+                            "slug",
+                            "stock",
+                            "price"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "quantity",
+                        "variant"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован"
+          },
+          "404": {
+            "description": "Вариант товара не найден"
+          },
+          "422": {
+            "description": "Ошибка валидации"
+          }
+        }
+      }
+    },
+    "/cart/{id}": {
+      "patch": {
+        "tags": [
+          "store"
+        ],
+        "description": "Обновить количество позиции корзины.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "description": "ID позиции корзины"
+            },
+            "required": true,
+            "description": "ID позиции корзины",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "quantity"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Количество обновлено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number"
+                        },
+                        "quantity": {
+                          "type": "number"
+                        },
+                        "variant": {
+                          "type": "object",
+                          "nullable": true,
+                          "properties": {
+                            "id": {
+                              "type": "number"
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "slug": {
+                              "type": "string"
+                            },
+                            "stock": {
+                              "type": "number"
+                            },
+                            "price": {
+                              "type": "object",
+                              "nullable": true,
+                              "properties": {
+                                "current": {
+                                  "type": "number"
+                                },
+                                "old": {
+                                  "type": "number",
+                                  "nullable": true
+                                }
+                              },
+                              "required": [
+                                "current",
+                                "old"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "title",
+                            "slug",
+                            "stock",
+                            "price"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "quantity",
+                        "variant"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован"
+          },
+          "404": {
+            "description": "Позиция не найдена (включая чужие позиции — IDOR-защита)"
+          },
+          "422": {
+            "description": "Ошибка валидации"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "store"
+        ],
+        "description": "Удалить позицию из корзины.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "description": "ID позиции корзины"
+            },
+            "required": true,
+            "description": "ID позиции корзины",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Позиция удалена",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean",
+                          "enum": [
+                            true
+                          ]
+                        }
+                      },
+                      "required": [
+                        "success"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован"
+          },
+          "404": {
+            "description": "Позиция не найдена (включая чужие позиции — IDOR-защита)"
+          }
+        }
+      }
+    },
+    "/orders": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "description": "Список заказов текущего пользователя с пагинацией.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "default": 1
+            },
+            "required": false,
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "default": 15
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список заказов с pagination links",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "totalPrice": {
+                            "type": "number"
+                          },
+                          "status": {
+                            "type": "object",
+                            "nullable": true,
+                            "properties": {
+                              "id": {
+                                "type": "number"
+                              },
+                              "title": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "title"
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "nullable": true,
+                            "format": "date-time"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "totalPrice",
+                          "status",
+                          "createdAt"
+                        ]
+                      }
+                    },
+                    "links": {
+                      "type": "object",
+                      "properties": {
+                        "self": {
+                          "type": "string"
+                        },
+                        "prev": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "next": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "first": {
+                          "type": "string"
+                        },
+                        "last": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "self",
+                        "prev",
+                        "next",
+                        "first",
+                        "last"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "links"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован"
+          },
+          "422": {
+            "description": "Ошибка валидации query-параметров (page/limit)"
+          }
+        }
+      }
+    },
+    "/orders/{id}": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "description": "Детальная информация по заказу, включая позиции (items).",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "description": "ID заказа"
+            },
+            "required": true,
+            "description": "ID заказа",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Заказ найден",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number"
+                        },
+                        "totalPrice": {
+                          "type": "number"
+                        },
+                        "status": {
+                          "type": "object",
+                          "nullable": true,
+                          "properties": {
+                            "id": {
+                              "type": "number"
+                            },
+                            "title": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "title"
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "nullable": true,
+                          "format": "date-time"
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number"
+                              },
+                              "productVariantId": {
+                                "type": "number"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "quantity": {
+                                "type": "number"
+                              },
+                              "price": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "productVariantId",
+                              "title",
+                              "quantity",
+                              "price"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "totalPrice",
+                        "status",
+                        "createdAt",
+                        "items"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован"
+          },
+          "404": {
+            "description": "Заказ не найден (включая чужие заказы — IDOR-защита)"
+          }
+        }
+      }
+    },
+    "/orders/checkout": {
+      "post": {
+        "tags": [
+          "store"
+        ],
+        "description": "Оформление заказа из текущей корзины пользователя.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "shippingAddress": {
+                    "type": "string",
+                    "minLength": 5
+                  },
+                  "paymentMethod": {
+                    "type": "string",
+                    "enum": [
+                      "card",
+                      "cash_on_delivery"
+                    ]
+                  }
+                },
+                "required": [
+                  "shippingAddress",
+                  "paymentMethod"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Заказ создан",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number"
+                        },
+                        "totalPrice": {
+                          "type": "number"
+                        },
+                        "status": {
+                          "type": "object",
+                          "nullable": true,
+                          "properties": {
+                            "id": {
+                              "type": "number"
+                            },
+                            "title": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "title"
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "nullable": true,
+                          "format": "date-time"
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number"
+                              },
+                              "productVariantId": {
+                                "type": "number"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "quantity": {
+                                "type": "number"
+                              },
+                              "price": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "productVariantId",
+                              "title",
+                              "quantity",
+                              "price"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "totalPrice",
+                        "status",
+                        "createdAt",
+                        "items"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Корзина пуста"
+          },
+          "401": {
+            "description": "Не авторизован"
+          },
+          "409": {
+            "description": "Конфликт: недостаточно stock у одной или нескольких позиций, либо вариант/цена стали недоступны"
+          },
+          "422": {
+            "description": "Ошибка валидации тела запроса"
+          }
+        }
+      }
+    },
+    "/bookmarks": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "description": "Список закладок текущего пользователя с данными вариантов товаров и ценами.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список закладок",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "variant": {
+                            "type": "object",
+                            "nullable": true,
+                            "properties": {
+                              "id": {
+                                "type": "number"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "slug": {
+                                "type": "string"
+                              },
+                              "stock": {
+                                "type": "number"
+                              },
+                              "price": {
+                                "type": "object",
+                                "nullable": true,
+                                "properties": {
+                                  "current": {
+                                    "type": "number"
+                                  },
+                                  "old": {
+                                    "type": "number",
+                                    "nullable": true
+                                  }
+                                },
+                                "required": [
+                                  "current",
+                                  "old"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "title",
+                              "slug",
+                              "stock",
+                              "price"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "variant"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован"
+          }
+        }
+      }
+    },
+    "/bookmarks/toggle": {
+      "post": {
+        "tags": [
+          "store"
+        ],
+        "description": "Идемпотентный toggle закладки: если закладка существует — удаляет, иначе — добавляет.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Bearer <accessToken>"
+            },
+            "required": true,
+            "description": "Bearer <accessToken>",
+            "name": "Authorization",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productVariantId": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true
+                  }
+                },
+                "required": [
+                  "productVariantId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Закладка добавлена или удалена",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "bookmarked": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "bookmarked"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Не авторизован"
+          },
+          "404": {
+            "description": "Вариант товара не найден"
+          },
+          "422": {
+            "description": "Ошибка валидации"
+          }
+        }
+      }
+    }
+  }
+}
