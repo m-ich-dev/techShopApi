@@ -1,5 +1,9 @@
 import { OpenApiGeneratorV3 } from "@asteasolutions/zod-to-openapi";
 import { fullRegistry, publicRegistry, openApiBaseInfo, PUBLIC_DESCRIPTION } from "./openapi-registry.js";
+import { registerAllPaths } from "./register-paths.js";
+
+// Регистрация всех роутов выполняется один раз при первом импорте модуля.
+registerAllPaths();
 
 // Тип документа выводим из сигнатуры генератора, чтобы не зависеть
 // от пути экспорта OpenAPIObject в транзитивной зависимости openapi3-ts.

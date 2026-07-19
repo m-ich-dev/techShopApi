@@ -1,0 +1,14 @@
+// Централизованная точка сборки: регистрирует все роуты в обоих registry.
+// publicRegistry — store + auth (публичный Swagger).
+// fullRegistry — все роуты, включая admin (локальная полная документация).
+import { publicRegistry, fullRegistry } from "./openapi-registry.js";
+import { registerAuthPaths } from "./paths/auth.paths.js";
+
+
+export function registerAllPaths(): void {
+    // auth — публичный модуль, регистрируется в обоих registry.
+    registerAuthPaths(publicRegistry);
+    registerAuthPaths(fullRegistry);
+
+    // store- и admin-модули будут добавлены здесь на следующих шагах.
+}
