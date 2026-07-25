@@ -18,12 +18,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull())
         .execute();
 
-    await db.schema
-        .createIndex(`idx_${tableName}_deleted_at`)
-        .on(tableName)
-        .column('deleted_at')
-        .execute();
-
     await updatedAtTrigger.createTrigger(db, tableName);
 }
 
