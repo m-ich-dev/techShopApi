@@ -2,4 +2,4 @@ import type { TRecordCategory } from "../../boot/database/schemas/category.schem
 import type { TOmitTimestamps } from "../../boot/types/db.types.js";
 
 
-export type TCategoryClientResource = TOmitTimestamps<TRecordCategory>;
+export type TCategoryClientResource = Omit<TOmitTimestamps<TRecordCategory>, 'id'>;

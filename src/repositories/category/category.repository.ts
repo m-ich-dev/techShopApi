@@ -10,4 +10,30 @@ export default class CategoryRepository extends SoftDeletable(Sluggable(Reposito
     public readonly softDeletable: boolean = true;
 
     constructor(protected readonly db: Kysely<IDatabase>) { super(); }
+
+    public async collectDescendantSlugs(slug: string): Promise<string[]> {
+        const rows = await this.db
+            .withRecursive('descendantSlugs',
+                (db) => db
+                    .selectFrom(this.tableName)
+                    .select([
+                        'id',
+                        'slug',
+                        'parentId'
+                    ])
+                    .where('categories.slug', '=', slug)
+                    .unionAll(
+                        db.selectFrom(`${this.tableName} as child`)
+                            .innerJoin('descendantSlugs as parent', 'parent.id', 'child.parentId')
+                            .select(['child.id', 'child.slug', 'child.parentId'])
+                    )
+            )
+            .selectFrom('descendantSlugs')
+            .select([
+                'descendantSlugs.slug',
+            ])
+            .execute();
+
+        return rows.map(r => r.slug);
+    }
 }

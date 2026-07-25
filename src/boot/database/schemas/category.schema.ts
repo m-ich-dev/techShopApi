@@ -8,8 +8,8 @@ export interface ICategoryTable {
     slug: string;
     createdAt: ColumnType<Date, never, never>;
     updatedAt: ColumnType<Date, never, never>;
-
     deletedAt: Date | null;
+    parentId: number | null;
 }
 
 export type TRecordCategory = Selectable<ICategoryTable>;

@@ -65,7 +65,9 @@ export const productCatalogQuerySchema = z.object({
     page: z.coerce.number().positive().default(1).optional(),
     limit: z.coerce.number().positive().default(15).optional(),
     brand: z.string().optional(),
-    category: z.string().optional(),
+    category: z.string().optional().openapi({
+        description: "Slug категории. Фильтрация по всему поддереву: сама категория + все потомки (по parent_id)."
+    }),
     minPrice: z.coerce.number().nonnegative().optional(),
     maxPrice: z.coerce.number().nonnegative().optional()
 });
