@@ -4,7 +4,10 @@ import type { TCatalogFilters } from "@/types/filters/catalog-filter.types.js";
 
 
 export default class CatalogFilter {
-    constructor(private readonly filters: TCatalogFilters) { }
+    constructor(
+        private readonly filters: TCatalogFilters,
+        private readonly categorySlugs?: string[]
+    ) { }
 
     public apply(qb: TQuery<TVariantPivotQuery>) {
         let q = qb;
@@ -12,8 +15,8 @@ export default class CatalogFilter {
         if (this.filters.brand) {
             q = q.where('brands.slug', '=', this.filters.brand);
         }
-        if (this.filters.category) {
-            q = q.where('categories.slug', '=', this.filters.category);
+        if (this.categorySlugs && this.categorySlugs.length > 0) {
+            q = q.where('categories.slug', 'in', this.categorySlugs);
         }
         if (this.filters.minPrice || this.filters.maxPrice) {
             const min = this.filters.minPrice ? this.filters.minPrice : null;

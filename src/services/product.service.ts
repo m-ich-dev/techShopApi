@@ -9,6 +9,7 @@ import type ProductRepository from "@/repositories/product/product.repository.js
 import type PriceRepository from "@/repositories/price/price.repository.js";
 import type ProductVariantRepository from "@/repositories/product-variant/product-variant.repository.js";
 import type ProductVariantAttributeRepository from "@/repositories/product-variant-attribute/product-variant-attribute.repository.js";
+import type CategoryRepository from "@/repositories/category/category.repository.js";
 import type { TProductStoreRequest } from "@/http/v1/requests/product/product.store.request.js";
 import type { TProductUpdateRequest } from "@/http/v1/requests/product/product.update.request.js";
 import type { TMasterProductRequest } from "@/http/v1/requests/product/master-product.request.js";
@@ -24,6 +25,7 @@ export default class ProductService extends GenerateSlug(Service) {
         private readonly variantRepository: ProductVariantRepository,
         private readonly priceRepository: PriceRepository,
         private readonly variantAttributeRepository: ProductVariantAttributeRepository,
+        private readonly categoryRepository: CategoryRepository,
     ) { super(); }
 
     public async all(
@@ -49,7 +51,23 @@ export default class ProductService extends GenerateSlug(Service) {
         withTrash?: boolean;
         filters: TCatalogFilters;
     }) {
-        const filter = new CatalogFilter(filters);
+        // Если задана категория — резолвим всё поддерево (сама категория + потомки)
+        // через recursive CTE в репозитории, чтобы каталог показывал товары всех дочерних категорий.
+        let categorySlugs: string[] | undefined;
+        if (filters.category) {
+            const slugs = await this.categoryRepository.collectDescendantSlugs(filters.category);
+
+            if (slugs.length === 0) {
+                throw HTTPError.notFound({
+                    message: 'Category not found',
+                    detail: { path: 'category', message: `with value: ${filters.category}` }
+                });
+            }
+
+            categorySlugs = slugs;
+        }
+
+        const filter = new CatalogFilter(filters, categorySlugs);
         return await this.variantRepository.paginatePivot({
             page,
             limit,

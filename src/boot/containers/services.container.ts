@@ -20,7 +20,8 @@ const productService = new ProductService(
     repositories.productRepository,
     repositories.productVariantRepository,
     repositories.priceRepository,
-    repositories.productVariantAttributeRepository
+    repositories.productVariantAttributeRepository,
+    repositories.categoryRepository
 );
 const productVariantService = new ProductVariantService(repositories.productVariantRepository);
 const JwtService = new JWTService();
