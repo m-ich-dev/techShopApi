@@ -6,9 +6,9 @@ import type { TCategoryClientResource } from "@/types/resources/category.resourc
 export default class CategoryResource extends Resource {
     public static override transform(data: TRecordCategory): TCategoryClientResource {
         return {
-            id: data.id,
             title: data.title,
-            slug: data.slug
+            slug: data.slug,
+            parentId: data.parentId
         };
     }
 }
