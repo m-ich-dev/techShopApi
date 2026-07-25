@@ -413,7 +413,7 @@
         "tags": [
           "store"
         ],
-        "description": "Каталог товаров с фильтрацией и пагинацией. Поддерживаются фильтры по brand (slug), category (slug), minPrice, maxPrice и динамическим атрибутам (любой ключ, не указанный в схеме, трактуется как атрибут: значения через запятую или повтор параметра).",
+        "description": "Каталог товаров с фильтрацией и пагинацией. Поддерживаются фильтры по brand (slug), category (slug, фильтрация по всему поддереву категории: сама категория + все потомки по parent_id), minPrice, maxPrice и динамическим атрибутам (любой ключ, не указанный в схеме, трактуется как атрибут: значения через запятую или повтор параметра).",
         "parameters": [
           {
             "schema": {
@@ -447,9 +447,11 @@
           },
           {
             "schema": {
-              "type": "string"
+              "type": "string",
+              "description": "Slug категории. Фильтрация по всему поддереву: сама категория + все потомки (по parent_id)."
             },
             "required": false,
+            "description": "Slug категории. Фильтрация по всему поддереву: сама категория + все потомки (по parent_id).",
             "name": "category",
             "in": "query"
           },
@@ -1746,6 +1748,126 @@
           },
           "422": {
             "description": "Ошибка валидации"
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "description": "Дерево категорий. Возвращает список корневых категорий с вложенными потомками (по parent_id). Используется для навигации в каталоге.",
+        "responses": {
+          "200": {
+            "description": "Дерево категорий",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "slug": {
+                            "type": "string"
+                          },
+                          "parentId": {
+                            "type": "number",
+                            "nullable": true
+                          },
+                          "children": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "title": {
+                                  "type": "string"
+                                },
+                                "slug": {
+                                  "type": "string"
+                                },
+                                "parentId": {
+                                  "type": "number",
+                                  "nullable": true
+                                },
+                                "children": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "title": {
+                                        "type": "string"
+                                      },
+                                      "slug": {
+                                        "type": "string"
+                                      },
+                                      "parentId": {
+                                        "type": "number",
+                                        "nullable": true
+                                      },
+                                      "children": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "title": {
+                                              "type": "string"
+                                            },
+                                            "slug": {
+                                              "type": "string"
+                                            },
+                                            "parentId": {
+                                              "type": "number",
+                                              "nullable": true
+                                            }
+                                          },
+                                          "required": [
+                                            "title",
+                                            "slug",
+                                            "parentId"
+                                          ]
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "title",
+                                      "slug",
+                                      "parentId",
+                                      "children"
+                                    ]
+                                  }
+                                }
+                              },
+                              "required": [
+                                "title",
+                                "slug",
+                                "parentId",
+                                "children"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "title",
+                          "slug",
+                          "parentId",
+                          "children"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
           }
         }
       }

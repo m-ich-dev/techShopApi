@@ -14,7 +14,8 @@ export function registerProductPaths(registry: OpenAPIRegistry): void {
         tags: ["store"],
         description:
             "Каталог товаров с фильтрацией и пагинацией. " +
-            "Поддерживаются фильтры по brand (slug), category (slug), minPrice, maxPrice " +
+            "Поддерживаются фильтры по brand (slug), category (slug, фильтрация по всему поддереву категории: " +
+            "сама категория + все потомки по parent_id), minPrice, maxPrice " +
             "и динамическим атрибутам (любой ключ, не указанный в схеме, трактуется как атрибут: " +
             "значения через запятую или повтор параметра).",
         request: {
