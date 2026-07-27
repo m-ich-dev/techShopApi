@@ -1,0 +1,31 @@
+services:
+  api:
+    image: demapi:latest
+    container_name: demapi
+    build:
+      context: .
+    env_file:
+      - .env
+    restart: unless-stopped
+    profiles: ["root", "api", "demapi"]
+    ports:
+      - 3030:3030
+    networks:
+      - www
+      - pg_network
+
+  migrate:
+    build: .
+    command: npm run migrate:pr:latest
+    env_file:
+      - .env
+    profiles: ["demapi"]
+    networks:
+      - pg_network
+
+networks:
+  www:
+    external: true
+
+  pg_network:
+    external: true
